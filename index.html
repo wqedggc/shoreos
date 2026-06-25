@@ -147,6 +147,65 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 .fade-in { animation: fadeIn 0.4s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Accordion */
+.acc-section { margin: 0 12px 8px; }
+.acc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 4px 8px; cursor: pointer; user-select: none;
+}
+.acc-header .acc-title {
+  font-size: 12px; font-weight: 600; color: var(--sub); text-transform: uppercase;
+  letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;
+}
+.acc-header .acc-arrow {
+  font-size: 11px; color: var(--sub); transition: transform 0.25s;
+}
+.acc-header.open .acc-arrow { transform: rotate(90deg); }
+.acc-header .acc-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--sep); margin-left: 6px;
+  transition: background 0.3s;
+}
+.acc-header .acc-dot.done { background: var(--green); }
+.acc-body {
+  max-height: 0; overflow: hidden; transition: max-height 0.35s ease;
+}
+.acc-body.open { max-height: 2000px; }
+
+/* Voice button */
+.voice-fab {
+  position: fixed; bottom: 110px; right: calc(50% - 215px + 16px); z-index: 30;
+  width: 48px; height: 48px; border-radius: 50%; background: var(--blue);
+  color: #fff; border: none; font-size: 22px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,122,255,0.3); display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s;
+}
+.voice-fab:active { transform: scale(0.92); }
+.voice-fab.listening { background: var(--red); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 4px 16px rgba(255,59,48,0.3); } 50% { box-shadow: 0 4px 28px rgba(255,59,48,0.6); } }
+.voice-toast {
+  position: fixed; bottom: 170px; left: 50%; transform: translateX(-50%); z-index: 31;
+  background: rgba(0,0,0,0.82); color: #fff; padding: 12px 22px; border-radius: 20px;
+  font-size: 13px; max-width: 320px; text-align: center; display: none;
+  backdrop-filter: blur(10px);
+}
+.voice-toast.show { display: block; animation: toastIn 0.3s ease-out; }
+@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+
+/* Quick presets row */
+.quick-row {
+  display: flex; gap: 6px; margin: 0 12px 12px; overflow-x: auto; padding-bottom: 4px;
+}
+.quick-chip {
+  flex-shrink: 0; padding: 6px 14px; border-radius: 50px; border: 1px solid var(--sep);
+  background: var(--card); font-size: 12px; font-weight: 600; color: var(--sub);
+  cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.15s;
+}
+.quick-chip:active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+@media (max-width: 430px) {
+  .voice-fab { right: 16px; }
+}
 </style>
 </head>
 <body>
@@ -232,8 +291,21 @@ td.wn { color: var(--orange); font-weight: 600; }
   <div class="scroll-section" id="sec-inputs">
     <div class="app-header">
       <div class="greeting">⚙️ 参数设置</div>
-      <div class="subtitle">填写后切回仪表盘查看结果，数据自动保存</div>
+      <div class="subtitle">填写数据自动保存 · 点击分类标题折叠/展开</div>
     </div>
+
+    <!-- Quick presets -->
+    <div class="quick-row" id="quickRow">
+      <button class="quick-chip" onclick="applyCityPreset('beijing')">📍 北京</button>
+      <button class="quick-chip" onclick="applyCityPreset('shanghai')">📍 上海</button>
+      <button class="quick-chip" onclick="applyCityPreset('guangzhou')">📍 广州</button>
+      <button class="quick-chip" onclick="applyCityPreset('shenzhen')">📍 深圳</button>
+      <button class="quick-chip" onclick="applyCityPreset('other')">📍 其他城市</button>
+    </div>
+
+    <!-- Voice button -->
+    <button class="voice-fab" id="voiceBtn" onclick="toggleVoice()" title="语音输入填表">🎤</button>
+    <div class="voice-toast" id="voiceToast"></div>
 
     <!-- Basic -->
     <div class="sec-label">基本信息</div>
@@ -792,7 +864,248 @@ function switchTab(tab, btn){
   recalc();
 }
 
+// ===== ACCORDION =====
+function initAccordion(){
+  const inputSec = document.getElementById('sec-inputs');
+  if(!inputSec) return;
+  const labels = inputSec.querySelectorAll('.sec-label');
+  labels.forEach((lbl, idx) => {
+    const cardGroup = lbl.nextElementSibling;
+    if(!cardGroup || !cardGroup.classList.contains('card-group')) return;
+    // Wrap in accordion
+    const wrapper = document.createElement('div');
+    wrapper.className = 'acc-section';
+    lbl.parentNode.insertBefore(wrapper, lbl);
+    // Create header
+    const header = document.createElement('div');
+    header.className = 'acc-header' + (idx === 0 ? ' open' : '');
+    header.innerHTML = `<span class="acc-title">${lbl.textContent}<span class="acc-dot"></span></span><span class="acc-arrow">›</span>`;
+    header.onclick = function(){
+      const isOpen = this.classList.toggle('open');
+      const body = this.nextElementSibling;
+      body.classList.toggle('open');
+    };
+    wrapper.appendChild(header);
+    // Create body
+    const body = document.createElement('div');
+    body.className = 'acc-body' + (idx === 0 ? ' open' : '');
+    wrapper.appendChild(body);
+    // Move label and card into body
+    body.appendChild(lbl);
+    body.appendChild(cardGroup);
+    // Initial dot check
+    updateAccDot(header, cardGroup);
+  });
+  // Watch for input changes to update dots
+  inputSec.addEventListener('change', function(e){
+    if(e.target.tagName === 'INPUT'){
+      const body = e.target.closest('.acc-body');
+      if(body){
+        const header = body.previousElementSibling;
+        const card = body.querySelector('.card-group');
+        updateAccDot(header, card);
+      }
+    }
+  });
+}
+
+function updateAccDot(header, card){
+  const inputs = card.querySelectorAll('input[type="number"]');
+  let filled = 0;
+  inputs.forEach(inp => { if(inp.value && inp.value.trim()!=='') filled++; });
+  const dot = header.querySelector('.acc-dot');
+  if(!dot) return;
+  if(filled === inputs.length && inputs.length > 0) dot.classList.add('done');
+  else dot.classList.remove('done');
+}
+
+// ===== CITY PRESETS =====
+const cityPresets = {
+  beijing: {
+    pensionMin: 15, medicalMin: 25,
+    penSelf: 1265, medSelf: 520,
+    label: '北京（养老15年·医保终身男25/女20）'
+  },
+  shanghai: {
+    pensionMin: 15, medicalMin: 15,
+    penSelf: 1400, medSelf: 580,
+    label: '上海（养老15年·医保终身15年）'
+  },
+  guangzhou: {
+    pensionMin: 15, medicalMin: 25,
+    penSelf: 1100, medSelf: 450,
+    label: '广州（养老15年·医保终身男25/女20）'
+  },
+  shenzhen: {
+    pensionMin: 15, medicalMin: 25,
+    penSelf: 1000, medSelf: 420,
+    label: '深圳（养老15年·医保终身男25/女20）'
+  },
+  other: {
+    pensionMin: 15, medicalMin: 25,
+    penSelf: 0, medSelf: 0,
+    label: '其他（手动填写）'
+  }
+};
+
+function applyCityPreset(city){
+  const p = cityPresets[city];
+  if(!p) return;
+  document.getElementById('pensionMin').value = p.pensionMin;
+  document.getElementById('medicalMin').value = p.medicalMin;
+  if(p.penSelf > 0) document.getElementById('pensionSelfPay').value = p.penSelf;
+  if(p.medSelf > 0) document.getElementById('medicalSelfPay').value = p.medSelf;
+  // Show toast
+  showVoiceToast('✅ 已应用 ' + p.label);
+  setTimeout(() => hideVoiceToast(), 2500);
+  recalc();
+  // Expand the SS section
+  const ssCard = document.getElementById('pensionMin').closest('.acc-body');
+  if(ssCard && !ssCard.classList.contains('open')){
+    ssCard.classList.add('open');
+    ssCard.previousElementSibling.classList.add('open');
+  }
+}
+
+// ===== VOICE INPUT =====
+let voiceListening = false;
+let recognition = null;
+
+function initVoice(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    document.getElementById('voiceBtn').style.display = 'none';
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = 'zh-CN';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = function(event){
+    const text = event.results[0][0].transcript;
+    showVoiceToast('识别结果：' + text);
+    const filled = parseVoiceText(text);
+    if(filled > 0){
+      setTimeout(() => showVoiceToast('✅ 已自动填写 ' + filled + ' 项'), 1500);
+    } else {
+      setTimeout(() => showVoiceToast('未识别到数字，请尝试说"年收入28万 房租5000"'), 1500);
+    }
+    setTimeout(() => hideVoiceToast(), 4000);
+    stopVoice();
+  };
+
+  recognition.onerror = function(event){
+    showVoiceToast('语音识别失败：' + event.error);
+    setTimeout(() => hideVoiceToast(), 2000);
+    stopVoice();
+  };
+
+  recognition.onend = function(){
+    stopVoice();
+  };
+}
+
+function toggleVoice(){
+  if(voiceListening){ stopVoice(); return; }
+  if(!recognition) return;
+  voiceListening = true;
+  document.getElementById('voiceBtn').classList.add('listening');
+  document.getElementById('voiceBtn').textContent = '🔴';
+  showVoiceToast('正在听… 试试说"年收入28万 月房租5000 吃饭2000"');
+  try { recognition.start(); } catch(e){ stopVoice(); }
+}
+
+function stopVoice(){
+  voiceListening = false;
+  const btn = document.getElementById('voiceBtn');
+  btn.classList.remove('listening');
+  btn.textContent = '🎤';
+}
+
+function showVoiceToast(msg){
+  const t = document.getElementById('voiceToast');
+  t.textContent = msg;
+  t.classList.add('show');
+}
+function hideVoiceToast(){
+  document.getElementById('voiceToast').classList.remove('show');
+}
+
+function parseVoiceText(text){
+  // Pattern matching for common financial phrases
+  const patterns = [
+    // Income
+    [/年收入\s*(\d+(?:\.\d+)?)\s*万/, 'incomePost'],
+    [/税后\s*(\d+(?:\.\d+)?)\s*万/, 'incomePost'],
+    [/到手\s*(\d+(?:\.\d+)?)\s*万/, 'incomePost'],
+    // Basic
+    [/出生[年份]*\s*(\d{4})/, 'birthYear'],
+    [/年龄\s*(\d+)/, 'birthYear', (v) => String(2026 - parseInt(v))],
+    // SS
+    [/养老[已缴]*\s*(\d+(?:\.\d+)?)\s*年/, 'pensionYears'],
+    [/医保[已缴]*\s*(\d+(?:\.\d+)?)\s*年/, 'medicalYears'],
+    [/社保[已缴]*\s*(\d+(?:\.\d+)?)\s*年/, 'pensionYears'],
+    // Expenses - current
+    [/房租\s*(\d+)/, 'expRent'],
+    [/月租\s*(\d+)/, 'expRent'],
+    [/住房\s*(\d+)/, 'expRent'],
+    [/月供\s*(\d+)/, 'expMortgage'],
+    [/吃饭\s*(\d+)/, 'expFood'],
+    [/餐饮\s*(\d+)/, 'expFood'],
+    [/宠物\s*(\d+)/, 'expPet'],
+    [/交通\s*(\d+)/, 'expTransport'],
+    [/娱乐\s*(\d+)/, 'expEntertain'],
+    [/保险\s*(\d+)/, 'expInsurance'],
+    [/其他\s*(\d+)/, 'expOther'],
+    // Expenses - minimum
+    [/最低.*?吃饭\s*(\d+)/, 'expQFood'],
+    [/最低.*?交通\s*(\d+)/, 'expQTransport'],
+    // Assets
+    [/现金\s*(\d+(?:\.\d+)?)\s*万/, 'assetCash'],
+    [/存款\s*(\d+(?:\.\d+)?)\s*万/, 'assetDeposit'],
+    [/基金\s*(\d+(?:\.\d+)?)\s*万/, 'assetFund'],
+    [/股票\s*(\d+(?:\.\d+)?)\s*万/, 'assetStock'],
+    // Generic number: if only one number found, don't guess
+  ];
+
+  let filled = 0;
+  for(const [regex, fieldId, transform] of patterns){
+    const match = text.match(regex);
+    if(match){
+      let value = match[1];
+      if(transform) value = transform(value);
+      const el = document.getElementById(fieldId);
+      if(el){
+        el.value = value;
+        filled++;
+      }
+    }
+  }
+
+  // Also detect month expense patterns: "月开销X" or "每月X"
+  const monthlyTotal = text.match(/每月[开销花]*\s*(\d+)/) || text.match(/月[开销花]*\s*(\d+)/);
+  if(monthlyTotal && filled === 0){
+    // Can't auto-split, just suggest
+  }
+
+  if(filled > 0){
+    recalc();
+    // Expand filled sections
+    document.querySelectorAll('.acc-body').forEach(b => {
+      const inputs = b.querySelectorAll('input');
+      let hasFilled = false;
+      inputs.forEach(inp => { if(inp.value && inp.value.trim()!=='') hasFilled = true; });
+      if(hasFilled) { b.classList.add('open'); b.previousElementSibling.classList.add('open'); }
+    });
+  }
+  return filled;
+}
+
 // ===== INIT =====
+initAccordion();
+initVoice();
 loadState();
 recalc();
 </script>
