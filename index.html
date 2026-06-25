@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>ShoreOS</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f2f2f7;
+  --card: #fff;
+  --sep: #e5e5ea;
+  --text: #1c1c1e;
+  --sub: #8e8e93;
+  --blue: #007aff;
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: center;
+  min-height: 100%;
+}
+
+/* Phone container */
+.phone {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  background: var(--bg);
+  position: relative;
+  padding-bottom: 90px; /* for tab bar */
+}
+
+/* Status bar */
+.status-bar {
+  padding: 12px 20px 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Header */
+.app-header {
+  padding: 8px 20px 16px;
+}
+.app-header .greeting {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+.app-header .greeting .emoji { font-size: 28px; }
+.app-header .subtitle {
+  font-size: 14px;
+  color: var(--sub);
+  margin-top: 4px;
+}
+
+/* Section label */
+.sec-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sub);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 16px 20px 8px;
+}
+
+/* Card group */
+.card-group {
+  margin: 0 12px 20px;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.card-row {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 0.5px solid var(--sep);
+  min-height: 44px;
+}
+.card-row:last-child { border-bottom: none; }
+.card-row .row-icon {
+  font-size: 18px;
+  width: 32px;
+  flex-shrink: 0;
+  text-align: center;
+  margin-right: 2px;
+}
+.card-row .row-label {
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-right: 10px;
+  color: var(--text);
+}
+.card-row .row-input {
+  flex: 1;
+  text-align: right;
+}
+.card-row .row-input input {
+  width: 100%;
+  max-width: 140px;
+  border: none;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+  font-family: inherit;
+  outline: none;
+  padding: 4px 0;
+}
+.card-row .row-unit {
+  font-size: 13px;
+  color: var(--sub);
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+.card-row .row-val {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--sub);
+  text-align: right;
+  flex: 1;
+}
+
+/* Segmented control inside card */
+.seg-row {
+  padding: 8px 12px;
+  border-bottom: 0.5px solid var(--sep);
+}
+.seg-row:last-child { border-bottom: none; }
+.seg-label {
+  font-size: 12px;
+  color: var(--sub);
+  margin-bottom: 6px;
+  padding: 0 4px;
+}
+.seg {
+  display: flex;
+  background: #f2f2f7;
+  border-radius: 9px;
+  padding: 2px;
+}
+.seg button {
+  flex: 1;
+  padding: 7px 2px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-align: center;
+}
+.seg button.active {
+  background: #fff;
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
+}
+
+/* Note row */
+.note-row {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: #b0862e;
+  background: #fff9ed;
+  border-bottom: 0.5px solid var(--sep);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.5;
+}
+.note-row .ni { flex-shrink: 0; }
+
+/* Summary row */
+.summary-row {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--sub);
+  display: flex;
+  justify-content: space-between;
+}
+.summary-row b { color: var(--text); font-weight: 600; }
+
+/* Metric highlight card */
+.highlight-card {
+  margin: 0 12px 12px;
+  padding: 20px;
+  border-radius: var(--radius);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.highlight-card .hl-emoji {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+.highlight-card .hl-value {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+.highlight-card .hl-label {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+.highlight-card .hl-meta {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+}
+.highlight-card .hl-meta b { font-weight: 700; }
+.hl-gradient-1 { background: linear-gradient(135deg, #ff6b35, #f7931e); }
+.hl-gradient-2 { background: linear-gradient(135deg, #5856d6, #af52de); }
+
+/* Mini metric grid */
+.mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 12px 12px;
+}
+.mini-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+}
+.mini-card .mc-emoji { font-size: 22px; margin-bottom: 4px; }
+.mini-card .mc-value {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.mini-card .mc-label {
+  font-size: 11px;
+  color: var(--sub);
+  margin-top: 2px;
+}
+.mini-card .mc-sub {
+  font-size: 10px;
+  color: var(--sub);
+  margin-top: 1px;
+}
+.mc-green .mc-value { color: var(--green); }
+.mc-blue .mc-value { color: var(--blue); }
+.mc-orange .mc-value { color: var(--orange); }
+.mc-red .mc-value { color: var(--red); }
+
+/* Chart card */
+.chart-card {
+  margin: 0 12px 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.chart-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.chart-wrap { position: relative; height: 220px; }
+
+/* Table card */
+.table-card {
+  margin: 0 12px 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  overflow-x: auto;
+}
+.table-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.table-card table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.table-card th {
+  text-align: left;
+  padding: 7px 6px;
+  font-size: 10px;
+  color: var(--sub);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid var(--sep);
+}
+.table-card td {
+  padding: 8px 6px;
+  border-bottom: 0.5px solid #f5f5f7;
+  font-size: 11px;
+}
+.table-card tr:last-child td { border-bottom: none; }
+td.hi { color: var(--blue); font-weight: 700; }
+td.ok { color: var(--green); font-weight: 600; }
+td.wn { color: var(--orange); font-weight: 600; }
+.pill {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+}
+.pill-g { background: #e8f8ed; color: #1a7a3a; }
+.pill-o { background: #fff3e5; color: #b06500; }
+
+/* Bottom tab bar */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: rgba(249,249,249,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 0.5px solid var(--sep);
+  display: flex;
+  padding: 6px 0 env(safe-area-inset-bottom, 8px);
+  z-index: 20;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+.tab-item .tab-icon { font-size: 22px; margin-bottom: 2px; }
+.tab-item .tab-text {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--sub);
+  transition: color 0.15s;
+}
+.tab-item.active .tab-text { color: var(--blue); }
+
+/* Desktop: center phone */
+@media (min-width: 431px) {
+  .phone {
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 20px 60px rgba(0,0,0,0.12);
+    border-radius: 20px;
+    margin: 24px 0;
+    min-height: calc(100vh - 48px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 900px;
+  }
+  body { align-items: flex-start; padding: 0; }
+  .phone::-webkit-scrollbar { width: 0; }
+  .tab-bar { border-radius: 0 0 20px 20px; }
+}
+
+/* Scroll sections */
+.scroll-section { display: none; }
+.scroll-section.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>🏝️ ShoreOS</span>
+  </div>
+
+  <!-- ===== SECTION: DASHBOARD ===== -->
+  <div class="scroll-section active" id="sec-dashboard">
+
+    <div class="app-header">
+      <div class="greeting"><span class="emoji">🏝️</span> 自由指数</div>
+      <div class="subtitle">每多坚持一年，安全垫就厚一层</div>
+    </div>
+
+    <!-- Freedom highlight card -->
+    <div class="highlight-card hl-gradient-1">
+      <div class="hl-emoji">🎯</div>
+      <div class="hl-value" id="hlFreedom">--</div>
+      <div class="hl-label" id="hlFreedomLabel">自由指数</div>
+      <div class="hl-meta">
+        <span>FIRE目标 <b id="hlTarget">--</b></span>
+        <span>还差 <b id="hlGap">--</b></span>
+        <span>预计 <b id="hlETA">--</b></span>
+      </div>
+    </div>
+
+    <!-- Mini metrics -->
+    <div class="mini-grid">
+      <div class="mini-card mc-green">
+        <div class="mc-emoji">💰</div>
+        <div class="mc-value" id="mcSave">--</div>
+        <div class="mc-label">每年存下</div>
+        <div class="mc-sub" id="mcSaveSub">--</div>
+      </div>
+      <div class="mini-card mc-blue">
+        <div class="mc-emoji">⏳</div>
+        <div class="mc-value" id="mcSS">--</div>
+        <div class="mc-label">社保倒计时</div>
+        <div class="mc-sub" id="mcSSSub">--</div>
+      </div>
+      <div class="mini-card mc-orange">
+        <div class="mc-emoji">🛟</div>
+        <div class="mc-value" id="mcQuit">--</div>
+        <div class="mc-label">今辞职能撑</div>
+        <div class="mc-sub" id="mcQuitSub">--</div>
+      </div>
+      <div class="mini-card mc-red">
+        <div class="mc-emoji">📉</div>
+        <div class="mc-value" id="mcGap">--</div>
+        <div class="mc-label">离FIRE缺口</div>
+        <div class="mc-sub" id="mcGapSub">--</div>
+      </div>
+    </div>
+
+    <!-- Gauge card -->
+    <div class="chart-card" style="text-align:center;">
+      <canvas id="gaugeCanvas" width="200" height="200" style="display:inline-block;"></canvas>
+      <div style="margin-top:-30px;">
+        <div style="font-size:32px;font-weight:900;" id="gaugeBigPct">--</div>
+        <div style="font-size:12px;color:var(--sub);">自由指数</div>
+      </div>
+      <div style="display:flex;justify-content:space-around;margin-top:12px;font-size:12px;">
+        <div><span style="color:var(--sub)">辞职后年开销</span><br><b id="giAnnual">--</b></div>
+        <div><span style="color:var(--sub)">干1年=安全垫</span><br><b id="giPerYear">--</b></div>
+        <div><span style="color:var(--sub)">社保自缴到退休</span><br><b id="giSelfPay">--</b></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-card">
+      <h3>📈 不同辞职时间的资产变化</h3>
+      <div class="chart-wrap"><canvas id="chartAssets"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <h3>🛡️ 多坚持N年，安全垫变化</h3>
+      <div class="chart-wrap"><canvas id="chartSafety"></canvas></div>
+    </div>
+
+    <!-- Scenario table -->
+    <div class="table-card">
+      <h3>🔮 情景推演</h3>
+      <table>
+        <thead><tr><th>情景</th><th>年龄</th><th>攒到</th><th>活多久</th><th>社保</th><th>自由</th></tr></thead>
+        <tbody id="scenarioBody"></tbody>
+      </table>
+    </div>
+
+    <div style="height:20px;"></div>
+  </div>
+
+  <!-- ===== SECTION: INPUTS ===== -->
+  <div class="scroll-section" id="sec-inputs">
+
+    <div class="app-header">
+      <div class="greeting">⚙️ 参数设置</div>
+      <div class="subtitle">修改任意数字，返回仪表盘看结果</div>
+    </div>
+
+    <div class="sec-label">基本信息</div>
+    <div class="card-group">
+      <div class="card-row">
+        <span class="row-icon">📅</span><span class="row-label">出生年份</span>
+        <span class="row-input"><input type="number" id="birthYear" value="1995" onchange="recalc()"></span>
+        <span class="row-unit">年</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">📆</span><span class="row-label">当前年份</span>
+        <span class="row-input"><input type="number" id="currentYear" value="2026" onchange="recalc()"></span>
+        <span class="row-unit">年</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🛡️</span><span class="row-label">已缴社保</span>
+        <span class="row-input"><input type="number" id="ssYears" value="7" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">年</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">💳</span><span class="row-label">辞职后自缴社保</span>
+        <span class="row-input"><input type="number" id="ssSelfPay" value="2500" onchange="recalc()"></span>
+        <span class="row-unit">元/月</span>
+      </div>
+    </div>
+
+    <div class="sec-label">收入</div>
+    <div class="card-group">
+      <div class="card-row">
+        <span class="row-icon">💸</span><span class="row-label">税后年收入</span>
+        <span class="row-input"><input type="number" id="incomePost" value="28" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">万元</span>
+      </div>
+    </div>
+
+    <div class="sec-label">现在每月开销（北京上班）</div>
+    <div class="card-group">
+      <div class="card-row">
+        <span class="row-icon">🏠</span><span class="row-label">房租</span>
+        <span class="row-input"><input type="number" id="expRent" value="5000" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🍜</span><span class="row-label">吃饭</span>
+        <span class="row-input"><input type="number" id="expFood" value="2000" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🐱</span><span class="row-label">养猫</span>
+        <span class="row-input"><input type="number" id="expCat" value="1000" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🚇</span><span class="row-label">交通</span>
+        <span class="row-input"><input type="number" id="expTransport" value="500" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🎬</span><span class="row-label">娱乐</span>
+        <span class="row-input"><input type="number" id="expEntertain" value="1000" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🩺</span><span class="row-label">保险</span>
+        <span class="row-input"><input type="number" id="expInsurance" value="500" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">📦</span><span class="row-label">其他</span>
+        <span class="row-input"><input type="number" id="expOther" value="1500" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="summary-row"><span>月合计</span><b id="totalNowExp">--</b></div>
+    </div>
+
+    <div class="sec-label">辞职后每月开销（不交房租）</div>
+    <div class="card-group">
+      <div class="note-row"><span class="ni">💡</span><span>不上班就不交北京房租，回哈尔滨/回家，生活成本大幅降低</span></div>
+      <div class="card-row">
+        <span class="row-icon">🏡</span><span class="row-label">住房</span>
+        <span class="row-input"><input type="number" id="expQHouse" value="0" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🍜</span><span class="row-label">吃饭</span>
+        <span class="row-input"><input type="number" id="expQFood" value="1500" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🐱</span><span class="row-label">养猫</span>
+        <span class="row-input"><input type="number" id="expQCat" value="1000" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🚌</span><span class="row-label">交通</span>
+        <span class="row-input"><input type="number" id="expQTransport" value="300" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🎮</span><span class="row-label">娱乐</span>
+        <span class="row-input"><input type="number" id="expQEntertain" value="500" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🩺</span><span class="row-label">保险</span>
+        <span class="row-input"><input type="number" id="expQInsurance" value="500" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🏛️</span><span class="row-label">自缴社保</span>
+        <span class="row-input"><input type="number" id="expQSS" value="2500" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">📦</span><span class="row-label">其他</span>
+        <span class="row-input"><input type="number" id="expQOther" value="1000" onchange="recalc()"></span>
+        <span class="row-unit">元</span>
+      </div>
+      <div class="summary-row"><span>月合计</span><b id="totalQuitExp">--</b></div>
+    </div>
+
+    <div class="sec-label">资产</div>
+    <div class="card-group">
+      <div class="card-row">
+        <span class="row-icon">💵</span><span class="row-label">现金/活期</span>
+        <span class="row-input"><input type="number" id="assetCash" value="5" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">万元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🏦</span><span class="row-label">定存/理财</span>
+        <span class="row-input"><input type="number" id="assetDeposit" value="10" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">万元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">📊</span><span class="row-label">基金</span>
+        <span class="row-input"><input type="number" id="assetFund" value="3" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">万元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">📈</span><span class="row-label">股票</span>
+        <span class="row-input"><input type="number" id="assetStock" value="4" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">万元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">👴</span><span class="row-label">养老金账户</span>
+        <span class="row-input"><input type="number" id="assetPension" value="2" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">万元</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">📈</span><span class="row-label">年化收益率</span>
+        <span class="row-input"><input type="number" id="assetReturn" value="2" step="0.5" onchange="recalc()"></span>
+        <span class="row-unit">%</span>
+      </div>
+      <div class="summary-row"><span>总资产</span><b id="totalAssets">--</b></div>
+    </div>
+
+    <div class="sec-label">未来规划</div>
+    <div class="card-group">
+      <div class="seg-row">
+        <div class="seg-label">买房</div>
+        <div class="seg" id="toggleHouse">
+          <button class="active" onclick="setHouse('none',this)">不买</button>
+          <button onclick="setHouse('xinlongcheng',this)">新龙城</button>
+          <button onclick="setHouse('beiqijia',this)">北七家</button>
+        </div>
+      </div>
+      <div id="houseDetail" style="display:none;">
+        <div class="card-row">
+          <span class="row-icon">🏠</span><span class="row-label">首付</span>
+          <span class="row-input"><input type="number" id="houseDown" value="30" onchange="recalc()"></span>
+          <span class="row-unit">万元</span>
+        </div>
+        <div class="card-row">
+          <span class="row-icon">💳</span><span class="row-label">月供</span>
+          <span class="row-input"><input type="number" id="houseMortgage" value="3000" onchange="recalc()"></span>
+          <span class="row-unit">元</span>
+        </div>
+        <div class="note-row"><span class="ni">💡</span><span>首付从资产扣，月供加开支，房租归零</span></div>
+      </div>
+      <div class="seg-row">
+        <div class="seg-label">子女</div>
+        <div class="seg" id="toggleChild">
+          <button class="active" onclick="setChild('none',this)">不计划</button>
+          <button onclick="setChild('one',this)">要1个</button>
+        </div>
+      </div>
+      <div id="childDetail" style="display:none;">
+        <div class="card-row">
+          <span class="row-icon">👶</span><span class="row-label">养娃年支出</span>
+          <span class="row-input"><input type="number" id="childCost" value="5" onchange="recalc()"></span>
+          <span class="row-unit">万元</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:30px;"></div>
+  </div>
+
+  <!-- Bottom Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-item active" onclick="switchTab('dashboard', this)">
+      <span class="tab-icon">📊</span>
+      <span class="tab-text">仪表盘</span>
+    </button>
+    <button class="tab-item" onclick="switchTab('inputs', this)">
+      <span class="tab-icon">⚙️</span>
+      <span class="tab-text">参数</span>
+    </button>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+let housePlan = 'none', childPlan = 'none';
+
+// ===== HELPERS =====
+function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function fmtW(n) { if (Math.abs(n) >= 10000) return (n/10000).toFixed(1)+'万'; return n.toFixed(0); }
+function fmtY(n) { if (n > 100) return '>100年'; return n.toFixed(1)+'年'; }
+function fmtP(n) { return Math.min(n,100).toFixed(1)+'%'; }
+function fmtM(n) { return Math.round(n)+'个月'; }
+
+// ===== CORE =====
+function calcAll() {
+  const birth = val('birthYear'), now = val('currentYear'), age = now - birth;
+  if (age < 0) return null;
+  const ssY = val('ssYears'), ssSelf = val('ssSelfPay');
+  const income = val('incomePost') * 10000;
+  const cm = val('expRent')+val('expFood')+val('expCat')+val('expTransport')+val('expEntertain')+val('expInsurance')+val('expOther'), ca = cm*12;
+  const qm = val('expQHouse')+val('expQFood')+val('expQCat')+val('expQTransport')+val('expQEntertain')+val('expQInsurance')+val('expQSS')+val('expQOther'), qa = qm*12;
+  const assets = (val('assetCash')+val('assetDeposit')+val('assetFund')+val('assetStock')+val('assetPension'))*10000;
+  const ret = val('assetReturn')/100;
+  const hDown = val('houseDown')*10000, hMtg = val('houseMortgage');
+  const cCost = val('childCost')*10000;
+
+  let eCA=ca, eAssets=assets;
+  if(housePlan!=='none'){ eAssets-=hDown; eCA=eCA+hMtg*12-val('expRent')*12; }
+  if(childPlan==='one') eCA+=cCost;
+  const eSave = Math.max(income - eCA, 0);
+
+  let eQA=qa;
+  if(housePlan!=='none') eQA+=hMtg*12;
+  if(childPlan==='one') eQA+=cCost;
+
+  const fire = eQA*25;
+  const fi = fire>0 ? Math.min(eAssets/fire*100,100) : 0;
+  const qYears = eQA>0 ? eAssets/eQA : 999;
+  const qMonths = qYears*12;
+  const to15=Math.max(15-ssY,0), to25=Math.max(25-ssY,0);
+  const age15=to15>0?age+to15:age, age25=to25>0?age+to25:age;
+  const selfPayTotal = Math.max(60-age,0)*ssSelf*12;
+  const gap = Math.max(fire-eAssets,0);
+  const ytf = eSave>0 ? gap/eSave : 999;
+  const fireYear = ytf<100 ? Math.round(now+ytf) : null;
+  const perYearMo = eSave/eQA*12;
+
+  const sc = [];
+  for(const ta of [age,35,40,45,50,55,60]){
+    if(ta<age) continue;
+    const wy=ta-age; let a=eAssets;
+    for(let i=0;i<wy;i++) a=a*(1+ret)+eSave;
+    const sAt=ssY+wy, surv=eQA>0?a/eQA:999, fiAt=fire>0?Math.min(a/fire*100,100):0;
+    const gAt=Math.max(fire-a,0), ytfAt=eSave>0?gAt/eSave:999;
+    sc.push({label:ta===age?'现在辞职':`坚持到${ta}岁`,age:ta,assets:a,survival:surv,ss:sAt,fi:fiAt,ytf:ytfAt,ok:a>=fire});
+  }
+
+  const labels=[],cw=[],qn=[],q35=[],q40=[];
+  for(let y=0;y<=35;y++){
+    labels.push((age+y)+'岁');
+    let aw=eAssets; for(let i=0;i<y;i++) aw=aw*(1+ret)+eSave; cw.push(aw/10000);
+    let aq=eAssets; for(let i=0;i<y;i++) aq=aq*(1+ret)-eQA; qn.push(Math.max(aq/10000,0));
+    const w35=Math.max(35-age,0); let a35=eAssets;
+    for(let i=0;i<y;i++){if(i<w35)a35=a35*(1+ret)+eSave;else a35=a35*(1+ret)-eQA;} q35.push(Math.max(a35/10000,0));
+    const w40=Math.max(40-age,0); let a40=eAssets;
+    for(let i=0;i<y;i++){if(i<w40)a40=a40*(1+ret)+eSave;else a40=a40*(1+ret)-eQA;} q40.push(Math.max(a40/10000,0));
+  }
+
+  const pY=[1,2,3,5,8,10], sLbl=pY.map(y=>'多干'+y+'年'), sMo=pY.map(y=>eSave*y/eQA*12);
+
+  return {age,ssY,to15,to25,age15,age25,income,cm,ca,eCA,qm,qa,eQA,assets,eAssets,eSave,fire,fi,gap,ytf,fireYear,qYears,qMonths,ret,selfPayTotal,perYearMo,sc,labels,cw,qn,q35,q40,sLbl,sMo};
+}
+
+// ===== RENDER =====
+let gChart=null, cA=null, cS=null;
+
+function render(d){
+  if(!d) return;
+  document.getElementById('totalNowExp').textContent = d.cm.toFixed(0)+' 元';
+  document.getElementById('totalQuitExp').textContent = d.qm.toFixed(0)+' 元';
+  document.getElementById('totalAssets').textContent = (d.assets/10000).toFixed(0)+' 万元';
+
+  // Freedom highlight
+  document.getElementById('hlFreedom').textContent = fmtP(d.fi);
+  const moods = ['起步积累','路走一半','曙光在前','接近自由','可以选择不工作了'];
+  const mi = d.fi<20?0:d.fi<40?1:d.fi<60?2:d.fi<80?3:4;
+  document.getElementById('hlFreedomLabel').textContent = moods[mi];
+  document.getElementById('hlTarget').textContent = fmtW(d.fire);
+  document.getElementById('hlGap').textContent = fmtW(d.gap);
+  document.getElementById('hlETA').textContent = d.fireYear?d.fireYear+'年':(d.gap<=0?'✨ 已到':'—');
+
+  // Mini cards
+  document.getElementById('mcSave').textContent = fmtW(d.eSave);
+  document.getElementById('mcSaveSub').textContent = '≈'+d.perYearMo.toFixed(1)+'个月辞职后生活';
+  document.getElementById('mcSS').textContent = d.to15>0?d.to15.toFixed(1)+'年':'✅ 达标';
+  document.getElementById('mcSSSub').textContent = d.to15>0?d.age15+'岁达15年':'已可领养老金';
+  const qd = d.qMonths>60?fmtY(d.qYears):fmtM(d.qMonths);
+  document.getElementById('mcQuit').textContent = d.qYears>100?'>100年':d.qYears>60?'>60年':qd;
+  document.getElementById('mcQuitSub').textContent = '辞职后月均'+fmtW(d.eQA/12);
+  document.getElementById('mcGap').textContent = fmtW(d.gap);
+  document.getElementById('mcGapSub').textContent = d.gap<=0?'够了！🎉':'继续攒';
+
+  // Gauge card
+  document.getElementById('giAnnual').textContent = fmtW(d.eQA)+'/年';
+  document.getElementById('giPerYear').textContent = d.perYearMo.toFixed(1)+'个月';
+  document.getElementById('giSelfPay').textContent = fmtW(d.selfPayTotal);
+
+  if(gChart) gChart.destroy();
+  const v = Math.min(Math.max(d.fi,0),100);
+  const clr = v<25?'#ff3b30':v<50?'#ff9500':v<75?'#007aff':'#34c759';
+  gChart = new Chart(document.getElementById('gaugeCanvas').getContext('2d'),{
+    type:'doughnut',
+    data:{datasets:[{data:[v,100-v],backgroundColor:[clr,'#e5e5ea'],borderWidth:0,circumference:270,rotation:225,cutout:'75%'}]},
+    options:{responsive:false,plugins:{tooltip:{enabled:false},legend:{display:false}}}
+  });
+  document.getElementById('gaugeBigPct').textContent = fmtP(v);
+  document.getElementById('gaugeBigPct').style.color = clr;
+
+  // Table
+  const tb = document.getElementById('scenarioBody');
+  tb.innerHTML = '';
+  for(const s of d.sc){
+    const fic=s.fi>=100?'ok':s.fi>=50?'hi':'wn';
+    const svc=s.survival>=30?'ok':s.survival>=10?'hi':'wn';
+    let sd=s.survival>100?'>100年':s.survival>60?'>60年':s.survival*12>36?fmtY(s.survival):fmtM(s.survival*12);
+    let tag=s.ok?'<span class="pill pill-g">可退</span>':s.fi>=75?'<span class="pill pill-o">接近</span>':'';
+    tb.innerHTML+=`<tr><td><b>${s.label}</b>${tag}</td><td>${s.age}岁</td><td class="hi">${fmtW(s.assets)}</td><td class="${svc}">${sd}</td><td>${s.ss.toFixed(1)}年</td><td class="${fic}">${fmtP(s.fi)}</td></tr>`;
+  }
+
+  // Charts
+  if(cA) cA.destroy();
+  cA = new Chart(document.getElementById('chartAssets').getContext('2d'),{
+    type:'line',
+    data:{labels:d.labels,datasets:[
+      {label:'继续工作',data:d.cw,borderColor:'#34c759',backgroundColor:'rgba(52,199,89,0.06)',fill:true,tension:0.35,borderWidth:2.5,pointRadius:0},
+      {label:'35岁辞职',data:d.q35,borderColor:'#007aff',fill:false,tension:0.35,borderWidth:2,pointRadius:0,borderDash:[8,4]},
+      {label:'40岁辞职',data:d.q40,borderColor:'#ff9500',fill:false,tension:0.35,borderWidth:2,pointRadius:0,borderDash:[4,4]},
+      {label:'现在辞职',data:d.qn,borderColor:'#ff3b30',fill:false,tension:0.35,borderWidth:1.5,pointRadius:0,borderDash:[3,5]}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{usePointStyle:true,boxWidth:6,padding:12,font:{size:10},color:'#666'}}},
+      scales:{
+        x:{ticks:{color:'#999',font:{size:9},maxTicksLimit:8,callback:(_,i)=>i%5===0?d.labels[i]:''},grid:{color:'#f2f2f7'}},
+        y:{ticks:{color:'#999',font:{size:9},callback:v=>v+'万'},grid:{color:'#f2f2f7'}}
+      },
+      interaction:{intersect:false,mode:'index'}
+    }
+  });
+
+  if(cS) cS.destroy();
+  const scC = d.sMo.map(m=>m>=60?'#34c759':m>=24?'#007aff':m>=12?'#ff9500':'#ff3b30');
+  cS = new Chart(document.getElementById('chartSafety').getContext('2d'),{
+    type:'bar',
+    data:{labels:d.sLbl,datasets:[{label:'安全垫',data:d.sMo,backgroundColor:scC,borderRadius:6,borderSkipped:false}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw.toFixed(1)+' 个月辞职后生活'}}},
+      scales:{
+        x:{ticks:{color:'#999',font:{size:10}},grid:{display:false}},
+        y:{ticks:{color:'#999',font:{size:9},callback:v=>v+'个月'},grid:{color:'#f2f2f7'}}
+      }
+    }
+  });
+}
+
+function recalc(){ const d=calcAll(); render(d); }
+
+function setHouse(p,btn){
+  housePlan=p;
+  document.querySelectorAll('#toggleHouse button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('houseDetail').style.display = p==='none'?'none':'block';
+  recalc();
+}
+function setChild(p,btn){
+  childPlan=p;
+  document.querySelectorAll('#toggleChild button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('childDetail').style.display = p==='none'?'none':'block';
+  recalc();
+}
+
+function switchTab(tab, btn){
+  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+tab).classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('phone').scrollTop = 0;
+  recalc();
+}
+
+recalc();
+</script>
+</body>
+</html>
