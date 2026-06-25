@@ -1194,18 +1194,28 @@ function wizPrev(){
   if(wizStep > 0) wizGoTo(wizStep-1);
 }
 function wizFinish(){
-  recalc();
-  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sec-dashboard').classList.add('active');
-  document.querySelectorAll('.tab-item').forEach((t,i)=>t.classList.toggle('active', i===0));
-  document.getElementById('phone').scrollTop = 0;
-  document.getElementById('welcomeCard').style.display = 'none';
-  document.getElementById('dashboardContent').style.display = 'block';
+  try { recalc(); } catch(e){ console.error('recalc error:', e); }
+  try {
+    document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('sec-dashboard').classList.add('active');
+    document.querySelectorAll('.tab-item').forEach((t,i)=>t.classList.toggle('active', i===0));
+    document.getElementById('phone').scrollTop = 0;
+    document.getElementById('welcomeCard').style.display = 'none';
+    document.getElementById('dashboardContent').style.display = 'block';
+  } catch(e){ console.error('wizFinish error:', e); }
 }
 function updateWizNav(){
   document.getElementById('wizBack').style.display = wizStep===0 ? 'none' : '';
   document.getElementById('wizNext').style.display = wizStep===WIZ_TOTAL-1 ? 'none' : '';
   document.getElementById('wizDone').style.display = wizStep===WIZ_TOTAL-1 ? '' : 'none';
+  // Bind done button fresh each time it's shown
+  if(wizStep === WIZ_TOTAL-1){
+    const doneBtn = document.getElementById('wizDone');
+    const newBtn = doneBtn.cloneNode(true);
+    doneBtn.parentNode.replaceChild(newBtn, doneBtn);
+    newBtn.onclick = wizFinish;
+    newBtn.addEventListener('click', wizFinish);
+  }
   // Render summary on step 7
   if(wizStep === WIZ_TOTAL-1) renderSummary();
 }
