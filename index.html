@@ -1157,14 +1157,32 @@ function wizPrev(){
 }
 function wizFinish(){
   recalc();
-  // Direct DOM manipulation instead of relying on switchTab
+  // Switch to dashboard tab
   document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-dashboard').classList.add('active');
   document.querySelectorAll('.tab-item').forEach((t,i)=>t.classList.toggle('active', i===0));
   document.getElementById('phone').scrollTop = 0;
+  // Force show dashboard content
   document.getElementById('welcomeCard').style.display = 'none';
   document.getElementById('dashboardContent').style.display = 'block';
 }
+
+// Also bind with addEventListener as backup
+document.addEventListener('DOMContentLoaded', function(){
+  const doneBtn = document.getElementById('wizDone');
+  if(doneBtn) doneBtn.addEventListener('click', wizFinish);
+});
+// Bind immediately too (in case DOMContentLoaded already fired)
+setTimeout(function(){
+  const doneBtn = document.getElementById('wizDone');
+  if(doneBtn && !doneBtn._bound){
+    doneBtn._bound = true;
+    doneBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      wizFinish();
+    });
+  }
+}, 500);
 function updateWizNav(){
   document.getElementById('wizBack').style.display = wizStep===0 ? 'none' : '';
   document.getElementById('wizNext').style.display = wizStep===WIZ_TOTAL-1 ? 'none' : '';
@@ -1341,20 +1359,42 @@ function syncWizToHidden(hiddenId, wizId){
   if(h && w && h.value) w.value = h.value;
 }
 
-// Update wizard subtotals in render
+// Update wizard subtotals — always calculate from field values directly
+function updateWizSubtotals(d){
+  const hasData = hasAnyData();
+  if(!hasData){
+    document.getElementById('wizNowSubtotal').textContent = '--';
+    document.getElementById('wizMinSubtotal').textContent = '--';
+    document.getElementById('wizAssetTotal').textContent = '--';
+  } else {
+    // Current expenses subtotal (excluding housing)
+    const nowHousing = houseTypeCur==='rent' ? val('expRent') :
+      (houseTypeCur==='mortgage' ? val('expMortgage')+val('expProperty') : val('expProperty2'));
+    const nowSub = val('expFood')+val('expTransport')+val('expPet')+val('expEntertain')+val('expInsurance')+val('expOther');
+    document.getElementById('wizNowSubtotal').textContent = nowSub.toFixed(0)+' 元';
+    // Min expenses subtotal (including SS)
+    const qHousing = houseTypeMin==='rent' ? val('expQRent') :
+      (houseTypeMin==='mortgage' ? val('expQMortgage')+val('expQProperty') : val('expQProperty2'));
+    const qSub = qHousing + val('expQFood')+val('expQTransport')+val('expQPet')+val('expQEntertain')+val('expQInsurance')+val('expQOther');
+    document.getElementById('wizMinSubtotal').textContent = (qSub).toFixed(0)+' 元（不含自缴社保）';
+    // Asset total
+    const assetTotal = val('assetCash')+val('assetDeposit')+val('assetFund')+val('assetStock')+val('assetPension');
+    document.getElementById('wizAssetTotal').textContent = assetTotal.toFixed(0)+' 万元';
+  }
+  // Also update dashboard totals if d is available
+  if(d){
+    document.getElementById('totalNowExp').textContent = d.cm.toFixed(0)+' 元';
+    document.getElementById('totalQuitExp').textContent = d.qm.toFixed(0)+' 元';
+    document.getElementById('totalAssets').textContent = (d.assets/10000).toFixed(0)+' 万元';
+    document.getElementById('totalSSSelfPay').textContent = fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）';
+  }
+}
+
+// Patch render to also update wizard subtotals
 const origRender = render;
 render = function(d){
   origRender(d);
-  if(!d) return;
-  // Update wizard summaries
-  const nowSub = d.cm - (houseTypeCur==='rent'?val('expRent'):(houseTypeCur==='mortgage'?val('expMortgage')+val('expProperty'):val('expProperty2')));
-  document.getElementById('wizNowSubtotal').textContent = nowSub.toFixed(0)+' 元';
-  document.getElementById('wizMinSubtotal').textContent = d.qm.toFixed(0)+' 元';
-  document.getElementById('wizAssetTotal').textContent = (d.assets/10000).toFixed(0)+' 万元';
-  document.getElementById('totalNowExp').textContent = d.cm.toFixed(0)+' 元';
-  document.getElementById('totalQuitExp').textContent = d.qm.toFixed(0)+' 元';
-  document.getElementById('totalAssets').textContent = (d.assets/10000).toFixed(0)+' 万元';
-  document.getElementById('totalSSSelfPay').textContent = fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）';
+  updateWizSubtotals(d);
 };
 
 // ===== CITY PRESETS (keep for wizard) =====
