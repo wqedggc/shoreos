@@ -308,20 +308,24 @@ td.wn { color: var(--orange); font-weight: 600; }
 .wiz-btn:active { transform: scale(0.95); }
 .wiz-count { font-size: 13px; color: var(--sub); font-weight: 600; }
 
-/* Year picker */
-.year-picker {
-  height: 140px; overflow-y: scroll; scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch; border: 2px solid var(--sep);
-  border-radius: var(--radius-sm); background: #fdfaf7; margin-bottom: 10px;
-  scroll-behavior: smooth;
+/* Compact stepper */
+.stepper {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; padding: 8px 0; margin-bottom: 6px;
 }
-.year-picker::-webkit-scrollbar { width: 0; }
-.year-option {
-  height: 40px; display: flex; align-items: center; justify-content: center;
-  font-size: 15px; font-weight: 600; color: #c7c7cc; scroll-snap-align: center;
-  transition: all 0.15s; cursor: pointer; user-select: none;
+.stepper-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--sep);
+  background: var(--card); font-size: 18px; font-weight: 700; color: var(--text);
+  cursor: pointer; font-family: inherit; display: flex; align-items: center;
+  justify-content: center; transition: all 0.15s; user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.year-option.selected { color: var(--text); font-size: 18px; font-weight: 800; }
+.stepper-btn:active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.stepper-val {
+  font-size: 26px; font-weight: 800; color: var(--text); min-width: 80px;
+  text-align: center; user-select: none;
+}
+.stepper-unit { font-size: 13px; color: var(--sub); font-weight: 600; }
 
 /* Summary page */
 .summary-card {
@@ -352,7 +356,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v0.9.5</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v0.9.6</span></span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
@@ -453,33 +457,17 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="setWizGender('male',this)">👨 男</button>
               <button class="wiz-chip" onclick="setWizGender('female',this)">👩 女</button>
             </div>
-            <label class="wiz-label">出生年份（点击选中）</label>
-            <div class="year-picker" id="yearPicker">
-              <div class="year-option" data-year="2010" onclick="pickYear(2010,this)">2010年</div><div class="year-option" data-year="2009" onclick="pickYear(2009,this)">2009年</div><div class="year-option" data-year="2008" onclick="pickYear(2008,this)">2008年</div><div class="year-option" data-year="2007" onclick="pickYear(2007,this)">2007年</div><div class="year-option" data-year="2006" onclick="pickYear(2006,this)">2006年</div><div class="year-option" data-year="2005" onclick="pickYear(2005,this)">2005年</div><div class="year-option" data-year="2004" onclick="pickYear(2004,this)">2004年</div><div class="year-option" data-year="2003" onclick="pickYear(2003,this)">2003年</div><div class="year-option" data-year="2002" onclick="pickYear(2002,this)">2002年</div><div class="year-option" data-year="2001" onclick="pickYear(2001,this)">2001年</div><div class="year-option" data-year="2000" onclick="pickYear(2000,this)">2000年</div><div class="year-option" data-year="1999" onclick="pickYear(1999,this)">1999年</div><div class="year-option" data-year="1998" onclick="pickYear(1998,this)">1998年</div><div class="year-option" data-year="1997" onclick="pickYear(1997,this)">1997年</div><div class="year-option" data-year="1996" onclick="pickYear(1996,this)">1996年</div><div class="year-option selected" data-year="1995" onclick="pickYear(1995,this)">1995年</div><div class="year-option" data-year="1994" onclick="pickYear(1994,this)">1994年</div><div class="year-option" data-year="1993" onclick="pickYear(1993,this)">1993年</div><div class="year-option" data-year="1992" onclick="pickYear(1992,this)">1992年</div><div class="year-option" data-year="1991" onclick="pickYear(1991,this)">1991年</div><div class="year-option" data-year="1990" onclick="pickYear(1990,this)">1990年</div><div class="year-option" data-year="1989" onclick="pickYear(1989,this)">1989年</div><div class="year-option" data-year="1988" onclick="pickYear(1988,this)">1988年</div><div class="year-option" data-year="1987" onclick="pickYear(1987,this)">1987年</div><div class="year-option" data-year="1986" onclick="pickYear(1986,this)">1986年</div><div class="year-option" data-year="1985" onclick="pickYear(1985,this)">1985年</div><div class="year-option" data-year="1984" onclick="pickYear(1984,this)">1984年</div><div class="year-option" data-year="1983" onclick="pickYear(1983,this)">1983年</div><div class="year-option" data-year="1982" onclick="pickYear(1982,this)">1982年</div><div class="year-option" data-year="1981" onclick="pickYear(1981,this)">1981年</div><div class="year-option" data-year="1980" onclick="pickYear(1980,this)">1980年</div><div class="year-option" data-year="1979" onclick="pickYear(1979,this)">1979年</div><div class="year-option" data-year="1978" onclick="pickYear(1978,this)">1978年</div><div class="year-option" data-year="1977" onclick="pickYear(1977,this)">1977年</div><div class="year-option" data-year="1976" onclick="pickYear(1976,this)">1976年</div><div class="year-option" data-year="1975" onclick="pickYear(1975,this)">1975年</div><div class="year-option" data-year="1974" onclick="pickYear(1974,this)">1974年</div><div class="year-option" data-year="1973" onclick="pickYear(1973,this)">1973年</div><div class="year-option" data-year="1972" onclick="pickYear(1972,this)">1972年</div><div class="year-option" data-year="1971" onclick="pickYear(1971,this)">1971年</div><div class="year-option" data-year="1970" onclick="pickYear(1970,this)">1970年</div><div class="year-option" data-year="1969" onclick="pickYear(1969,this)">1969年</div><div class="year-option" data-year="1968" onclick="pickYear(1968,this)">1968年</div><div class="year-option" data-year="1967" onclick="pickYear(1967,this)">1967年</div><div class="year-option" data-year="1966" onclick="pickYear(1966,this)">1966年</div><div class="year-option" data-year="1965" onclick="pickYear(1965,this)">1965年</div><div class="year-option" data-year="1964" onclick="pickYear(1964,this)">1964年</div><div class="year-option" data-year="1963" onclick="pickYear(1963,this)">1963年</div><div class="year-option" data-year="1962" onclick="pickYear(1962,this)">1962年</div><div class="year-option" data-year="1961" onclick="pickYear(1961,this)">1961年</div><div class="year-option" data-year="1960" onclick="pickYear(1960,this)">1960年</div>
+            <label class="wiz-label">出生年份</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="stepYear(-1)">−</button>
+              <div><span class="stepper-val" id="yearDisplay">1995</span><span class="stepper-unit">年</span></div>
+              <button class="stepper-btn" onclick="stepYear(1)">+</button>
             </div>
-            <label class="wiz-label">开始工作年份（自动算社保年数）</label>
-            <div class="year-picker" id="workYearPicker" style="height:100px;">
-              <div class="year-option" data-year="2025" onclick="pickWorkYear(2025,this)">2025年</div>
-              <div class="year-option" data-year="2024" onclick="pickWorkYear(2024,this)">2024年</div>
-              <div class="year-option" data-year="2023" onclick="pickWorkYear(2023,this)">2023年</div>
-              <div class="year-option" data-year="2022" onclick="pickWorkYear(2022,this)">2022年</div>
-              <div class="year-option" data-year="2021" onclick="pickWorkYear(2021,this)">2021年</div>
-              <div class="year-option" data-year="2020" onclick="pickWorkYear(2020,this)">2020年</div>
-              <div class="year-option selected" data-year="2019" onclick="pickWorkYear(2019,this)">2019年</div>
-              <div class="year-option" data-year="2018" onclick="pickWorkYear(2018,this)">2018年</div>
-              <div class="year-option" data-year="2017" onclick="pickWorkYear(2017,this)">2017年</div>
-              <div class="year-option" data-year="2016" onclick="pickWorkYear(2016,this)">2016年</div>
-              <div class="year-option" data-year="2015" onclick="pickWorkYear(2015,this)">2015年</div>
-              <div class="year-option" data-year="2014" onclick="pickWorkYear(2014,this)">2014年</div>
-              <div class="year-option" data-year="2013" onclick="pickWorkYear(2013,this)">2013年</div>
-              <div class="year-option" data-year="2012" onclick="pickWorkYear(2012,this)">2012年</div>
-              <div class="year-option" data-year="2011" onclick="pickWorkYear(2011,this)">2011年</div>
-              <div class="year-option" data-year="2010" onclick="pickWorkYear(2010,this)">2010年</div>
-              <div class="year-option" data-year="2009" onclick="pickWorkYear(2009,this)">2009年</div>
-              <div class="year-option" data-year="2008" onclick="pickWorkYear(2008,this)">2008年</div>
-              <div class="year-option" data-year="2007" onclick="pickWorkYear(2007,this)">2007年</div>
-              <div class="year-option" data-year="2006" onclick="pickWorkYear(2006,this)">2006年</div>
-              <div class="year-option" data-year="2005" onclick="pickWorkYear(2005,this)">2005年</div>
+            <label class="wiz-label">已工作年限</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="stepWorkYears(-1)">−</button>
+              <div><span class="stepper-val" id="workYearsDisplay">7</span><span class="stepper-unit">年</span></div>
+              <button class="stepper-btn" onclick="stepWorkYears(1)">+</button>
             </div>
             <label class="wiz-label">工作城市（点一下自动填社保参数）</label>
             <div class="wiz-chips">
@@ -1193,42 +1181,22 @@ function updateWizNav(){
   document.getElementById('wizDone').style.display = wizStep===WIZ_TOTAL-1 ? '' : 'none';
   // Render summary on step 7
   if(wizStep === WIZ_TOTAL-1) renderSummary();
-  // Scroll year picker on step 0
-  if(wizStep === 0) setTimeout(scrollYearToDefault, 200);
 }
 
-// ===== YEAR PICKER =====
-function pickYear(year, el){
-  document.getElementById('birthYear').value = year;
-  document.querySelectorAll('#yearPicker .year-option').forEach(o=>o.classList.remove('selected'));
-  if(el) el.classList.add('selected');
+// Stepper functions
+let currentYear = 1995, currentWorkYears = 7;
+function stepYear(delta){
+  currentYear = Math.max(1960, Math.min(2010, currentYear + delta));
+  document.getElementById('yearDisplay').textContent = currentYear;
+  document.getElementById('birthYear').value = currentYear;
   recalc();
 }
-
-function pickWorkYear(year, el){
-  document.querySelectorAll('#workYearPicker .year-option').forEach(o=>o.classList.remove('selected'));
-  if(el) el.classList.add('selected');
-  const currentYear = parseInt(document.getElementById('currentYear').value) || 2026;
-  const ssYears = Math.max(currentYear - year, 0);
-  document.getElementById('pensionYears').value = ssYears;
-  document.getElementById('medicalYears').value = ssYears;
+function stepWorkYears(delta){
+  currentWorkYears = Math.max(0, Math.min(50, currentWorkYears + delta));
+  document.getElementById('workYearsDisplay').textContent = currentWorkYears;
+  document.getElementById('pensionYears').value = currentWorkYears;
+  document.getElementById('medicalYears').value = currentWorkYears;
   recalc();
-}
-
-// Scroll year picker to default position on first load
-function scrollYearToDefault(){
-  const picker = document.getElementById('yearPicker');
-  if(!picker || picker.clientHeight === 0) return;
-  const sel = picker.querySelector('.selected') || picker.querySelector('[data-year="1995"]');
-  if(sel){
-    const target = sel.offsetTop - picker.clientHeight/2 + sel.clientHeight/2;
-    picker.scrollTop = Math.max(0, target);
-    // Retry once if scrollTop didn't take
-    if(picker.scrollTop === 0 && target > 0){
-      setTimeout(() => { picker.scrollTop = Math.max(0, target); }, 100);
-    }
-  }
-  document.getElementById('birthYear').value = sel ? sel.getAttribute('data-year') : '1995';
 }
 
 // ===== SUMMARY RENDER =====
@@ -1558,11 +1526,11 @@ function parseVoiceText(text){
 wizGoTo(0);
 initVoice();
 loadState();
-// Scroll year picker to default
-scrollYearToDefault();
-window.addEventListener('load', function(){
-  setTimeout(scrollYearToDefault, 300);
-});
+// Sync stepper from saved values
+currentYear = parseInt(document.getElementById('birthYear').value) || 1995;
+currentWorkYears = parseInt(document.getElementById('pensionYears').value) || 7;
+document.getElementById('yearDisplay').textContent = currentYear;
+document.getElementById('workYearsDisplay').textContent = currentWorkYears;
 // Sync hidden → wizard fields
 ['birthYear','pensionYears','incomePost','expRent','expMortgage','mortgageYearsLeft','expProperty','expProperty2',
  'expFood','expTransport','expPet','expEntertain','expInsurance','expOther',
