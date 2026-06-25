@@ -356,7 +356,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v0.9.6</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v0.9.7</span></span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
@@ -691,9 +691,9 @@ td.wn { color: var(--orange); font-weight: 600; }
     <!-- Wizard nav -->
     <div class="wiz-nav" id="wizNav">
       <button class="wiz-btn wiz-btn-back" id="wizBack" onclick="wizPrev()">← 上一题</button>
-      <span class="wiz-count" id="wizCount">1/7</span>
+      <span class="wiz-count" id="wizCount">1/8</span>
       <button class="wiz-btn wiz-btn-next" id="wizNext" onclick="wizNext()">下一题 →</button>
-      <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinish();return false;" ontouchstart="wizFinish();return false;" style="display:none;">✨ 完成，看结果</button>
+      <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinish()" style="display:none;">✨ 完成，看结果</button>
     </div>
 
     <!-- Hidden fields (keep old IDs for calculation engine) -->
@@ -777,19 +777,45 @@ function loadState(){
 }
 
 function restoreToggles(){
-  // Current housing type
-  document.querySelectorAll('#toggleHouseType button').forEach(b=>b.classList.remove('active'));
-  const curMap = {rent:0, mortgage:1, none:2};
-  document.querySelectorAll('#toggleHouseType button')[curMap[houseTypeCur]||0].classList.add('active');
-  toggleHouseFields('cur');
-  // Min housing type
-  document.querySelectorAll('#toggleHouseTypeQ button').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#toggleHouseTypeQ button')[curMap[houseTypeMin]||0].classList.add('active');
-  toggleHouseFields('min');
-  // Child
-  document.querySelectorAll('#toggleChild button').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('#toggleChild button')[childPlan==='one'?1:0].classList.add('active');
-  document.getElementById('childDetail').style.display = childPlan==='one'?'block':'none';
+  // Restore wizard house type chips
+  try {
+    const wizHT = document.querySelectorAll('#wizHouseType .wiz-chip');
+    if(wizHT.length > 0){
+      wizHT.forEach(b=>b.classList.remove('active'));
+      const idx = {rent:0, mortgage:1, none:2}[houseTypeCur] || 0;
+      if(wizHT[idx]) wizHT[idx].classList.add('active');
+      // Show correct housing fields
+      document.getElementById('wizHouseRent').style.display = houseTypeCur==='rent'?'block':'none';
+      document.getElementById('wizHouseMortgage').style.display = houseTypeCur==='mortgage'?'block':'none';
+      document.getElementById('wizHouseNone').style.display = houseTypeCur==='none'?'block':'none';
+    }
+    // Restore child plan chips
+    const wizC = document.querySelectorAll('#wizChild .wiz-chip');
+    if(wizC.length > 0){
+      wizC.forEach(b=>b.classList.remove('active'));
+      const ci = childPlan==='one'?1:0;
+      if(wizC[ci]) wizC[ci].classList.add('active');
+      const cc = document.getElementById('wizChildCost');
+      if(cc) cc.style.display = childPlan==='one'?'block':'none';
+    }
+    // Restore gender chips
+    const wizG = document.querySelectorAll('#wizGender .wiz-chip');
+    if(wizG.length > 0 && gender){
+      wizG.forEach(b=>b.classList.remove('active'));
+      const gi = gender==='female'?1:0;
+      if(wizG[gi]) wizG[gi].classList.add('active');
+    }
+    // Restore SS strategy chips
+    if(ssStrategy === 'retire'){
+      const ssChips = document.querySelectorAll('#wizSSStrategy .wiz-chip');
+      if(ssChips.length > 1){
+        ssChips.forEach(b=>b.classList.remove('active'));
+        ssChips[1].classList.add('active');
+        const hint = document.getElementById('wizSSHint');
+        if(hint) hint.textContent = '一直缴到60岁退休，养老金领得更多。每月固定支出多一份';
+      }
+    }
+  } catch(e){ /* ignore toggle restore errors */ }
 }
 
 function hasAnyData(){
@@ -991,10 +1017,11 @@ function calcAll(){
 let gChart=null, cA=null, cS=null;
 
 function render(d){
-  document.getElementById('totalNowExp').textContent = d ? d.cm.toFixed(0)+' 元' : '--';
-  document.getElementById('totalQuitExp').textContent = d ? d.qm.toFixed(0)+' 元' : '--';
-  document.getElementById('totalAssets').textContent = d ? (d.assets/10000).toFixed(0)+' 万元' : '--';
-  document.getElementById('totalSSSelfPay').textContent = d ? fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）' : '--';
+  const safeText = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
+  safeText('totalNowExp', d ? d.cm.toFixed(0)+' 元' : '--');
+  safeText('totalQuitExp', d ? d.qm.toFixed(0)+' 元' : '--');
+  safeText('totalAssets', d ? (d.assets/10000).toFixed(0)+' 万元' : '--');
+  safeText('totalSSSelfPay', d ? fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）' : '--');
 
   const hasData = hasAnyData();
 
@@ -1184,11 +1211,11 @@ function updateWizNav(){
 }
 
 // Stepper functions
-let currentYear = 1995, currentWorkYears = 7;
+let birthYearSel = 1995, currentWorkYears = 7;
 function stepYear(delta){
-  currentYear = Math.max(1960, Math.min(2010, currentYear + delta));
-  document.getElementById('yearDisplay').textContent = currentYear;
-  document.getElementById('birthYear').value = currentYear;
+  birthYearSel = Math.max(1960, Math.min(2010, birthYearSel + delta));
+  document.getElementById('yearDisplay').textContent = birthYearSel;
+  document.getElementById('birthYear').value = birthYearSel;
   recalc();
 }
 function stepWorkYears(delta){
@@ -1357,10 +1384,10 @@ function updateWizSubtotals(d){
   }
   // Also update dashboard totals if d is available
   if(d){
-    document.getElementById('totalNowExp').textContent = d.cm.toFixed(0)+' 元';
-    document.getElementById('totalQuitExp').textContent = d.qm.toFixed(0)+' 元';
-    document.getElementById('totalAssets').textContent = (d.assets/10000).toFixed(0)+' 万元';
-    document.getElementById('totalSSSelfPay').textContent = fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）';
+    safeText('totalNowExp', d.cm.toFixed(0)+' 元');
+    safeText('totalQuitExp', d.qm.toFixed(0)+' 元');
+    safeText('totalAssets', (d.assets/10000).toFixed(0)+' 万元');
+    safeText('totalSSSelfPay', fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）');
   }
 }
 
@@ -1527,9 +1554,9 @@ wizGoTo(0);
 initVoice();
 loadState();
 // Sync stepper from saved values
-currentYear = parseInt(document.getElementById('birthYear').value) || 1995;
+birthYearSel = parseInt(document.getElementById('birthYear').value) || 1995;
 currentWorkYears = parseInt(document.getElementById('pensionYears').value) || 7;
-document.getElementById('yearDisplay').textContent = currentYear;
+document.getElementById('yearDisplay').textContent = birthYearSel;
 document.getElementById('workYearsDisplay').textContent = currentWorkYears;
 // Sync hidden → wizard fields
 ['birthYear','pensionYears','incomePost','expRent','expMortgage','mortgageYearsLeft','expProperty','expProperty2',
