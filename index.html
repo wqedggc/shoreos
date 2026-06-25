@@ -1196,15 +1196,17 @@ function updateWizNav(){
 // ===== YEAR PICKER =====
 function initYearPicker(){
   const picker = document.getElementById('yearPicker');
-  if(!picker || picker.children.length > 0) return;
-  const currentYear = new Date().getFullYear();
+  if(!picker) return;
+  // Always rebuild to ensure correct state
+  picker.innerHTML = '';
+  const savedYear = document.getElementById('birthYear').value || '1995';
   const startY = 1960, endY = 2010;
-  let savedYear = document.getElementById('birthYear').value || '';
-  if(!savedYear) savedYear = '1995'; // default center
+  let targetEl = null;
   for(let y = endY; y >= startY; y--){
     const div = document.createElement('div');
     div.className = 'year-option';
     div.textContent = y + '年';
+    div.setAttribute('data-year', y);
     div.onclick = function(){
       document.getElementById('birthYear').value = y;
       picker.querySelectorAll('.year-option').forEach(o=>o.classList.remove('selected'));
@@ -1212,16 +1214,26 @@ function initYearPicker(){
       recalc();
     };
     picker.appendChild(div);
-    if(String(y) === String(savedYear)) div.classList.add('selected');
+    if(String(y) === String(savedYear)){
+      div.classList.add('selected');
+      targetEl = div;
+    }
   }
-  // Scroll to selected
-  const sel = picker.querySelector('.selected');
-  if(sel) sel.scrollIntoView({ block: 'center' });
-  // Default select 1995 if none
-  if(!savedYear || savedYear===''){
-    document.getElementById('birthYear').value = '1995';
-    const d = picker.querySelector('.year-option');
-    if(d) d.classList.add('selected');
+  // If no saved year matches, default to 1995
+  if(!targetEl){
+    const found = picker.querySelector('[data-year="1995"]');
+    if(found){ found.classList.add('selected'); targetEl = found; }
+    else { picker.firstElementChild.classList.add('selected'); targetEl = picker.firstElementChild; }
+    document.getElementById('birthYear').value = targetEl ? targetEl.getAttribute('data-year') : '1995';
+  }
+  // Scroll to selected — use requestAnimationFrame to ensure layout is done
+  if(targetEl){
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const offset = targetEl.offsetTop - picker.clientHeight/2 + targetEl.clientHeight/2;
+        picker.scrollTop = Math.max(0, offset);
+      });
+    });
   }
 }
 
