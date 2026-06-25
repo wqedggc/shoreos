@@ -1213,8 +1213,8 @@ function updateWizNav(){
     const doneBtn = document.getElementById('wizDone');
     const newBtn = doneBtn.cloneNode(true);
     doneBtn.parentNode.replaceChild(newBtn, doneBtn);
-    newBtn.onclick = wizFinish;
-    newBtn.addEventListener('click', wizFinish);
+    newBtn.removeAttribute('onclick');
+    newBtn.addEventListener('click', function(e){ e.preventDefault(); wizFinish(); });
   }
   // Render summary on step 7
   if(wizStep === WIZ_TOTAL-1) renderSummary();
