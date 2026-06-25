@@ -206,6 +206,110 @@ td.wn { color: var(--orange); font-weight: 600; }
 @media (max-width: 430px) {
   .voice-fab { right: 16px; }
 }
+
+/* ===== WIZARD STYLES ===== */
+.wizard-progress {
+  margin: 12px 16px 0; height: 4px; background: #e5e5ea; border-radius: 2px; overflow: hidden;
+}
+.wiz-bar-fill {
+  height: 100%; background: var(--blue); border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1); width: 0%;
+}
+.wizard-steps { position: relative; min-height: 360px; }
+.wiz-step {
+  position: absolute; width: 100%; top: 0; left: 0;
+  opacity: 0; transform: translateX(40px);
+  pointer-events: none; transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  padding: 0 8px;
+}
+.wiz-step.active {
+  position: relative; opacity: 1; transform: translateX(0); pointer-events: auto;
+}
+.wiz-step.exit-left { opacity: 0; transform: translateX(-40px); }
+.wiz-card {
+  background: var(--card); border-radius: var(--radius); padding: 24px 20px;
+  margin: 12px 4px; text-align: center;
+}
+.wiz-emoji { font-size: 48px; margin-bottom: 8px; }
+.wiz-question { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.wiz-desc { font-size: 13px; color: var(--sub); margin-bottom: 14px; line-height: 1.5; }
+.wiz-fields { text-align: left; margin-top: 16px; }
+.wiz-label { font-size: 12px; font-weight: 600; color: var(--sub); display: block; margin: 12px 0 6px; }
+.wiz-label:first-child { margin-top: 0; }
+
+.wiz-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+.wiz-chip {
+  padding: 8px 16px; border-radius: 50px; border: 2px solid var(--sep);
+  background: var(--card); font-size: 14px; font-weight: 700; color: var(--text);
+  cursor: pointer; font-family: inherit; transition: all 0.2s; white-space: nowrap;
+}
+.wiz-chip:active, .wiz-chip.active {
+  background: var(--blue); color: #fff; border-color: var(--blue);
+  transform: scale(0.96);
+}
+
+.wiz-input {
+  width: 100%; padding: 14px 16px; border: 2px solid var(--sep);
+  border-radius: var(--radius-sm); font-size: 16px; font-weight: 600;
+  color: var(--text); background: #fdfaf7; font-family: inherit;
+  transition: all 0.2s; text-align: center;
+}
+.wiz-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,122,255,0.08); }
+.wiz-input::placeholder { color: #c7c7cc; font-weight: 400; }
+
+.wiz-input-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.wiz-input-row .wiz-input { flex: 1; text-align: left; }
+.wiz-input-suffix { font-size: 14px; color: var(--sub); font-weight: 600; white-space: nowrap; }
+
+.wiz-quick-total {
+  background: #f8f8fb; border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px;
+}
+.wiz-quick-total > span { font-size: 11px; color: var(--sub); font-weight: 600; display: block; margin-bottom: 8px; }
+
+.wiz-divider {
+  display: flex; align-items: center; margin: 14px 0; color: var(--sub); font-size: 11px;
+}
+.wiz-divider::before, .wiz-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--sep);
+}
+.wiz-divider span { padding: 0 12px; }
+
+.wiz-exp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wiz-exp-grid .wiz-input-row { margin-bottom: 0; }
+.wiz-sm { font-size: 13px !important; }
+.wiz-sm span { font-size: 14px; flex-shrink: 0; min-width: 60px; }
+.wiz-sm input { padding: 10px 10px; font-size: 14px; }
+.wiz-sm span:last-child { font-size: 12px; color: var(--sub); min-width: auto; }
+
+.wiz-summary {
+  display: flex; justify-content: space-between; padding: 10px 4px 0;
+  font-size: 12px; color: var(--sub); font-weight: 600;
+}
+.wiz-summary b { color: var(--text); font-size: 15px; }
+.wiz-hint {
+  font-size: 12px; color: var(--sub); margin-top: 8px; text-align: center;
+  padding: 8px 12px; background: #f8f8fb; border-radius: 8px; line-height: 1.5;
+}
+
+.wiz-nav {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 12px 16px 20px;
+}
+.wiz-btn {
+  padding: 12px 24px; border-radius: 50px; border: none;
+  font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: all 0.2s;
+}
+.wiz-btn-back { background: #f2f2f7; color: var(--sub); }
+.wiz-btn-next { background: var(--blue); color: #fff; }
+.wiz-btn-done {
+  background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff;
+  padding: 14px 32px; font-size: 16px;
+}
+.wiz-btn:active { transform: scale(0.95); }
+.wiz-count { font-size: 13px; color: var(--sub); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -289,175 +393,265 @@ td.wn { color: var(--orange); font-weight: 600; }
 
   <!-- ===== INPUTS ===== -->
   <div class="scroll-section" id="sec-inputs">
-    <div class="app-header">
-      <div class="greeting">⚙️ 参数设置</div>
-      <div class="subtitle">填写数据自动保存 · 点击分类标题折叠/展开</div>
-    </div>
 
-    <!-- Quick presets -->
-    <div class="quick-row" id="quickRow">
-      <button class="quick-chip" onclick="applyCityPreset('beijing')">📍 北京</button>
-      <button class="quick-chip" onclick="applyCityPreset('shanghai')">📍 上海</button>
-      <button class="quick-chip" onclick="applyCityPreset('guangzhou')">📍 广州</button>
-      <button class="quick-chip" onclick="applyCityPreset('shenzhen')">📍 深圳</button>
-      <button class="quick-chip" onclick="applyCityPreset('other')">📍 其他城市</button>
-    </div>
-
-    <!-- Voice button -->
+    <!-- Voice button (floating) -->
     <button class="voice-fab" id="voiceBtn" onclick="toggleVoice()" title="语音输入填表">🎤</button>
     <div class="voice-toast" id="voiceToast"></div>
 
-    <!-- Basic -->
-    <div class="sec-label">基本信息</div>
-    <div class="card-group">
-      <div class="card-row">
-        <span class="row-icon">📅</span><span class="row-label">出生年份</span>
-        <span class="row-input"><input type="number" id="birthYear" placeholder="例如 1995" onchange="recalc()"></span>
-        <span class="row-unit">年</span>
-      </div>
-      <div class="card-row">
-        <span class="row-icon">📆</span><span class="row-label">当前年份</span>
-        <span class="row-input"><input type="number" id="currentYear" placeholder="2026" onchange="recalc()"></span>
-        <span class="row-unit">年</span>
-      </div>
-      <div class="card-row">
-        <span class="row-icon">🛡️</span><span class="row-label">已缴养老保险</span>
-        <span class="row-input"><input type="number" id="pensionYears" step="0.5" placeholder="已缴几年" onchange="recalc()"></span>
-        <span class="row-unit">年</span>
-      </div>
-      <div class="card-row">
-        <span class="row-icon">🏥</span><span class="row-label">已缴医疗保险</span>
-        <span class="row-input"><input type="number" id="medicalYears" step="0.5" placeholder="通常同养老" onchange="recalc()"></span>
-        <span class="row-unit">年</span>
-      </div>
-      <div class="note-row"><span>💡</span><span>养老最低通常15年，医保终身通常男25/女20年，各省市不同。达标后不需再缴，退休仍可享受。</span></div>
-      <div class="card-row">
-        <span class="row-icon">🎯</span><span class="row-label">养老最低缴费年限</span>
-        <span class="row-input"><input type="number" id="pensionMin" value="15" placeholder="默认15" onchange="recalc()"></span>
-        <span class="row-unit">年</span>
-      </div>
-      <div class="card-row">
-        <span class="row-icon">🏥</span><span class="row-label">医保终身年限</span>
-        <span class="row-input"><input type="number" id="medicalMin" value="25" placeholder="男25/女20" onchange="recalc()"></span>
-        <span class="row-unit">年</span>
-      </div>
-      <div class="card-row">
-        <span class="row-icon">💰</span><span class="row-label">自缴养老（灵活就业）</span>
-        <span class="row-input"><input type="number" id="pensionSelfPay" placeholder="月缴" onchange="recalc()"></span>
-        <span class="row-unit">元/月</span>
-      </div>
-      <div class="card-row">
-        <span class="row-icon">💊</span><span class="row-label">自缴医保（灵活就业）</span>
-        <span class="row-input"><input type="number" id="medicalSelfPay" placeholder="月缴" onchange="recalc()"></span>
-        <span class="row-unit">元/月</span>
-      </div>
+    <!-- ===== WIZARD ===== -->
+    <div class="wizard-progress" id="wizProgress">
+      <div class="wiz-bar-fill" id="wizBarFill"></div>
     </div>
 
-    <!-- Income -->
-    <div class="sec-label">收入</div>
-    <div class="card-group">
-      <div class="card-row">
-        <span class="row-icon">💸</span><span class="row-label">税后年收入</span>
-        <span class="row-input"><input type="number" id="incomePost" step="0.5" placeholder="到手多少" onchange="recalc()"></span>
-        <span class="row-unit">万元</span>
-      </div>
-    </div>
+    <div class="wizard-steps" id="wizSteps">
 
-    <!-- Current expenses -->
-    <div class="sec-label">当前每月开销</div>
-    <div class="card-group">
-      <!-- Housing -->
-      <div class="seg-row">
-        <div class="seg-label">🏠 住房类型</div>
-        <div class="seg" id="toggleHouseType">
-          <button class="active" onclick="setHouseType('rent',this,'cur')">租房</button>
-          <button onclick="setHouseType('mortgage',this,'cur')">有房贷</button>
-          <button onclick="setHouseType('none',this,'cur')">无房贷</button>
+      <!-- Step 0: Gender + Birth + City -->
+      <div class="wiz-step active" data-step="0">
+        <div class="wiz-card">
+          <div class="wiz-emoji">👤</div>
+          <h2 class="wiz-question">先简单认识一下你</h2>
+          <div class="wiz-fields">
+            <label class="wiz-label">性别</label>
+            <div class="wiz-chips" id="wizGender">
+              <button class="wiz-chip" onclick="setWizGender('male',this)">👨 男</button>
+              <button class="wiz-chip" onclick="setWizGender('female',this)">👩 女</button>
+            </div>
+            <label class="wiz-label">出生年份</label>
+            <div class="wiz-chips">
+              <button class="wiz-chip" onclick="setWizVal('birthYear','1995',this)">1995</button>
+              <button class="wiz-chip" onclick="setWizVal('birthYear','1990',this)">1990</button>
+              <button class="wiz-chip" onclick="setWizVal('birthYear','1985',this)">1985</button>
+            </div>
+            <input type="number" class="wiz-input" id="wizBirth" placeholder="或手动输入出生年份" onchange="document.getElementById('birthYear').value=this.value;recalc()">
+            <label class="wiz-label">工作城市</label>
+            <div class="wiz-chips">
+              <button class="wiz-chip" onclick="applyCityPreset('beijing');setWizActive(this)">北京</button>
+              <button class="wiz-chip" onclick="applyCityPreset('shanghai');setWizActive(this)">上海</button>
+              <button class="wiz-chip" onclick="applyCityPreset('guangzhou');setWizActive(this)">广州</button>
+              <button class="wiz-chip" onclick="applyCityPreset('shenzhen');setWizActive(this)">深圳</button>
+              <button class="wiz-chip" onclick="applyCityPreset('other');setWizActive(this)">其他</button>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="houseCurRent">
-        <div class="card-row"><span class="row-icon">🔑</span><span class="row-label">月租金</span><span class="row-input"><input type="number" id="expRent" placeholder="含物业取暖" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      </div>
-      <div id="houseCurMortgage" style="display:none;">
-        <div class="card-row"><span class="row-icon">🏦</span><span class="row-label">月供</span><span class="row-input"><input type="number" id="expMortgage" placeholder="每月还贷" onchange="recalc()"></span><span class="row-unit">元</span></div>
-        <div class="card-row"><span class="row-icon">⏱️</span><span class="row-label">剩余年限</span><span class="row-input"><input type="number" id="mortgageYearsLeft" placeholder="还剩几年" onchange="recalc()"></span><span class="row-unit">年</span></div>
-        <div class="card-row"><span class="row-icon">🏢</span><span class="row-label">物业取暖</span><span class="row-input"><input type="number" id="expProperty" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      </div>
-      <div id="houseCurNone" style="display:none;">
-        <div class="card-row"><span class="row-icon">🏢</span><span class="row-label">物业取暖</span><span class="row-input"><input type="number" id="expProperty2" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      </div>
-      <!-- Other expenses -->
-      <div class="card-row"><span class="row-icon">🍜</span><span class="row-label">餐饮</span><span class="row-input"><input type="number" id="expFood" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🚇</span><span class="row-label">交通</span><span class="row-input"><input type="number" id="expTransport" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🐾</span><span class="row-label">宠物</span><span class="row-input"><input type="number" id="expPet" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🎬</span><span class="row-label">娱乐</span><span class="row-input"><input type="number" id="expEntertain" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🩺</span><span class="row-label">医疗/保险</span><span class="row-input"><input type="number" id="expInsurance" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">📦</span><span class="row-label">其他</span><span class="row-input"><input type="number" id="expOther" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="summary-row"><span>月合计</span><b id="totalNowExp">--</b></div>
-    </div>
 
-    <!-- Minimum expenses -->
-    <div class="sec-label">最低生活开销</div>
-    <div class="card-group">
-      <div class="note-row"><span>💡</span><span>如果不再工作，搬到成本更低的地方或削减开支，你的最低月支出会降到多少？这用于计算"若今天就不工作了能撑多久"。</span></div>
-      <!-- Housing Q -->
-      <div class="seg-row">
-        <div class="seg-label">🏠 住房类型</div>
-        <div class="seg" id="toggleHouseTypeQ">
-          <button class="active" onclick="setHouseType('rent',this,'min')">租房</button>
-          <button onclick="setHouseType('mortgage',this,'min')">有房贷</button>
-          <button onclick="setHouseType('none',this,'min')">无房贷</button>
+      <!-- Step 1: Social Security -->
+      <div class="wiz-step" data-step="1">
+        <div class="wiz-card">
+          <div class="wiz-emoji">🛡️</div>
+          <h2 class="wiz-question">你的社保情况</h2>
+          <div class="wiz-fields">
+            <label class="wiz-label">已缴养老保险</label>
+            <div class="wiz-chips">
+              <button class="wiz-chip" onclick="setWizVal('pensionYears','3',this)">3年</button>
+              <button class="wiz-chip" onclick="setWizVal('pensionYears','5',this)">5年</button>
+              <button class="wiz-chip" onclick="setWizVal('pensionYears','7',this)">7年</button>
+              <button class="wiz-chip" onclick="setWizVal('pensionYears','10',this)">10年</button>
+            </div>
+            <input type="number" class="wiz-input" id="wizPensionY" placeholder="或手动输入" step="0.5" onchange="document.getElementById('pensionYears').value=this.value;document.getElementById('medicalYears').value=this.value;recalc()">
+            <label class="wiz-label">社保缴纳策略</label>
+            <div class="wiz-chips" id="wizSSStrategy">
+              <button class="wiz-chip active" onclick="setSSStrategy('min',this)">🛑 达标即停</button>
+              <button class="wiz-chip" onclick="setSSStrategy('retire',this)">💪 缴到退休（养老金更高）</button>
+            </div>
+            <div class="wiz-hint" id="wizSSHint">达标后不再自缴社保，省下的钱就是安全垫</div>
+          </div>
         </div>
       </div>
-      <div id="houseMinRent">
-        <div class="card-row"><span class="row-icon">🔑</span><span class="row-label">月租金</span><span class="row-input"><input type="number" id="expQRent" placeholder="含物业取暖" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      </div>
-      <div id="houseMinMortgage" style="display:none;">
-        <div class="card-row"><span class="row-icon">🏦</span><span class="row-label">月供</span><span class="row-input"><input type="number" id="expQMortgage" placeholder="每月还贷" onchange="recalc()"></span><span class="row-unit">元</span></div>
-        <div class="card-row"><span class="row-icon">⏱️</span><span class="row-label">剩余年限</span><span class="row-input"><input type="number" id="mortgageYearsLeftQ" placeholder="还剩几年" onchange="recalc()"></span><span class="row-unit">年</span></div>
-        <div class="card-row"><span class="row-icon">🏢</span><span class="row-label">物业取暖</span><span class="row-input"><input type="number" id="expQProperty" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      </div>
-      <div id="houseMinNone" style="display:none;">
-        <div class="card-row"><span class="row-icon">🏢</span><span class="row-label">物业取暖</span><span class="row-input"><input type="number" id="expQProperty2" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      </div>
-      <!-- Other min expenses -->
-      <div class="card-row"><span class="row-icon">🍜</span><span class="row-label">餐饮</span><span class="row-input"><input type="number" id="expQFood" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🚌</span><span class="row-label">交通</span><span class="row-input"><input type="number" id="expQTransport" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🐾</span><span class="row-label">宠物</span><span class="row-input"><input type="number" id="expQPet" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🎮</span><span class="row-label">娱乐</span><span class="row-input"><input type="number" id="expQEntertain" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🩺</span><span class="row-label">医疗/保险</span><span class="row-input"><input type="number" id="expQInsurance" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="summary-row"><span>自缴社保</span><b id="totalSSSelfPay">--</b></div>
-      <div class="card-row"><span class="row-icon">📦</span><span class="row-label">其他</span><span class="row-input"><input type="number" id="expQOther" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="summary-row"><span>月合计</span><b id="totalQuitExp">--</b></div>
-    </div>
 
-    <!-- Assets -->
-    <div class="sec-label">资产</div>
-    <div class="card-group">
-      <div class="card-row"><span class="row-icon">💵</span><span class="row-label">现金/活期</span><span class="row-input"><input type="number" id="assetCash" step="0.5" placeholder="万元" onchange="recalc()"></span><span class="row-unit">万元</span></div>
-      <div class="card-row"><span class="row-icon">🏦</span><span class="row-label">定存/理财</span><span class="row-input"><input type="number" id="assetDeposit" step="0.5" placeholder="万元" onchange="recalc()"></span><span class="row-unit">万元</span></div>
-      <div class="card-row"><span class="row-icon">📊</span><span class="row-label">基金</span><span class="row-input"><input type="number" id="assetFund" step="0.5" placeholder="万元" onchange="recalc()"></span><span class="row-unit">万元</span></div>
-      <div class="card-row"><span class="row-icon">📈</span><span class="row-label">股票</span><span class="row-input"><input type="number" id="assetStock" step="0.5" placeholder="万元" onchange="recalc()"></span><span class="row-unit">万元</span></div>
-      <div class="card-row"><span class="row-icon">👴</span><span class="row-label">养老金账户</span><span class="row-input"><input type="number" id="assetPension" step="0.5" placeholder="万元" onchange="recalc()"></span><span class="row-unit">万元</span></div>
-      <div class="card-row"><span class="row-icon">📈</span><span class="row-label">年化收益率</span><span class="row-input"><input type="number" id="assetReturn" step="0.5" placeholder="保守估计2" onchange="recalc()"></span><span class="row-unit">%</span></div>
-      <div class="summary-row"><span>总资产</span><b id="totalAssets">--</b></div>
-    </div>
-
-    <!-- Future plans -->
-    <div class="sec-label">未来规划</div>
-    <div class="card-group">
-      <div class="seg-row">
-        <div class="seg-label">👶 子女计划</div>
-        <div class="seg" id="toggleChild">
-          <button class="active" onclick="setChild('none',this)">不计划</button>
-          <button onclick="setChild('one',this)">计划要孩子</button>
+      <!-- Step 2: Income -->
+      <div class="wiz-step" data-step="2">
+        <div class="wiz-card">
+          <div class="wiz-emoji">💸</div>
+          <h2 class="wiz-question">你一年到手多少钱？</h2>
+          <div class="wiz-fields">
+            <div class="wiz-chips">
+              <button class="wiz-chip" onclick="setWizVal('incomePost','10',this)">10万</button>
+              <button class="wiz-chip" onclick="setWizVal('incomePost','20',this)">20万</button>
+              <button class="wiz-chip" onclick="setWizVal('incomePost','30',this)">30万</button>
+              <button class="wiz-chip" onclick="setWizVal('incomePost','50',this)">50万</button>
+              <button class="wiz-chip" onclick="setWizVal('incomePost','80',this)">80万</button>
+            </div>
+            <div class="wiz-input-row">
+              <input type="number" class="wiz-input" id="wizIncome" placeholder="或手动输入" step="0.5" onchange="document.getElementById('incomePost').value=this.value;recalc()">
+              <span class="wiz-input-suffix">万元/年</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="childDetail" style="display:none;">
-        <div class="card-row"><span class="row-icon">👶</span><span class="row-label">预计年支出</span><span class="row-input"><input type="number" id="childCost" placeholder="万元" onchange="recalc()"></span><span class="row-unit">万元</span></div>
+
+      <!-- Step 3: Housing -->
+      <div class="wiz-step" data-step="3">
+        <div class="wiz-card">
+          <div class="wiz-emoji">🏠</div>
+          <h2 class="wiz-question">你的住房情况</h2>
+          <div class="wiz-fields">
+            <div class="wiz-chips" id="wizHouseType">
+              <button class="wiz-chip active" onclick="setWizHouseType('rent',this)">🔑 租房</button>
+              <button class="wiz-chip" onclick="setWizHouseType('mortgage',this)">🏦 有房贷</button>
+              <button class="wiz-chip" onclick="setWizHouseType('none',this)">🏡 无房贷</button>
+            </div>
+            <div id="wizHouseRent">
+              <div class="wiz-input-row">
+                <input type="number" class="wiz-input" id="wizRent" placeholder="月租金（含物业取暖）" onchange="document.getElementById('expRent').value=this.value;recalc()">
+                <span class="wiz-input-suffix">元/月</span>
+              </div>
+            </div>
+            <div id="wizHouseMortgage" style="display:none;">
+              <div class="wiz-input-row">
+                <input type="number" class="wiz-input" id="wizMtg" placeholder="月供" onchange="document.getElementById('expMortgage').value=this.value;recalc()">
+                <span class="wiz-input-suffix">元/月</span>
+              </div>
+              <div class="wiz-input-row">
+                <input type="number" class="wiz-input" id="wizMtgYrs" placeholder="剩余年限" onchange="document.getElementById('mortgageYearsLeft').value=this.value;recalc()">
+                <span class="wiz-input-suffix">年</span>
+              </div>
+              <div class="wiz-input-row">
+                <input type="number" class="wiz-input" id="wizProp" placeholder="物业取暖月均" onchange="document.getElementById('expProperty').value=this.value;recalc()">
+                <span class="wiz-input-suffix">元/月</span>
+              </div>
+            </div>
+            <div id="wizHouseNone" style="display:none;">
+              <div class="wiz-input-row">
+                <input type="number" class="wiz-input" id="wizProp2" placeholder="物业取暖月均（可选）" onchange="document.getElementById('expProperty2').value=this.value;recalc()">
+                <span class="wiz-input-suffix">元/月</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Step 4: Current expenses -->
+      <div class="wiz-step" data-step="4">
+        <div class="wiz-card">
+          <div class="wiz-emoji">🛒</div>
+          <h2 class="wiz-question">你现在每月花多少钱？</h2>
+          <div class="wiz-fields">
+            <div class="wiz-quick-total">
+              <span>快速估算</span>
+              <div class="wiz-chips">
+                <button class="wiz-chip" onclick="fillQuickExpenses(8000)">~8千</button>
+                <button class="wiz-chip" onclick="fillQuickExpenses(12000)">~1.2万</button>
+                <button class="wiz-chip" onclick="fillQuickExpenses(16000)">~1.6万</button>
+                <button class="wiz-chip" onclick="fillQuickExpenses(20000)">~2万</button>
+              </div>
+            </div>
+            <div class="wiz-divider"><span>或逐项填写</span></div>
+            <div class="wiz-exp-grid">
+              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizFood" placeholder="月均" onchange="document.getElementById('expFood').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🚇 交通</span><input type="number" id="wizTransport" placeholder="月均" onchange="document.getElementById('expTransport').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizPet" placeholder="月均" onchange="document.getElementById('expPet').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🎬 娱乐</span><input type="number" id="wizEntertain" placeholder="月均" onchange="document.getElementById('expEntertain').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizInsurance" placeholder="月均" onchange="document.getElementById('expInsurance').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizOther" placeholder="月均" onchange="document.getElementById('expOther').value=this.value;recalc()"><span>元</span></div>
+            </div>
+            <div class="wiz-summary"><span>月合计（不含住房）</span><b id="wizNowSubtotal">--</b></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Minimum expenses -->
+      <div class="wiz-step" data-step="5">
+        <div class="wiz-card">
+          <div class="wiz-emoji">🛟</div>
+          <h2 class="wiz-question">如果不再工作，你最低每月要花多少？</h2>
+          <p class="wiz-desc">算算"最省能省到多少"——这决定了你的安全垫有多厚</p>
+          <div class="wiz-fields">
+            <div class="wiz-quick-total">
+              <span>按当前开销比例估算</span>
+              <div class="wiz-chips">
+                <button class="wiz-chip" onclick="fillQuickMinExp(0.5)">50%</button>
+                <button class="wiz-chip" onclick="fillQuickMinExp(0.6)">60%</button>
+                <button class="wiz-chip" onclick="fillQuickMinExp(0.7)">70%</button>
+                <button class="wiz-chip" onclick="fillQuickMinExp(0.8)">80%</button>
+              </div>
+            </div>
+            <div class="wiz-divider"><span>或逐项填写</span></div>
+            <div class="wiz-exp-grid">
+              <div class="wiz-input-row wiz-sm"><span>🏡 住房</span><input type="number" id="wizQHouse" placeholder="月均" onchange="document.getElementById('expQRent').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizQFood" placeholder="月均" onchange="document.getElementById('expQFood').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🚌 交通</span><input type="number" id="wizQTransport" placeholder="月均" onchange="document.getElementById('expQTransport').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizQPet" placeholder="月均" onchange="document.getElementById('expQPet').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🎮 娱乐</span><input type="number" id="wizQEntertain" placeholder="月均" onchange="document.getElementById('expQEntertain').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizQInsurance" placeholder="月均" onchange="document.getElementById('expQInsurance').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizQOther" placeholder="月均" onchange="document.getElementById('expQOther').value=this.value;recalc()"><span>元</span></div>
+            </div>
+            <div class="wiz-summary"><span>月合计（含自缴社保）</span><b id="wizMinSubtotal">--</b></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Assets & Future -->
+      <div class="wiz-step" data-step="6">
+        <div class="wiz-card">
+          <div class="wiz-emoji">🏦</div>
+          <h2 class="wiz-question">你现在有多少积蓄？</h2>
+          <div class="wiz-fields">
+            <div class="wiz-quick-total">
+              <span>快速填写总额</span>
+              <div class="wiz-chips">
+                <button class="wiz-chip" onclick="fillQuickAssets(10)">10万</button>
+                <button class="wiz-chip" onclick="fillQuickAssets(30)">30万</button>
+                <button class="wiz-chip" onclick="fillQuickAssets(50)">50万</button>
+                <button class="wiz-chip" onclick="fillQuickAssets(100)">100万</button>
+              </div>
+            </div>
+            <div class="wiz-divider"><span>或分类填写</span></div>
+            <div class="wiz-exp-grid">
+              <div class="wiz-input-row wiz-sm"><span>💵 现金</span><input type="number" id="wizCash" placeholder="万" onchange="document.getElementById('assetCash').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🏦 定存理财</span><input type="number" id="wizDep" placeholder="万" onchange="document.getElementById('assetDeposit').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📊 基金</span><input type="number" id="wizFund" placeholder="万" onchange="document.getElementById('assetFund').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📈 股票</span><input type="number" id="wizStock" placeholder="万" onchange="document.getElementById('assetStock').value=this.value;recalc()"><span>万</span></div>
+            </div>
+            <div class="wiz-summary"><span>总资产</span><b id="wizAssetTotal">--</b></div>
+            <div class="wiz-divider" style="margin-top:10px;"></div>
+            <label class="wiz-label">子女计划</label>
+            <div class="wiz-chips" id="wizChild">
+              <button class="wiz-chip active" onclick="setWizChild('none',this)">暂无计划</button>
+              <button class="wiz-chip" onclick="setWizChild('one',this)">计划要孩子</button>
+            </div>
+            <div id="wizChildCost" style="display:none;">
+              <div class="wiz-input-row">
+                <input type="number" class="wiz-input" id="wizCC" placeholder="预计年支出" onchange="document.getElementById('childCost').value=this.value;recalc()">
+                <span class="wiz-input-suffix">万元/年</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div style="height:30px;"></div>
+
+    <!-- Wizard nav -->
+    <div class="wiz-nav" id="wizNav">
+      <button class="wiz-btn wiz-btn-back" id="wizBack" onclick="wizPrev()">← 上一题</button>
+      <span class="wiz-count" id="wizCount">1/7</span>
+      <button class="wiz-btn wiz-btn-next" id="wizNext" onclick="wizNext()">下一题 →</button>
+      <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinish()" style="display:none;">✨ 完成，看结果</button>
+    </div>
+
+    <!-- Hidden fields (keep old IDs for calculation engine) -->
+    <input type="hidden" id="birthYear">
+    <input type="hidden" id="currentYear" value="2026">
+    <input type="hidden" id="pensionYears" step="0.5">
+    <input type="hidden" id="medicalYears" step="0.5">
+    <input type="hidden" id="pensionMin" value="15">
+    <input type="hidden" id="medicalMin" value="25">
+    <input type="hidden" id="pensionSelfPay">
+    <input type="hidden" id="medicalSelfPay">
+    <input type="hidden" id="incomePost" step="0.5">
+    <input type="hidden" id="expRent"><input type="hidden" id="expMortgage"><input type="hidden" id="mortgageYearsLeft">
+    <input type="hidden" id="expProperty"><input type="hidden" id="expProperty2">
+    <input type="hidden" id="expFood"><input type="hidden" id="expTransport"><input type="hidden" id="expPet">
+    <input type="hidden" id="expEntertain"><input type="hidden" id="expInsurance"><input type="hidden" id="expOther">
+    <input type="hidden" id="expQRent"><input type="hidden" id="expQMortgage"><input type="hidden" id="mortgageYearsLeftQ">
+    <input type="hidden" id="expQProperty"><input type="hidden" id="expQProperty2">
+    <input type="hidden" id="expQFood"><input type="hidden" id="expQTransport"><input type="hidden" id="expQPet">
+    <input type="hidden" id="expQEntertain"><input type="hidden" id="expQInsurance"><input type="hidden" id="expQOther">
+    <input type="hidden" id="assetCash" step="0.5"><input type="hidden" id="assetDeposit" step="0.5">
+    <input type="hidden" id="assetFund" step="0.5"><input type="hidden" id="assetStock" step="0.5">
+    <input type="hidden" id="assetPension" step="0.5"><input type="hidden" id="assetReturn" step="0.5">
+    <input type="hidden" id="childCost">
   </div>
 
   <!-- Tab Bar -->
@@ -470,6 +664,8 @@ td.wn { color: var(--orange); font-weight: 600; }
 <script>
 // ===== STATE =====
 let houseTypeCur = 'rent', houseTypeMin = 'rent', childPlan = 'none';
+let gender = '', ssStrategy = 'min'; // 'min' = stop at minimum, 'retire' = pay until retire
+let wizStep = 0; const WIZ_TOTAL = 7;
 
 // ===== STORAGE =====
 const PREFIX = 'shoreos_v05_';
@@ -487,6 +683,8 @@ function saveState(){
   data._houseTypeCur = houseTypeCur;
   data._houseTypeMin = houseTypeMin;
   data._childPlan = childPlan;
+  data._gender = gender;
+  data._ssStrategy = ssStrategy;
   localStorage.setItem(PREFIX+'state', JSON.stringify(data));
 }
 function loadState(){
@@ -504,6 +702,8 @@ function loadState(){
     if(data._houseTypeCur) houseTypeCur = data._houseTypeCur;
     if(data._houseTypeMin) houseTypeMin = data._houseTypeMin;
     if(data._childPlan) childPlan = data._childPlan;
+    if(data._gender) gender = data._gender;
+    if(data._ssStrategy) ssStrategy = data._ssStrategy;
     // Restore toggle UIs
     restoreToggles();
     return any;
@@ -588,23 +788,28 @@ function calcAll(){
   let ssSelfNow = 0;
   if(penY < penMin) ssSelfNow += penSelf;
   if(medY < medMin) ssSelfNow += medSelf;
-  // But if penY>=penMin && medY<medMin, only pay medical
+  // If ssStrategy is 'retire', user pays until age 60 even after minimums met
+  if(ssStrategy === 'retire'){
+    ssSelfNow = penSelf + medSelf; // always pay both until 60
+  }
 
-  // Calculate total self-pay cost from now until both minimums met
-  // Stage 1: pay both until penMin reached (if pen needed)
-  // Stage 2: pay only medical until medMin reached (if med needed)
+  // Calculate total self-pay cost
   let ssTotalCost = 0;
-  let penRemain = Math.max(penMin - penY, 0);
-  let medRemain = Math.max(medMin - medY, 0);
-  const stage1Years = Math.min(penRemain, medRemain); // years paying both
-  ssTotalCost += stage1Years * (penSelf + medSelf) * 12;
-  penRemain -= stage1Years; medRemain -= stage1Years;
-  if(medRemain > 0) ssTotalCost += medRemain * medSelf * 12; // only medical remains
-  // penRemain should be 0 now since we paid both in stage 1
+  if(ssStrategy === 'retire'){
+    // Pay until age 60
+    const retireAge = 60;
+    const yearsToRetire = Math.max(retireAge - age, 0);
+    ssTotalCost = yearsToRetire * (penSelf + medSelf) * 12;
+  } else {
+    // Staged: stop when minimums met
+    let penRemain = Math.max(penMin - penY, 0);
+    let medRemain = Math.max(medMin - medY, 0);
+    const stage1Years = Math.min(penRemain, medRemain);
+    ssTotalCost += stage1Years * (penSelf + medSelf) * 12;
+    penRemain -= stage1Years; medRemain -= stage1Years;
+    if(medRemain > 0) ssTotalCost += medRemain * medSelf * 12;
+  }
 
-  // For the monthly expense calculation (post-quit)
-  // The effective monthly self-pay for the FIRST year after quitting
-  // This is what goes into the "最低生活开销" monthly total
   const ssMonthlyEffective = ssSelfNow;
   const income=val('incomePost')*10000;
   // Current monthly
@@ -662,13 +867,16 @@ function calcAll(){
   // Chart projections — include staged SS self-pay
   // Helper: annual expense at year N after quitting (SS drops in stages)
   function annualExpAtYear(yearIdx){
-    let exp = eQA - ssMonthlyEffective*12; // base expenses without SS
-    const pRem = Math.max(penMin - penY, 0);
-    const mRem = Math.max(medMin - medY, 0);
-    // Both active until min(pRem, mRem)
-    if(yearIdx < Math.min(pRem, mRem)) exp += (penSelf + medSelf)*12;
-    else if(yearIdx < mRem) exp += medSelf*12;
-    // After both minimums met: exp stays at base (no SS self-pay)
+    let exp = eQA - ssMonthlyEffective*12;
+    if(ssStrategy === 'retire'){
+      // Pay until 60, regardless of minimums
+      if(age + yearIdx < 60) exp += (penSelf + medSelf)*12;
+    } else {
+      const pRem = Math.max(penMin - penY, 0);
+      const mRem = Math.max(medMin - medY, 0);
+      if(yearIdx < Math.min(pRem, mRem)) exp += (penSelf + medSelf)*12;
+      else if(yearIdx < mRem) exp += medSelf*12;
+    }
     return exp;
   }
 
@@ -864,88 +1072,172 @@ function switchTab(tab, btn){
   recalc();
 }
 
-// ===== ACCORDION =====
-function initAccordion(){
-  const inputSec = document.getElementById('sec-inputs');
-  if(!inputSec) return;
-  const labels = inputSec.querySelectorAll('.sec-label');
-  labels.forEach((lbl, idx) => {
-    const cardGroup = lbl.nextElementSibling;
-    if(!cardGroup || !cardGroup.classList.contains('card-group')) return;
-    // Wrap in accordion
-    const wrapper = document.createElement('div');
-    wrapper.className = 'acc-section';
-    lbl.parentNode.insertBefore(wrapper, lbl);
-    // Create header
-    const header = document.createElement('div');
-    header.className = 'acc-header' + (idx === 0 ? ' open' : '');
-    header.innerHTML = `<span class="acc-title">${lbl.textContent}<span class="acc-dot"></span></span><span class="acc-arrow">›</span>`;
-    header.onclick = function(){
-      const isOpen = this.classList.toggle('open');
-      const body = this.nextElementSibling;
-      body.classList.toggle('open');
-    };
-    wrapper.appendChild(header);
-    // Create body
-    const body = document.createElement('div');
-    body.className = 'acc-body' + (idx === 0 ? ' open' : '');
-    wrapper.appendChild(body);
-    // Move label and card into body
-    body.appendChild(lbl);
-    body.appendChild(cardGroup);
-    // Initial dot check
-    updateAccDot(header, cardGroup);
-  });
-  // Watch for input changes to update dots
-  inputSec.addEventListener('change', function(e){
-    if(e.target.tagName === 'INPUT'){
-      const body = e.target.closest('.acc-body');
-      if(body){
-        const header = body.previousElementSibling;
-        const card = body.querySelector('.card-group');
-        updateAccDot(header, card);
-      }
-    }
-  });
-}
+// ===== WIZARD NAVIGATION =====
+function wizGoTo(step){
+  const old = document.querySelector('.wiz-step.active');
+  const next = document.querySelector(`.wiz-step[data-step="${step}"]`);
+  if(!next) return;
 
-function updateAccDot(header, card){
-  const inputs = card.querySelectorAll('input[type="number"]');
-  let filled = 0;
-  inputs.forEach(inp => { if(inp.value && inp.value.trim()!=='') filled++; });
-  const dot = header.querySelector('.acc-dot');
-  if(!dot) return;
-  if(filled === inputs.length && inputs.length > 0) dot.classList.add('done');
-  else dot.classList.remove('done');
-}
-
-// ===== CITY PRESETS =====
-const cityPresets = {
-  beijing: {
-    pensionMin: 15, medicalMin: 25,
-    penSelf: 1265, medSelf: 520,
-    label: '北京（养老15年·医保终身男25/女20）'
-  },
-  shanghai: {
-    pensionMin: 15, medicalMin: 15,
-    penSelf: 1400, medSelf: 580,
-    label: '上海（养老15年·医保终身15年）'
-  },
-  guangzhou: {
-    pensionMin: 15, medicalMin: 25,
-    penSelf: 1100, medSelf: 450,
-    label: '广州（养老15年·医保终身男25/女20）'
-  },
-  shenzhen: {
-    pensionMin: 15, medicalMin: 25,
-    penSelf: 1000, medSelf: 420,
-    label: '深圳（养老15年·医保终身男25/女20）'
-  },
-  other: {
-    pensionMin: 15, medicalMin: 25,
-    penSelf: 0, medSelf: 0,
-    label: '其他（手动填写）'
+  if(old && old !== next){
+    old.classList.add('exit-left');
+    setTimeout(() => { old.classList.remove('active','exit-left'); }, 300);
   }
+  setTimeout(() => {
+    next.classList.add('active');
+    wizStep = step;
+    updateWizNav();
+  }, old && old !== next ? 150 : 0);
+
+  const pct = ((step+1)/WIZ_TOTAL*100).toFixed(0);
+  document.getElementById('wizBarFill').style.width = pct+'%';
+  document.getElementById('wizCount').textContent = (step+1)+'/'+WIZ_TOTAL;
+  document.getElementById('phone').scrollTop = 0;
+}
+
+function wizNext(){
+  if(wizStep < WIZ_TOTAL-1) wizGoTo(wizStep+1);
+}
+function wizPrev(){
+  if(wizStep > 0) wizGoTo(wizStep-1);
+}
+function wizFinish(){
+  recalc();
+  switchTab('dashboard', document.querySelector('.tab-item'));
+}
+function updateWizNav(){
+  document.getElementById('wizBack').style.display = wizStep===0 ? 'none' : '';
+  document.getElementById('wizNext').style.display = wizStep===WIZ_TOTAL-1 ? 'none' : '';
+  document.getElementById('wizDone').style.display = wizStep===WIZ_TOTAL-1 ? '' : 'none';
+}
+
+// ===== GENDER =====
+function setWizGender(g, btn){
+  gender = g;
+  document.querySelectorAll('#wizGender .wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('medicalMin').value = g==='female' ? '20' : '25';
+  recalc();
+}
+
+// ===== SS STRATEGY =====
+function setSSStrategy(s, btn){
+  ssStrategy = s;
+  document.querySelectorAll('#wizSSStrategy .wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const hint = document.getElementById('wizSSHint');
+  hint.textContent = s==='min' ? '达标后不再自缴社保，省下的钱就是安全垫' : '一直缴到60岁退休，养老金领得更多。每月固定支出多一份';
+  recalc();
+}
+
+// ===== WIZARD QUICK FILLS =====
+function setWizVal(fieldId, val, btn){
+  document.getElementById(fieldId).value = val;
+  // Also sync medicalYears with pensionYears
+  if(fieldId==='pensionYears') document.getElementById('medicalYears').value = val;
+  if(btn) btn.parentElement.querySelectorAll('.wiz-chip').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  recalc();
+}
+function setWizActive(btn){
+  btn.parentElement.querySelectorAll('.wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setWizHouseType(type, btn){
+  houseTypeCur = type;
+  document.querySelectorAll('#wizHouseType .wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('wizHouseRent').style.display = type==='rent'?'block':'none';
+  document.getElementById('wizHouseMortgage').style.display = type==='mortgage'?'block':'none';
+  document.getElementById('wizHouseNone').style.display = type==='none'?'block':'none';
+  recalc();
+}
+
+function setWizChild(plan, btn){
+  childPlan = plan;
+  document.querySelectorAll('#wizChild .wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('wizChildCost').style.display = plan==='one'?'block':'none';
+  recalc();
+}
+
+function fillQuickExpenses(total){
+  // Smart split: housing already filled separately, split remainder among categories
+  const housing = houseTypeCur==='rent' ? (val('expRent')) : (houseTypeCur==='mortgage' ? val('expMortgage')+val('expProperty') : val('expProperty2'));
+  const remaining = Math.max(total - housing, 0);
+  const ratios = { food: 0.35, transport: 0.1, pet: 0.1, entertain: 0.15, insurance: 0.1, other: 0.2 };
+  document.getElementById('expFood').value = Math.round(remaining*ratios.food);
+  document.getElementById('expTransport').value = Math.round(remaining*ratios.transport);
+  document.getElementById('expPet').value = Math.round(remaining*ratios.pet);
+  document.getElementById('expEntertain').value = Math.round(remaining*ratios.entertain);
+  document.getElementById('expInsurance').value = Math.round(remaining*ratios.insurance);
+  document.getElementById('expOther').value = Math.round(remaining*ratios.other);
+  // Sync wizard fields
+  syncWizToHidden('expFood','wizFood'); syncWizToHidden('expTransport','wizTransport');
+  syncWizToHidden('expPet','wizPet'); syncWizToHidden('expEntertain','wizEntertain');
+  syncWizToHidden('expInsurance','wizInsurance'); syncWizToHidden('expOther','wizOther');
+  recalc();
+}
+
+function fillQuickMinExp(ratio){
+  ['expRent','expFood','expTransport','expPet','expEntertain','expInsurance','expOther'].forEach(id=>{
+    const v = val(id);
+    const qId = 'expQ' + id.charAt(3).toUpperCase() + id.slice(4);
+    // For housing, map to expQRent
+    let targetId;
+    if(id==='expRent') targetId='expQRent';
+    else targetId=qId;
+    const el = document.getElementById(targetId);
+    if(el) el.value = Math.round(v * ratio);
+  });
+  // Sync wiz fields
+  syncWizToHidden('expQRent','wizQHouse');
+  syncWizToHidden('expQFood','wizQFood'); syncWizToHidden('expQTransport','wizQTransport');
+  syncWizToHidden('expQPet','wizQPet'); syncWizToHidden('expQEntertain','wizQEntertain');
+  syncWizToHidden('expQInsurance','wizQInsurance'); syncWizToHidden('expQOther','wizQOther');
+  recalc();
+}
+
+function fillQuickAssets(total){
+  const half = Math.round(total/2);
+  document.getElementById('assetCash').value = Math.round(total*0.2);
+  document.getElementById('assetDeposit').value = Math.round(total*0.4);
+  document.getElementById('assetFund').value = Math.round(total*0.2);
+  document.getElementById('assetStock').value = Math.round(total*0.2);
+  syncWizToHidden('assetCash','wizCash'); syncWizToHidden('assetDeposit','wizDep');
+  syncWizToHidden('assetFund','wizFund'); syncWizToHidden('assetStock','wizStock');
+  recalc();
+}
+
+function syncWizToHidden(hiddenId, wizId){
+  const h = document.getElementById(hiddenId);
+  const w = document.getElementById(wizId);
+  if(h && w && h.value) w.value = h.value;
+}
+
+// Update wizard subtotals in render
+const origRender = render;
+render = function(d){
+  origRender(d);
+  if(!d) return;
+  // Update wizard summaries
+  const nowSub = d.cm - (houseTypeCur==='rent'?val('expRent'):(houseTypeCur==='mortgage'?val('expMortgage')+val('expProperty'):val('expProperty2')));
+  document.getElementById('wizNowSubtotal').textContent = nowSub.toFixed(0)+' 元';
+  document.getElementById('wizMinSubtotal').textContent = d.qm.toFixed(0)+' 元';
+  document.getElementById('wizAssetTotal').textContent = (d.assets/10000).toFixed(0)+' 万元';
+  document.getElementById('totalNowExp').textContent = d.cm.toFixed(0)+' 元';
+  document.getElementById('totalQuitExp').textContent = d.qm.toFixed(0)+' 元';
+  document.getElementById('totalAssets').textContent = (d.assets/10000).toFixed(0)+' 万元';
+  document.getElementById('totalSSSelfPay').textContent = fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）';
+};
+
+// ===== CITY PRESETS (keep for wizard) =====
+const cityPresets = {
+  beijing: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:1265, medSelf:520, label:'北京' },
+  shanghai: { pensionMin:15, medicalMin:15, penSelf:1400, medSelf:580, label:'上海' },
+  guangzhou: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:1100, medSelf:450, label:'广州' },
+  shenzhen: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:1000, medSelf:420, label:'深圳' },
+  other: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:0, medSelf:0, label:'其他' }
 };
 
 function applyCityPreset(city){
@@ -953,18 +1245,9 @@ function applyCityPreset(city){
   if(!p) return;
   document.getElementById('pensionMin').value = p.pensionMin;
   document.getElementById('medicalMin').value = p.medicalMin;
-  if(p.penSelf > 0) document.getElementById('pensionSelfPay').value = p.penSelf;
-  if(p.medSelf > 0) document.getElementById('medicalSelfPay').value = p.medSelf;
-  // Show toast
-  showVoiceToast('✅ 已应用 ' + p.label);
-  setTimeout(() => hideVoiceToast(), 2500);
+  if(p.penSelf>0) document.getElementById('pensionSelfPay').value = p.penSelf;
+  if(p.medSelf>0) document.getElementById('medicalSelfPay').value = p.medSelf;
   recalc();
-  // Expand the SS section
-  const ssCard = document.getElementById('pensionMin').closest('.acc-body');
-  if(ssCard && !ssCard.classList.contains('open')){
-    ssCard.classList.add('open');
-    ssCard.previousElementSibling.classList.add('open');
-  }
 }
 
 // ===== VOICE INPUT =====
@@ -1092,21 +1375,41 @@ function parseVoiceText(text){
 
   if(filled > 0){
     recalc();
-    // Expand filled sections
-    document.querySelectorAll('.acc-body').forEach(b => {
-      const inputs = b.querySelectorAll('input');
-      let hasFilled = false;
-      inputs.forEach(inp => { if(inp.value && inp.value.trim()!=='') hasFilled = true; });
-      if(hasFilled) { b.classList.add('open'); b.previousElementSibling.classList.add('open'); }
-    });
+    // Show success and advance wizard to last step?
   }
   return filled;
 }
 
 // ===== INIT =====
-initAccordion();
+wizGoTo(0);
 initVoice();
 loadState();
+// Sync hidden → wizard fields
+['birthYear','pensionYears','incomePost','expRent','expMortgage','mortgageYearsLeft','expProperty','expProperty2',
+ 'expFood','expTransport','expPet','expEntertain','expInsurance','expOther',
+ 'expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2',
+ 'expQFood','expQTransport','expQPet','expQEntertain','expQInsurance','expQOther',
+ 'assetCash','assetDeposit','assetFund','assetStock','childCost'].forEach(id=>{
+  const h = document.getElementById(id);
+  const wMap = {
+    birthYear:'wizBirth', pensionYears:'wizPensionY', incomePost:'wizIncome',
+    expRent:'wizRent', expMortgage:'wizMtg', mortgageYearsLeft:'wizMtgYrs',
+    expProperty:'wizProp', expProperty2:'wizProp2',
+    expFood:'wizFood', expTransport:'wizTransport', expPet:'wizPet',
+    expEntertain:'wizEntertain', expInsurance:'wizInsurance', expOther:'wizOther',
+    expQRent:'wizQHouse', expQFood:'wizQFood', expQTransport:'wizQTransport',
+    expQPet:'wizQPet', expQEntertain:'wizQEntertain', expQInsurance:'wizQInsurance', expQOther:'wizQOther',
+    assetCash:'wizCash', assetDeposit:'wizDep', assetFund:'wizFund', assetStock:'wizStock', childCost:'wizCC'
+  };
+  const wId = wMap[id];
+  if(h && h.value && wId){ const w = document.getElementById(wId); if(w) w.value = h.value; }
+});
+// Restore toggle positions
+if(gender){ const gBtn = document.querySelector(gender==='female'?'#wizGender .wiz-chip:last-child':'#wizGender .wiz-chip:first-child'); if(gBtn) gBtn.classList.add('active'); }
+if(ssStrategy==='retire'){
+  const rBtn = document.querySelector('#wizSSStrategy .wiz-chip:last-child');
+  if(rBtn){ rBtn.classList.add('active'); document.getElementById('wizSSHint').textContent = '一直缴到60岁退休，养老金领得更多。每月固定支出多一份'; }
+}
 recalc();
 </script>
 </body>
