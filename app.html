@@ -351,12 +351,14 @@ td.wn { color: var(--orange); font-weight: 600; }
 }
 .sum-item .si-val { font-size: 20px; font-weight: 900; }
 .sum-item .si-lbl { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+#bodyModal.show { display: flex !important; }
 </style>
 </head>
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v0.9.7</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v0.9.9</span></span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
@@ -430,6 +432,60 @@ td.wn { color: var(--orange); font-weight: 600; }
       </div>
       <div style="height:20px;"></div>
     </div>
+  </div>
+
+  <!-- ===== BODY WEIGHT ===== -->
+  <div class="scroll-section" id="sec-body">
+    <div class="app-header">
+      <div class="greeting">⚖️ 体重管理</div>
+      <div class="subtitle">追踪你的身体数据变化</div>
+    </div>
+
+    <!-- 指标卡 -->
+    <div class="mini-grid">
+      <div class="mini-card mc-blue">
+        <div class="mc-emoji">⚖️</div><div class="mc-value" id="bodyWeightVal">--</div>
+        <div class="mc-label">最新体重</div><div class="mc-sub" id="bodyWeightDate">--</div>
+      </div>
+      <div class="mini-card mc-green">
+        <div class="mc-emoji">📉</div><div class="mc-value" id="bodyFatVal">--</div>
+        <div class="mc-label">体脂率</div><div class="mc-sub" id="bodyBMIShow">--</div>
+      </div>
+    </div>
+
+    <!-- 目标进度 -->
+    <div class="chart-card" style="margin: 0 12px 12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:700;">🎯 目标体重</span>
+        <span id="bodyTargetShow">未设置</span>
+      </div>
+      <div style="height:8px;background:#e5e5ea;border-radius:4px;overflow:hidden;">
+        <div id="bodyTargetBar" style="height:100%;background:#34c759;border-radius:4px;width:0%;transition:width 0.5s;"></div>
+      </div>
+      <div style="font-size:11px;color:#8e8e93;margin-top:6px;" id="bodyTargetText">先设置目标体重吧</div>
+      <div style="margin-top:8px;display:flex;gap:8px;">
+        <input type="number" id="bodyTargetInput" placeholder="目标体重kg" style="flex:1;padding:8px;border:1.5px solid #e5e5ea;border-radius:8px;font-size:14px;" onchange="setBodyTarget()">
+      </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div style="margin: 0 12px 12px;display:flex;gap:8px;">
+      <button onclick="openBodyModal()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#007aff;color:#fff;font-size:14px;font-weight:700;">✏️ 记录数据</button>
+      <button onclick="importBodyCSV()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#fff;color:#1c1c1e;font-size:14px;font-weight:700;">📥 导入CSV</button>
+    </div>
+
+    <!-- 体重趋势图 -->
+    <div class="chart-card">
+      <h3>📈 体重趋势</h3>
+      <div class="chart-wrap"><canvas id="chartBodyWeight"></canvas></div>
+    </div>
+
+    <!-- 历史记录 -->
+    <div class="chart-card">
+      <h3>📋 最近记录</h3>
+      <div id="bodyHistoryList" style="font-size:13px;color:#8e8e93;text-align:center;padding:16px 0;">暂无数据，点击上方按钮记录</div>
+    </div>
+    <div style="height:20px;"></div>
   </div>
 
   <!-- ===== INPUTS ===== -->
@@ -724,6 +780,24 @@ td.wn { color: var(--orange); font-weight: 600; }
   <div class="tab-bar">
     <button class="tab-item active" onclick="switchTab('dashboard', this)"><span class="tab-icon">📊</span><span class="tab-text">仪表盘</span></button>
     <button class="tab-item" onclick="switchTab('inputs', this)"><span class="tab-icon">⚙️</span><span class="tab-text">参数</span></button>
+    <button class="tab-item" onclick="switchTab('body', this)">
+      <span class="tab-icon">⚖️</span>
+      <span class="tab-text">体重</span>
+    </button>
+  </div>
+
+  <!-- Body Record Modal -->
+  <div id="bodyModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:200;align-items:flex-end;justify-content:center;">
+    <div style="width:100%;max-width:430px;background:#fff;border-radius:20px 20px 0 0;padding:24px 16px 32px;">
+      <h3 style="text-align:center;margin-bottom:16px;">记录身体数据</h3>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="width:60px;font-size:14px;color:#8e8e93;">日期</span><input type="date" id="bodyRecDate" style="flex:1;padding:8px;border:1.5px solid #e5e5ea;border-radius:8px;"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="width:60px;font-size:14px;color:#8e8e93;">体重</span><input type="number" id="bodyRecWeight" placeholder="kg" step="0.1" style="flex:1;padding:8px;border:1.5px solid #e5e5ea;border-radius:8px;"><span>kg</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="width:60px;font-size:14px;color:#8e8e93;">体脂率</span><input type="number" id="bodyRecFat" placeholder="%" step="0.1" style="flex:1;padding:8px;border:1.5px solid #e5e5ea;border-radius:8px;"><span>%</span></div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button onclick="closeBodyModal()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#f2f2f7;font-size:14px;font-weight:600;">取消</button>
+        <button onclick="saveBodyRecord()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#007aff;color:#fff;font-size:14px;font-weight:600;">保存</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1594,6 +1668,142 @@ if(ssStrategy==='retire'){
   const rBtn = document.querySelector('#wizSSStrategy .wiz-chip:last-child');
   if(rBtn){ rBtn.classList.add('active'); document.getElementById('wizSSHint').textContent = '一直缴到60岁退休，养老金领得更多。每月固定支出多一份'; }
 }
+
+// ===== BODY WEIGHT MANAGEMENT =====
+let bodyRecords = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+if(!Array.isArray(bodyRecords)) bodyRecords = [];
+bodyRecords.sort((a,b)=>a.date.localeCompare(b.date));
+let bodyTarget = parseFloat(localStorage.getItem('shoreos_body_target')) || 0;
+let chartBW = null;
+
+function saveBodyData(){ localStorage.setItem('shoreos_body', JSON.stringify(bodyRecords)); }
+function setBodyTarget(){
+  bodyTarget = parseFloat(document.getElementById('bodyTargetInput').value) || 0;
+  localStorage.setItem('shoreos_body_target', bodyTarget);
+  renderBodyPage();
+}
+
+function openBodyModal(){
+  document.getElementById('bodyRecDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('bodyModal').style.display = 'flex';
+}
+function closeBodyModal(){ document.getElementById('bodyModal').style.display = 'none'; }
+
+function saveBodyRecord(){
+  const date = document.getElementById('bodyRecDate').value;
+  const weight = parseFloat(document.getElementById('bodyRecWeight').value);
+  const fat = parseFloat(document.getElementById('bodyRecFat').value) || 0;
+  if(!date || !weight){ alert('请填写日期和体重'); return; }
+  const idx = bodyRecords.findIndex(r=>r.date===date);
+  const entry = { date, weight, fat };
+  if(idx >= 0) bodyRecords[idx] = entry; else bodyRecords.push(entry);
+  bodyRecords.sort((a,b)=>a.date.localeCompare(b.date));
+  saveBodyData();
+  closeBodyModal();
+  renderBodyPage();
+}
+
+function importBodyCSV(){
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.csv';
+  input.onchange = function(e){
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const lines = ev.target.result.split('\n');
+      let imported = 0;
+      lines.forEach(line => {
+        const cols = line.split(',');
+        const date = cols[0]?.trim();
+        const weight = parseFloat(cols[1]);
+        if(date && !isNaN(weight) && weight>20 && weight<300){
+          const fat = parseFloat(cols[2])||0;
+          const idx = bodyRecords.findIndex(r=>r.date===date);
+          if(idx>=0) bodyRecords[idx]={date,weight,fat};
+          else bodyRecords.push({date,weight,fat});
+          imported++;
+        }
+      });
+      bodyRecords.sort((a,b)=>a.date.localeCompare(b.date));
+      saveBodyData();
+      renderBodyPage();
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function renderBodyPage(){
+  // Metrics
+  if(bodyRecords.length === 0){
+    document.getElementById('bodyWeightVal').textContent = '--';
+    document.getElementById('bodyWeightDate').textContent = '暂无';
+    document.getElementById('bodyFatVal').textContent = '--';
+    document.getElementById('bodyBMIShow').textContent = '--';
+    document.getElementById('bodyTargetShow').textContent = '未设置';
+    document.getElementById('bodyTargetBar').style.width = '0%';
+    document.getElementById('bodyTargetText').textContent = '先设置目标体重吧';
+    document.getElementById('bodyHistoryList').innerHTML = '<div style="padding:16px;text-align:center;color:#8e8e93;">暂无数据，点击上方按钮记录</div>';
+    return;
+  }
+  const latest = bodyRecords[bodyRecords.length-1];
+  document.getElementById('bodyWeightVal').textContent = latest.weight.toFixed(1);
+  document.getElementById('bodyWeightDate').textContent = latest.date;
+  document.getElementById('bodyFatVal').textContent = latest.fat>0?(latest.fat.toFixed(1)+'%'):'--';
+  const bmi = (latest.weight / 1.75 / 1.75).toFixed(1);
+  document.getElementById('bodyBMIShow').textContent = 'BMI '+bmi;
+
+  // Target
+  if(bodyTarget > 0){
+    document.getElementById('bodyTargetShow').textContent = bodyTarget.toFixed(0)+'kg';
+    document.getElementById('bodyTargetInput').value = bodyTarget;
+    const startW = bodyRecords[0].weight;
+    const curW = latest.weight;
+    const totalDiff = Math.abs(startW - bodyTarget);
+    if(totalDiff > 0){
+      const pct = Math.min(((startW - curW) / (startW - bodyTarget) * 100), 100);
+      document.getElementById('bodyTargetBar').style.width = Math.max(0, pct).toFixed(0)+'%';
+      document.getElementById('bodyTargetText').textContent = curW <= bodyTarget ? '🎉 已达成目标！' : `还差 ${(curW-bodyTarget).toFixed(1)}kg · 进度 ${Math.max(0,pct).toFixed(0)}%`;
+    }
+  }
+
+  // Chart
+  if(chartBW) chartBW.destroy();
+  const ctx = document.getElementById('chartBodyWeight');
+  if(!ctx) return;
+  chartBW = new Chart(ctx.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: bodyRecords.slice(-30).map(r=>r.date.slice(5)),
+      datasets: [
+        { label:'体重(kg)', data: bodyRecords.slice(-30).map(r=>r.weight), borderColor:'#007aff', tension:0.3, fill:false, pointRadius:2 },
+        { label:'体脂(%)', data: bodyRecords.slice(-30).map(r=>r.fat||null), borderColor:'#ff9500', tension:0.3, fill:false, pointRadius:2, borderDash:[4,3] }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ usePointStyle:true,boxWidth:6,padding:12,font:{size:10},color:'#666' } } },
+      scales:{
+        x:{ ticks:{ color:'#999',font:{size:9} }, grid:{ color:'#f2f2f7' } },
+        y:{ ticks:{ color:'#999',font:{size:9} }, grid:{ color:'#f2f2f7' } }
+      }
+    }
+  });
+
+  // History
+  const hist = document.getElementById('bodyHistoryList');
+  hist.innerHTML = bodyRecords.slice(-10).reverse().map(r =>
+    `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f5f7;font-size:12px;"><span>${r.date}</span><span style="font-weight:600;">${r.weight.toFixed(1)}kg</span><span>${r.fat>0?r.fat.toFixed(1)+'%':''}</span></div>`
+  ).join('');
+}
+
+// Ensure switchTab also renders body page
+const origSwitchTab = switchTab;
+switchTab = function(tab, btn){
+  origSwitchTab(tab, btn);
+  if(tab === 'body') renderBodyPage();
+};
+
 recalc();
 </script>
 </body>
