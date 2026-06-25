@@ -250,12 +250,33 @@ td.wn { color: var(--orange); font-weight: 600; }
       </div>
       <div class="card-row">
         <span class="row-icon">🛡️</span><span class="row-label">已缴养老保险</span>
-        <span class="row-input"><input type="number" id="ssYears" step="0.5" placeholder="已缴几年" onchange="recalc()"></span>
+        <span class="row-input"><input type="number" id="pensionYears" step="0.5" placeholder="已缴几年" onchange="recalc()"></span>
         <span class="row-unit">年</span>
       </div>
       <div class="card-row">
-        <span class="row-icon">🏛️</span><span class="row-label">若不再工作自缴社保</span>
-        <span class="row-input"><input type="number" id="ssSelfPay" placeholder="灵活就业月缴" onchange="recalc()"></span>
+        <span class="row-icon">🏥</span><span class="row-label">已缴医疗保险</span>
+        <span class="row-input"><input type="number" id="medicalYears" step="0.5" placeholder="通常同养老" onchange="recalc()"></span>
+        <span class="row-unit">年</span>
+      </div>
+      <div class="note-row"><span>💡</span><span>养老最低通常15年，医保终身通常男25/女20年，各省市不同。达标后不需再缴，退休仍可享受。</span></div>
+      <div class="card-row">
+        <span class="row-icon">🎯</span><span class="row-label">养老最低缴费年限</span>
+        <span class="row-input"><input type="number" id="pensionMin" value="15" placeholder="默认15" onchange="recalc()"></span>
+        <span class="row-unit">年</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">🏥</span><span class="row-label">医保终身年限</span>
+        <span class="row-input"><input type="number" id="medicalMin" value="25" placeholder="男25/女20" onchange="recalc()"></span>
+        <span class="row-unit">年</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">💰</span><span class="row-label">自缴养老（灵活就业）</span>
+        <span class="row-input"><input type="number" id="pensionSelfPay" placeholder="月缴" onchange="recalc()"></span>
+        <span class="row-unit">元/月</span>
+      </div>
+      <div class="card-row">
+        <span class="row-icon">💊</span><span class="row-label">自缴医保（灵活就业）</span>
+        <span class="row-input"><input type="number" id="medicalSelfPay" placeholder="月缴" onchange="recalc()"></span>
         <span class="row-unit">元/月</span>
       </div>
     </div>
@@ -333,7 +354,7 @@ td.wn { color: var(--orange); font-weight: 600; }
       <div class="card-row"><span class="row-icon">🐾</span><span class="row-label">宠物</span><span class="row-input"><input type="number" id="expQPet" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
       <div class="card-row"><span class="row-icon">🎮</span><span class="row-label">娱乐</span><span class="row-input"><input type="number" id="expQEntertain" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
       <div class="card-row"><span class="row-icon">🩺</span><span class="row-label">医疗/保险</span><span class="row-input"><input type="number" id="expQInsurance" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
-      <div class="card-row"><span class="row-icon">🏛️</span><span class="row-label">自缴社保</span><span class="row-input"><input type="number" id="expQSS" placeholder="灵活就业" onchange="recalc()"></span><span class="row-unit">元</span></div>
+      <div class="summary-row"><span>自缴社保</span><b id="totalSSSelfPay">--</b></div>
       <div class="card-row"><span class="row-icon">📦</span><span class="row-label">其他</span><span class="row-input"><input type="number" id="expQOther" placeholder="月均" onchange="recalc()"></span><span class="row-unit">元</span></div>
       <div class="summary-row"><span>月合计</span><b id="totalQuitExp">--</b></div>
     </div>
@@ -380,11 +401,11 @@ let houseTypeCur = 'rent', houseTypeMin = 'rent', childPlan = 'none';
 
 // ===== STORAGE =====
 const PREFIX = 'shoreos_v05_';
-const FIELD_IDS = ['birthYear','currentYear','ssYears','ssSelfPay','incomePost',
+const FIELD_IDS = ['birthYear','currentYear','pensionYears','medicalYears','pensionMin','medicalMin','pensionSelfPay','medicalSelfPay','incomePost',
   'expRent','expMortgage','mortgageYearsLeft','expProperty','expProperty2',
   'expFood','expTransport','expPet','expEntertain','expInsurance','expOther',
   'expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2',
-  'expQFood','expQTransport','expQPet','expQEntertain','expQInsurance','expQSS','expQOther',
+  'expQFood','expQTransport','expQPet','expQEntertain','expQInsurance','expQOther',
   'assetCash','assetDeposit','assetFund','assetStock','assetPension','assetReturn',
   'childCost'];
 
@@ -485,13 +506,41 @@ function getMortgageYears(section){
 function calcAll(){
   const birth=val('birthYear'), now=val('currentYear'), age=now-birth;
   if(age<=0||age>120) return null;
-  const ssY=val('ssYears'), ssSelf=val('ssSelfPay');
+
+  // Social security: pension + medical, two tracks
+  const penY=val('pensionYears'), medY=val('medicalYears');
+  const penMin=val('pensionMin')||15, medMin=val('medicalMin')||25;
+  const penSelf=val('pensionSelfPay'), medSelf=val('medicalSelfPay');
+
+  // Effective self-pay now: what you'd pay monthly if you quit today
+  let ssSelfNow = 0;
+  if(penY < penMin) ssSelfNow += penSelf;
+  if(medY < medMin) ssSelfNow += medSelf;
+  // But if penY>=penMin && medY<medMin, only pay medical
+
+  // Calculate total self-pay cost from now until both minimums met
+  // Stage 1: pay both until penMin reached (if pen needed)
+  // Stage 2: pay only medical until medMin reached (if med needed)
+  let ssTotalCost = 0;
+  let penRemain = Math.max(penMin - penY, 0);
+  let medRemain = Math.max(medMin - medY, 0);
+  const stage1Years = Math.min(penRemain, medRemain); // years paying both
+  ssTotalCost += stage1Years * (penSelf + medSelf) * 12;
+  penRemain -= stage1Years; medRemain -= stage1Years;
+  if(medRemain > 0) ssTotalCost += medRemain * medSelf * 12; // only medical remains
+  // penRemain should be 0 now since we paid both in stage 1
+
+  // For the monthly expense calculation (post-quit)
+  // The effective monthly self-pay for the FIRST year after quitting
+  // This is what goes into the "最低生活开销" monthly total
+  const ssMonthlyEffective = ssSelfNow;
   const income=val('incomePost')*10000;
   // Current monthly
   const cm = getHouseCost('cur') + val('expFood')+val('expTransport')+val('expPet')+val('expEntertain')+val('expInsurance')+val('expOther');
   const ca=cm*12;
-  // Min monthly
-  const qm = getHouseCost('min') + val('expQFood')+val('expQTransport')+val('expQPet')+val('expQEntertain')+val('expQInsurance')+val('expQSS')+val('expQOther');
+  // Min monthly (base expenses + effective SS self-pay)
+  const qmBase = getHouseCost('min') + val('expQFood')+val('expQTransport')+val('expQPet')+val('expQEntertain')+val('expQInsurance')+val('expQOther');
+  const qm = qmBase + ssMonthlyEffective;
   const qa=qm*12;
 
   const assets=(val('assetCash')+val('assetDeposit')+val('assetFund')+val('assetStock')+val('assetPension'))*10000;
@@ -519,9 +568,9 @@ function calcAll(){
   const qYears = eQA>0 ? eAssets/eQA : 999;
   const qMonths = qYears*12;
 
-  const to15=Math.max(15-ssY,0), to25=Math.max(25-ssY,0);
-  const age15=to15>0?age+to15:age, age25=to25>0?age+to25:age;
-  const selfPayTotal = Math.max(60-age,0)*ssSelf*12;
+  const penToMin=Math.max(penMin-penY,0), medToMin=Math.max(medMin-medY,0);
+  const agePenMin=penToMin>0?age+penToMin:age;
+  const ageMedMin=medToMin>0?age+medToMin:age;
   const gap = Math.max(fire-investableAssets, 0);
   const ytf = eSave>0 ? gap/eSave : 999;
   const fireYear = ytf<100 ? Math.round(now+ytf) : null;
@@ -533,39 +582,63 @@ function calcAll(){
   for(const ta of ages2){
     const wy=ta-age; let a=eAssets;
     for(let i=0;i<wy;i++) a=a*(1+ret)+eSave;
-    const sAt=ssY+wy, surv=eQA>0?a/eQA:999, fiAt=fire>0?Math.min((a-mgPrincipalQ)/fire*100,100):0;
-    sc.push({label:ta===age?'现在就不工作':`坚持到${ta}岁`,age:ta,assets:a,survival:surv,ss:sAt,fi:fiAt,ok:fiAt>=100});
+    const penAt=penY+wy, medAt=medY+wy;
+    const surv=eQA>0?a/eQA:999, fiAt=fire>0?Math.min((a-mgPrincipalQ)/fire*100,100):0;
+    sc.push({label:ta===age?'现在就不工作':`坚持到${ta}岁`,age:ta,assets:a,survival:surv,pen:penAt,med:medAt,fi:fiAt,ok:fiAt>=100});
   }
 
-  // Chart projections
+  // Chart projections — include staged SS self-pay
+  // Helper: annual expense at year N after quitting (SS drops in stages)
+  function annualExpAtYear(yearIdx){
+    let exp = eQA - ssMonthlyEffective*12; // base expenses without SS
+    const pRem = Math.max(penMin - penY, 0);
+    const mRem = Math.max(medMin - medY, 0);
+    // Both active until min(pRem, mRem)
+    if(yearIdx < Math.min(pRem, mRem)) exp += (penSelf + medSelf)*12;
+    else if(yearIdx < mRem) exp += medSelf*12;
+    // After both minimums met: exp stays at base (no SS self-pay)
+    return exp;
+  }
+
   const labels=[],cw=[],qn=[],q35=[],q40=[];
   for(let y=0;y<=35;y++){
     labels.push((age+y)+'岁');
     let aw=eAssets; for(let i=0;i<y;i++) aw=aw*(1+ret)+eSave; cw.push(aw/10000);
-    // Quit now: after mortgage years, expense drops
+    // Quit now
     let aq=eAssets;
     for(let i=0;i<y;i++){
-      const expY = i<mgYearsQ ? eQA : (eQA - mgMonthlyQ*12);
+      let expY = annualExpAtYear(i);
+      if(i<mgYearsQ) expY += mgMonthlyQ*12; // mortgage still active
       aq = aq*(1+ret) - expY;
     }
     qn.push(Math.max(aq/10000,0));
+    // Quit at 35
     const w35=Math.max(35-age,0); let a35=eAssets;
     for(let i=0;i<y;i++){
       if(i<w35) a35=a35*(1+ret)+eSave;
-      else { const expY=i-w35<mgYearsQ?eQA:(eQA-mgMonthlyQ*12); a35=a35*(1+ret)-expY; }
+      else {
+        let expY = annualExpAtYear(i-w35);
+        if(i-w35<mgYearsQ) expY += mgMonthlyQ*12;
+        a35 = a35*(1+ret) - expY;
+      }
     }
     q35.push(Math.max(a35/10000,0));
+    // Quit at 40
     const w40=Math.max(40-age,0); let a40=eAssets;
     for(let i=0;i<y;i++){
       if(i<w40) a40=a40*(1+ret)+eSave;
-      else { const expY=i-w40<mgYearsQ?eQA:(eQA-mgMonthlyQ*12); a40=a40*(1+ret)-expY; }
+      else {
+        let expY = annualExpAtYear(i-w40);
+        if(i-w40<mgYearsQ) expY += mgMonthlyQ*12;
+        a40 = a40*(1+ret) - expY;
+      }
     }
     q40.push(Math.max(a40/10000,0));
   }
 
   const pY=[1,2,3,5,8,10], sLbl=pY.map(y=>'多干'+y+'年'), sMo=pY.map(y=>eSave*y/eQA*12);
 
-  return {age,ssY,to15,to25,age15,age25,income,cm,ca,eCA,qm,qa,eQA,assets,eAssets,investableAssets,eSave,fire,fi,gap,ytf,fireYear,qYears,qMonths,ret,selfPayTotal,perYearMo,mgPrincipalQ,mgMonthlyQ,mgYearsQ,sc,labels,cw,qn,q35,q40,sLbl,sMo};
+  return {age,penY,medY,penMin,medMin,penSelf,medSelf,penToMin,medToMin,agePenMin,ageMedMin,ssTotalCost,ssSelfNow,income,cm,ca,eCA,qm,qmBase,qa,eQA,assets,eAssets,investableAssets,eSave,fire,fi,gap,ytf,fireYear,qYears,qMonths,ret,perYearMo,mgPrincipalQ,mgMonthlyQ,mgYearsQ,sc,labels,cw,qn,q35,q40,sLbl,sMo};
 }
 
 // ===== RENDER =====
@@ -575,6 +648,7 @@ function render(d){
   document.getElementById('totalNowExp').textContent = d ? d.cm.toFixed(0)+' 元' : '--';
   document.getElementById('totalQuitExp').textContent = d ? d.qm.toFixed(0)+' 元' : '--';
   document.getElementById('totalAssets').textContent = d ? (d.assets/10000).toFixed(0)+' 万元' : '--';
+  document.getElementById('totalSSSelfPay').textContent = d ? fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）' : '--';
 
   const hasData = hasAnyData();
 
@@ -595,8 +669,13 @@ function render(d){
   // Mini cards
   document.getElementById('mcSave').textContent = fmtW(d.eSave);
   document.getElementById('mcSaveSub').textContent = d.eSave>0 ? '≈'+d.perYearMo.toFixed(1)+'个月最低生活': '--';
-  document.getElementById('mcSS').textContent = d.to15>0?d.to15.toFixed(1)+'年':'✅ 达标';
-  document.getElementById('mcSSSub').textContent = d.to15>0?d.age15+'岁满15年':d.age25+'岁满25年';
+  document.getElementById('mcSS').textContent = d.penToMin>0?d.penToMin.toFixed(1)+'年':'✅ 养老达标';
+  const ssStatus = [];
+  if(d.penToMin>0) ssStatus.push('养老'+d.agePenMin+'岁满'+d.penMin+'年');
+  else ssStatus.push('养老已达标');
+  if(d.medToMin>0) ssStatus.push('医保'+d.ageMedMin+'岁终身');
+  else ssStatus.push('医保已终身');
+  document.getElementById('mcSSSub').textContent = ssStatus.join(' · ');
   document.getElementById('mcQuit').textContent = d.qMonths>120?fmtY(d.qYears):fmtM(d.qMonths);
   document.getElementById('mcQuitSub').textContent = '最低月均'+fmtW(d.eQA/12);
   document.getElementById('mcGap').textContent = fmtW(d.gap);
@@ -605,7 +684,7 @@ function render(d){
   // Gauge card
   document.getElementById('giAnnual').textContent = fmtW(d.eQA)+'/年';
   document.getElementById('giPerYear').textContent = d.eSave>0 ? d.perYearMo.toFixed(1)+'个月':'--';
-  document.getElementById('giSelfPay').textContent = fmtW(d.selfPayTotal);
+  document.getElementById('giSelfPay').textContent = fmtW(d.ssTotalCost);
 
   if(gChart) gChart.destroy();
   const v=Math.min(Math.max(d.fi,0),100);
@@ -625,7 +704,12 @@ function render(d){
     const svc=s.survival>=30?'ok':s.survival>=10?'hi':'wn';
     let sd=s.survival>500?'不限':s.survival>100?'>100年':s.survival*12>36?fmtY(s.survival):fmtM(s.survival*12);
     let tag=s.ok?'<span class="pill pill-g">已自由</span>':s.fi>=75?'<span class="pill pill-o">接近</span>':'';
-    tb.innerHTML+=`<tr><td><b>${s.label}</b>${tag}</td><td>${s.age}岁</td><td class="hi">${fmtW(s.assets)}</td><td class="${svc}">${sd}</td><td>${s.ss.toFixed(1)}年</td><td class="${fic}">${fmtP(s.fi)}</td></tr>`;
+    let ssInfo = '';
+    if(s.pen>=d.penMin && s.med>=d.medMin) ssInfo = '✅ 养老医保均达标';
+    else if(s.pen>=d.penMin) ssInfo = '养老✅ · 医保'+s.med.toFixed(1)+'年';
+    else if(s.med>=d.medMin) ssInfo = '养老'+s.pen.toFixed(1)+'年 · 医保✅';
+    else ssInfo = '养老'+s.pen.toFixed(1)+' · 医保'+s.med.toFixed(1)+'年';
+    tb.innerHTML+=`<tr><td><b>${s.label}</b>${tag}</td><td>${s.age}岁</td><td class="hi">${fmtW(s.assets)}</td><td class="${svc}">${sd}</td><td>${ssInfo}</td><td class="${fic}">${fmtP(s.fi)}</td></tr>`;
   }
 
   // Charts
