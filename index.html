@@ -310,6 +310,46 @@ td.wn { color: var(--orange); font-weight: 600; }
 }
 .wiz-btn:active { transform: scale(0.95); }
 .wiz-count { font-size: 13px; color: var(--sub); font-weight: 600; }
+
+/* Year picker */
+.year-picker {
+  height: 180px; overflow-y: scroll; scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch; border: 2px solid var(--sep);
+  border-radius: var(--radius-sm); background: #fdfaf7; margin-bottom: 10px;
+  scroll-behavior: smooth;
+}
+.year-picker::-webkit-scrollbar { width: 0; }
+.year-option {
+  height: 48px; display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 600; color: #c7c7cc; scroll-snap-align: center;
+  transition: all 0.15s; cursor: pointer; user-select: none;
+}
+.year-option.selected { color: var(--text); font-size: 22px; font-weight: 800; }
+
+/* Summary page */
+.summary-card {
+  background: linear-gradient(135deg, #ff6b35, #f7931e); border-radius: var(--radius);
+  padding: 28px 22px; color: #fff; text-align: center; margin: 12px 4px;
+}
+.summary-avatar {
+  width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+  font-size: 36px;
+}
+.summary-card h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.summary-card .sum-tags { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 12px 0; }
+.summary-card .sum-tag {
+  padding: 4px 14px; border-radius: 50px; background: rgba(255,255,255,0.2);
+  font-size: 12px; font-weight: 700;
+}
+.summary-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 14px;
+}
+.sum-item {
+  background: rgba(255,255,255,0.12); padding: 12px 10px; border-radius: 8px; text-align: center;
+}
+.sum-item .si-val { font-size: 20px; font-weight: 900; }
+.sum-item .si-lbl { font-size: 10px; opacity: 0.7; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -416,20 +456,15 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="setWizGender('male',this)">👨 男</button>
               <button class="wiz-chip" onclick="setWizGender('female',this)">👩 女</button>
             </div>
-            <label class="wiz-label">出生年份</label>
+            <label class="wiz-label">出生年份（上下滑动选择）</label>
+            <div class="year-picker" id="yearPicker"></div>
+            <label class="wiz-label">工作城市（点一下自动填社保参数）</label>
             <div class="wiz-chips">
-              <button class="wiz-chip" onclick="setWizVal('birthYear','1995',this)">1995</button>
-              <button class="wiz-chip" onclick="setWizVal('birthYear','1990',this)">1990</button>
-              <button class="wiz-chip" onclick="setWizVal('birthYear','1985',this)">1985</button>
-            </div>
-            <input type="number" class="wiz-input" id="wizBirth" placeholder="或手动输入出生年份" onchange="document.getElementById('birthYear').value=this.value;recalc()">
-            <label class="wiz-label">工作城市</label>
-            <div class="wiz-chips">
-              <button class="wiz-chip" onclick="applyCityPreset('beijing');setWizActive(this)">北京</button>
-              <button class="wiz-chip" onclick="applyCityPreset('shanghai');setWizActive(this)">上海</button>
-              <button class="wiz-chip" onclick="applyCityPreset('guangzhou');setWizActive(this)">广州</button>
-              <button class="wiz-chip" onclick="applyCityPreset('shenzhen');setWizActive(this)">深圳</button>
-              <button class="wiz-chip" onclick="applyCityPreset('other');setWizActive(this)">其他</button>
+              <button class="wiz-chip" onclick="applyCityPreset('beijing');flashChip(this)">📍 北京</button>
+              <button class="wiz-chip" onclick="applyCityPreset('shanghai');flashChip(this)">📍 上海</button>
+              <button class="wiz-chip" onclick="applyCityPreset('guangzhou');flashChip(this)">📍 广州</button>
+              <button class="wiz-chip" onclick="applyCityPreset('shenzhen');flashChip(this)">📍 深圳</button>
+              <button class="wiz-chip" onclick="applyCityPreset('other');flashChip(this)">📍 其他</button>
             </div>
           </div>
         </div>
@@ -620,6 +655,26 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
+      <!-- Step 7: Summary -->
+      <div class="wiz-step" data-step="7">
+        <div class="summary-card" id="summaryCard">
+          <div class="summary-avatar" id="sumAvatar">👤</div>
+          <h2 id="sumName">你的财务画像</h2>
+          <div class="sum-tags">
+            <span class="sum-tag" id="sumAge">--</span>
+            <span class="sum-tag" id="sumCity">--</span>
+            <span class="sum-tag" id="sumGender">--</span>
+          </div>
+          <div class="summary-grid">
+            <div class="sum-item"><div class="si-val" id="sumIncome">--</div><div class="si-lbl">年收入</div></div>
+            <div class="sum-item"><div class="si-val" id="sumExpense">--</div><div class="si-lbl">月开销</div></div>
+            <div class="sum-item"><div class="si-val" id="sumAssets">--</div><div class="si-lbl">总资产</div></div>
+            <div class="sum-item"><div class="si-val" id="sumSS">--</div><div class="si-lbl">社保年限</div></div>
+          </div>
+          <p style="opacity:0.8;font-size:13px;margin-top:16px;">数据已自动保存。点下方按钮查看你的自由指数 👇</p>
+        </div>
+      </div>
+
     </div>
 
     <!-- Wizard nav -->
@@ -665,7 +720,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 // ===== STATE =====
 let houseTypeCur = 'rent', houseTypeMin = 'rent', childPlan = 'none';
 let gender = '', ssStrategy = 'min'; // 'min' = stop at minimum, 'retire' = pay until retire
-let wizStep = 0; const WIZ_TOTAL = 7;
+let wizStep = 0; const WIZ_TOTAL = 8;
 
 // ===== STORAGE =====
 const PREFIX = 'shoreos_v05_';
@@ -1108,6 +1163,71 @@ function updateWizNav(){
   document.getElementById('wizBack').style.display = wizStep===0 ? 'none' : '';
   document.getElementById('wizNext').style.display = wizStep===WIZ_TOTAL-1 ? 'none' : '';
   document.getElementById('wizDone').style.display = wizStep===WIZ_TOTAL-1 ? '' : 'none';
+  // Render summary on step 7
+  if(wizStep === WIZ_TOTAL-1) renderSummary();
+  // Init year picker on step 0
+  if(wizStep === 0) setTimeout(initYearPicker, 100);
+}
+
+// ===== YEAR PICKER =====
+function initYearPicker(){
+  const picker = document.getElementById('yearPicker');
+  if(!picker || picker.children.length > 0) return;
+  const currentYear = new Date().getFullYear();
+  const startY = 1960, endY = 2010;
+  let savedYear = document.getElementById('birthYear').value || '';
+  if(!savedYear) savedYear = '1995'; // default center
+  for(let y = endY; y >= startY; y--){
+    const div = document.createElement('div');
+    div.className = 'year-option';
+    div.textContent = y + '年';
+    div.onclick = function(){
+      document.getElementById('birthYear').value = y;
+      picker.querySelectorAll('.year-option').forEach(o=>o.classList.remove('selected'));
+      this.classList.add('selected');
+      recalc();
+    };
+    picker.appendChild(div);
+    if(String(y) === String(savedYear)) div.classList.add('selected');
+  }
+  // Scroll to selected
+  const sel = picker.querySelector('.selected');
+  if(sel) sel.scrollIntoView({ block: 'center' });
+  // Default select 1995 if none
+  if(!savedYear || savedYear===''){
+    document.getElementById('birthYear').value = '1995';
+    const d = picker.querySelector('.year-option');
+    if(d) d.classList.add('selected');
+  }
+}
+
+// ===== SUMMARY RENDER =====
+function renderSummary(){
+  const d = calcAll();
+  if(!d) return;
+  document.getElementById('sumAge').textContent = d.age+'岁';
+  document.getElementById('sumCity').textContent = gender==='female'?'👩':'👨';
+  document.getElementById('sumGender').textContent = gender==='female'?'女':'男';
+  document.getElementById('sumIncome').textContent = fmtW(d.income);
+  document.getElementById('sumExpense').textContent = fmtW(d.cm)+'/月';
+  document.getElementById('sumAssets').textContent = fmtW(d.assets);
+  const ssStatus = [];
+  if(d.penToMin>0) ssStatus.push('养老差'+d.penToMin.toFixed(1)+'年');
+  else ssStatus.push('养老✅');
+  if(d.medToMin>0) ssStatus.push('医保差'+d.medToMin.toFixed(1)+'年');
+  else ssStatus.push('医保✅');
+  document.getElementById('sumSS').textContent = ssStatus.join(' · ');
+  document.getElementById('sumAvatar').textContent = gender==='female'?'👩':'👨';
+  document.getElementById('sumName').textContent = d.age+'岁 · '+fmtW(d.income)+'/年';
+}
+
+// ===== FLASH CHIP (city feedback) =====
+function flashChip(btn){
+  btn.style.transform = 'scale(0.9)';
+  setTimeout(() => { btn.style.transform = ''; }, 150);
+  // Visual active state
+  btn.parentElement.querySelectorAll('.wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
 // ===== GENDER =====
@@ -1247,6 +1367,8 @@ function applyCityPreset(city){
   document.getElementById('medicalMin').value = p.medicalMin;
   if(p.penSelf>0) document.getElementById('pensionSelfPay').value = p.penSelf;
   if(p.medSelf>0) document.getElementById('medicalSelfPay').value = p.medSelf;
+  showVoiceToast('✅ 已应用「'+p.label+'」社保参数');
+  setTimeout(() => hideVoiceToast(), 2000);
   recalc();
 }
 
@@ -1392,7 +1514,7 @@ loadState();
  'assetCash','assetDeposit','assetFund','assetStock','childCost'].forEach(id=>{
   const h = document.getElementById(id);
   const wMap = {
-    birthYear:'wizBirth', pensionYears:'wizPensionY', incomePost:'wizIncome',
+    birthYear:'', pensionYears:'wizPensionY', incomePost:'wizIncome',
     expRent:'wizRent', expMortgage:'wizMtg', mortgageYearsLeft:'wizMtgYrs',
     expProperty:'wizProp', expProperty2:'wizProp2',
     expFood:'wizFood', expTransport:'wizTransport', expPet:'wizPet',
