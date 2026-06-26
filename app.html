@@ -353,12 +353,117 @@ td.wn { color: var(--orange); font-weight: 600; }
 .sum-item .si-lbl { font-size: 10px; opacity: 0.7; margin-top: 2px; }
 
 #bodyModal.show { display: flex !important; }
+
+/* ===== BOOKKEEPING ===== */
+.bk-topbar { display: flex; justify-content: space-between; align-items: center; padding: 0 16px 8px; }
+.bk-month-nav { font-size: 18px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none; }
+.bk-month-nav .arr { font-size: 14px; color: var(--sub); }
+.bk-summary-bar { display: flex; gap: 12px; margin: 0 12px 8px; }
+.bk-summary-item { flex: 1; background: var(--card); border-radius: var(--radius-sm); padding: 10px 12px; text-align: center; }
+.bk-summary-item .bsi-val { font-size: 16px; font-weight: 800; }
+.bk-summary-item .bsi-lbl { font-size: 10px; color: var(--sub); margin-top: 2px; }
+.bk-summary-item.bsi-red .bsi-val { color: var(--red); }
+.bk-summary-item.bsi-green .bsi-val { color: var(--green); }
+.bk-summary-item.bsi-blue .bsi-val { color: var(--blue); }
+
+/* Calendar */
+.bk-calendar { margin: 0 12px; background: var(--card); border-radius: var(--radius); padding: 12px 8px 8px; }
+.bk-cal-header { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; font-size: 11px; font-weight: 700; color: var(--sub); margin-bottom: 6px; }
+.bk-cal-body { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+.bk-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; position: relative; transition: all 0.15s; user-select: none; }
+.bk-day:hover { background: #f2f2f7; }
+.bk-day.today { background: var(--blue); color: #fff; border-radius: 50%; width: 36px; height: 36px; margin: 0 auto; }
+.bk-day.empty { cursor: default; }
+.bk-day .day-exp { font-size: 9px; color: var(--red); font-weight: 700; margin-top: 0px; }
+.bk-day.today .day-exp { color: rgba(255,255,255,0.85); }
+.bk-day.selected { background: rgba(0,122,255,0.12); border-radius: 50%; width: 36px; height: 36px; margin: 0 auto; }
+
+/* Day detail */
+.bk-day-detail { margin: 0 12px 8px; background: var(--card); border-radius: var(--radius); padding: 14px 16px; min-height: 80px; }
+.bk-day-detail .bdd-date { font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.bk-day-detail .bdd-total { font-size: 12px; color: var(--sub); }
+.bk-day-detail .bdd-empty { text-align: center; color: var(--sub); font-size: 13px; padding: 20px 0; }
+.bk-bill-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 0.5px solid #f5f5f7; gap: 10px; }
+.bk-bill-row:last-child { border-bottom: none; }
+.bk-bill-row .bill-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.bk-bill-row .bill-info { flex: 1; min-width: 0; }
+.bk-bill-row .bill-cat { font-size: 14px; font-weight: 600; }
+.bk-bill-row .bill-note { font-size: 11px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bk-bill-row .bill-amt { font-size: 15px; font-weight: 700; flex-shrink: 0; }
+.bk-bill-row .bill-amt.exp { color: var(--red); }
+.bk-bill-row .bill-amt.inc { color: var(--green); }
+.bk-bill-row .bill-del { color: var(--sub); font-size: 14px; cursor: pointer; padding: 4px; visibility: hidden; }
+.bk-bill-row:hover .bill-del { visibility: visible; }
+
+/* Bookkeeping FAB */
+.bk-fab {
+  position: fixed; bottom: 110px; right: calc(50% - 215px + 16px); z-index: 30;
+  width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: #fff; border: none; font-size: 24px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(255,107,53,0.35); display: none;
+  align-items: center; justify-content: center; transition: all 0.2s;
+}
+.bk-fab:active { transform: scale(0.9); }
+@media (max-width: 430px) { .bk-fab { right: 16px; } }
+
+/* Bookkeeping Modal */
+.bk-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: flex-end; justify-content: center; }
+.bk-modal.show { display: flex !important; }
+.bk-modal-inner { width: 100%; max-width: 430px; background: #fff; border-radius: 20px 20px 0 0; padding: 24px 16px 32px; max-height: 85vh; overflow-y: auto; }
+.bk-modal-inner h3 { text-align: center; margin-bottom: 16px; font-size: 17px; font-weight: 800; }
+.bk-type-seg { display: flex; background: #f2f2f7; border-radius: 9px; padding: 2px; margin-bottom: 16px; }
+.bk-type-seg button { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 7px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; color: var(--sub); }
+.bk-type-seg button.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.bk-amount-input { text-align: center; margin-bottom: 16px; }
+.bk-amount-input .amt { font-size: 36px; font-weight: 900; border: none; text-align: center; width: 100%; outline: none; font-family: inherit; color: var(--text); }
+.bk-amount-input .amt::placeholder { color: #c7c7cc; }
+.bk-cat-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 16px; }
+.bk-cat-item { display: flex; flex-direction: column; align-items: center; padding: 8px 2px; border-radius: 10px; cursor: pointer; transition: all 0.15s; border: 2px solid transparent; }
+.bk-cat-item .cat-icon { font-size: 24px; margin-bottom: 4px; }
+.bk-cat-item .cat-name { font-size: 11px; font-weight: 600; color: var(--sub); }
+.bk-cat-item.selected { background: rgba(0,122,255,0.08); border-color: var(--blue); }
+.bk-cat-item:active { transform: scale(0.95); }
+.bk-form-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.bk-form-row label { width: 48px; font-size: 13px; color: var(--sub); font-weight: 600; flex-shrink: 0; }
+.bk-form-row input, .bk-form-row select { flex: 1; padding: 8px 10px; border: 1.5px solid #e5e5ea; border-radius: 8px; font-size: 14px; font-family: inherit; }
+.bk-form-row input:focus { outline: none; border-color: var(--blue); }
+.bk-modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+.bk-modal-actions button { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.bk-modal-actions .bk-btn-cancel { background: #f2f2f7; color: var(--text); }
+.bk-modal-actions .bk-btn-save { background: var(--blue); color: #fff; }
+
+/* Analysis tab inner */
+.bk-analysis-subtabs { display: flex; margin: 0 12px 8px; background: var(--card); border-radius: var(--radius); padding: 4px; }
+.bk-analysis-subtabs button { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--sub); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.bk-analysis-subtabs button.active { background: var(--blue); color: #fff; }
+.bk-analysis-page { display: none; }
+.bk-analysis-page.active { display: block; }
+
+/* Category list for analysis */
+.bk-cat-list { margin: 0 12px; }
+.bk-cat-list-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 0.5px solid #f5f5f7; gap: 10px; }
+.bk-cat-list-row .cat-rank { width: 22px; font-size: 12px; font-weight: 700; color: var(--sub); text-align: center; }
+.bk-cat-list-row .cat-icon-sm { font-size: 22px; width: 32px; text-align: center; }
+.bk-cat-list-row .cat-info { flex: 1; min-width: 0; }
+.bk-cat-list-row .cat-name-sm { font-size: 14px; font-weight: 600; }
+.bk-cat-list-row .cat-meta { font-size: 11px; color: var(--sub); }
+.bk-cat-list-row .cat-amount { font-size: 15px; font-weight: 700; text-align: right; }
+.bk-cat-list-row .cat-pct { font-size: 11px; color: var(--sub); text-align: right; }
+.bk-cat-bar-wrap { height: 3px; background: #e5e5ea; border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.bk-cat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+/* Trends */
+.bk-trend-chart { margin: 0 12px; background: var(--card); border-radius: var(--radius); padding: 12px; }
+
+/* Summary table */
+.bk-summary-table { margin: 0 12px; background: var(--card); border-radius: var(--radius); padding: 14px; }
+.bk-summary-table table { width: 100%; }
 </style>
 </head>
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v0.9.9</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v1.0.0</span></span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
@@ -779,11 +884,15 @@ td.wn { color: var(--orange); font-weight: 600; }
   <!-- Tab Bar -->
   <div class="tab-bar">
     <button class="tab-item active" onclick="switchTab('dashboard', this)"><span class="tab-icon">📊</span><span class="tab-text">仪表盘</span></button>
-    <button class="tab-item" onclick="switchTab('inputs', this)"><span class="tab-icon">⚙️</span><span class="tab-text">参数</span></button>
     <button class="tab-item" onclick="switchTab('body', this)">
       <span class="tab-icon">⚖️</span>
       <span class="tab-text">体重</span>
     </button>
+    <button class="tab-item" onclick="switchTab('bookkeeping', this)">
+      <span class="tab-icon">🧾</span>
+      <span class="tab-text">记账</span>
+    </button>
+    <button class="tab-item" onclick="switchTab('inputs', this)"><span class="tab-icon">⚙️</span><span class="tab-text">参数</span></button>
   </div>
 
   <!-- Body Record Modal -->
@@ -796,6 +905,107 @@ td.wn { color: var(--orange); font-weight: 600; }
       <div style="display:flex;gap:8px;margin-top:16px;">
         <button onclick="closeBodyModal()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#f2f2f7;font-size:14px;font-weight:600;">取消</button>
         <button onclick="saveBodyRecord()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#007aff;color:#fff;font-size:14px;font-weight:600;">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BOOKKEEPING ===== -->
+  <div class="scroll-section" id="sec-bookkeeping">
+    <div class="app-header">
+      <div class="greeting">🧾 记账</div>
+      <div class="subtitle">记录每一笔收支</div>
+    </div>
+
+    <!-- Month Navigator -->
+    <div class="bk-topbar">
+      <div class="bk-month-nav" onclick="bkPrevMonth()"><span class="arr">‹</span><span id="bkMonthLabel">2025年6月</span><span class="arr">›</span><span style="font-size:12px;color:var(--sub);" onclick="event.stopPropagation();bkGoToday()">今天</span></div>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="bk-summary-bar">
+      <div class="bk-summary-item bsi-red"><div class="bsi-val" id="bkSumExp">--</div><div class="bsi-lbl">支出</div></div>
+      <div class="bk-summary-item bsi-green"><div class="bsi-val" id="bkSumInc">--</div><div class="bsi-lbl">收入</div></div>
+      <div class="bk-summary-item bsi-blue"><div class="bsi-val" id="bkSumNet">--</div><div class="bsi-lbl">结余</div></div>
+      <div class="bk-summary-item"><div class="bsi-val" id="bkSumCount">0</div><div class="bsi-lbl">笔数</div></div>
+    </div>
+
+    <!-- Sub-tabs: Calendar | Analysis -->
+    <div class="bk-analysis-subtabs">
+      <button class="active" id="bkSubCal" onclick="bkSwitchSub('calendar')">📅 日历</button>
+      <button id="bkSubAna" onclick="bkSwitchSub('analysis')">📊 分析</button>
+    </div>
+
+    <!-- CALENDAR VIEW -->
+    <div class="bk-analysis-page active" id="bkPageCalendar">
+      <div class="bk-calendar" id="bkCalendar"></div>
+      <div class="bk-day-detail" id="bkDayDetail">
+        <div class="bdd-empty">👆 点击日历上的日期查看账单</div>
+      </div>
+    </div>
+
+    <!-- ANALYSIS VIEW -->
+    <div class="bk-analysis-page" id="bkPageAnalysis">
+      <!-- Overview card -->
+      <div class="chart-card" style="margin: 0 12px 12px;">
+        <h3>💰 收支总览</h3>
+        <div style="display:flex;justify-content:space-around;text-align:center;padding:8px 0;">
+          <div><div style="font-size:22px;font-weight:900;color:var(--red);" id="bkAnaExp">--</div><div style="font-size:11px;color:var(--sub);">支出</div></div>
+          <div><div style="font-size:22px;font-weight:900;color:var(--green);" id="bkAnaInc">--</div><div style="font-size:11px;color:var(--sub);">收入</div></div>
+          <div><div style="font-size:22px;font-weight:900;color:var(--blue);" id="bkAnaNet">--</div><div style="font-size:11px;color:var(--sub);">结余</div></div>
+        </div>
+      </div>
+
+      <!-- Category Pie -->
+      <div class="chart-card" style="margin: 0 12px 12px;">
+        <h3>📊 分类统计</h3>
+        <div class="chart-wrap" style="height:200px;"><canvas id="chartBkCat"></canvas></div>
+        <div class="bk-cat-list" id="bkCatList"></div>
+      </div>
+
+      <!-- Monthly trend -->
+      <div class="chart-card" style="margin: 0 12px 12px;">
+        <h3>📈 月度趋势</h3>
+        <div class="chart-wrap"><canvas id="chartBkTrend"></canvas></div>
+      </div>
+
+      <!-- Monthly summary table -->
+      <div class="bk-summary-table">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">📋 月度汇总</h3>
+        <table>
+          <thead><tr><th>月份</th><th>收入</th><th>支出</th><th>结余</th></tr></thead>
+          <tbody id="bkMonthTableBody"></tbody>
+        </table>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+  </div>
+
+  <!-- Bookkeeping FAB -->
+  <button class="bk-fab" id="bkFab" onclick="openBkModal()">+</button>
+
+  <!-- Bookkeeping Modal -->
+  <div class="bk-modal" id="bkModal">
+    <div class="bk-modal-inner">
+      <h3>记一笔</h3>
+      <div class="bk-type-seg">
+        <button class="active" id="bkTypeExp" onclick="setBkType('expense')">支出</button>
+        <button id="bkTypeInc" onclick="setBkType('income')">收入</button>
+      </div>
+      <div class="bk-amount-input">
+        <input type="number" class="amt" id="bkAmount" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="bk-cat-grid" id="bkCatGrid"></div>
+      <div class="bk-form-row">
+        <label>📅 日期</label>
+        <input type="date" id="bkDate">
+      </div>
+      <div class="bk-form-row">
+        <label>📝 备注</label>
+        <input type="text" id="bkNote" placeholder="选填">
+      </div>
+      <div class="bk-modal-actions">
+        <button class="bk-btn-cancel" onclick="closeBkModal()">取消</button>
+        <button class="bk-btn-save" onclick="saveBill()">保存</button>
       </div>
     </div>
   </div>
@@ -1802,7 +2012,348 @@ const origSwitchTab = switchTab;
 switchTab = function(tab, btn){
   origSwitchTab(tab, btn);
   if(tab === 'body') renderBodyPage();
+  if(tab === 'bookkeeping'){
+    document.getElementById('bkFab').style.display = 'flex';
+    renderBkCalendar();
+    renderBkAnalysis();
+  } else {
+    document.getElementById('bkFab').style.display = 'none';
+  }
 };
+
+// ===== BOOKKEEPING MODULE =====
+const BK_CATEGORIES = {
+  expense: [
+    { id:'food', name:'餐饮', icon:'🍜', color:'#FF6B6B' },
+    { id:'shopping', name:'购物', icon:'🛒', color:'#4ECDC4' },
+    { id:'transport', name:'交通', icon:'🚌', color:'#45B7D1' },
+    { id:'housing', name:'住房', icon:'🏠', color:'#96CEB4' },
+    { id:'entertain', name:'娱乐', icon:'🎮', color:'#FFEAA7' },
+    { id:'study', name:'学习', icon:'📚', color:'#DDA0DD' },
+    { id:'medical', name:'医疗', icon:'🏥', color:'#FF7979' },
+    { id:'pet', name:'宠物', icon:'🐱', color:'#F8B500' },
+    { id:'clothing', name:'服饰', icon:'👔', color:'#7B68EE' },
+    { id:'coffee', name:'咖啡', icon:'☕', color:'#C8A27A' },
+    { id:'digital', name:'数码', icon:'📱', color:'#5F9EA0' },
+    { id:'social', name:'社交', icon:'🎁', color:'#FF8C94' },
+    { id:'beauty', name:'美妆', icon:'💄', color:'#FF69B4' },
+    { id:'repair', name:'维修', icon:'🔧', color:'#A9A9A9' },
+    { id:'other', name:'其他', icon:'📦', color:'#B0BEC5' },
+  ],
+  income: [
+    { id:'salary', name:'工资', icon:'💰', color:'#34C759' },
+    { id:'bonus', name:'奖金', icon:'🎉', color:'#FF9500' },
+    { id:'invest', name:'理财', icon:'📈', color:'#007AFF' },
+    { id:'side', name:'兼职', icon:'💼', color:'#5856D6' },
+    { id:'gift_in', name:'礼金', icon:'🎁', color:'#FF6B6B' },
+    { id:'refund', name:'退款', icon:'↩️', color:'#8E8E93' },
+    { id:'other_in', name:'其他', icon:'📦', color:'#B0BEC5' },
+  ]
+};
+
+let bkBills = JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+if(!Array.isArray(bkBills)) bkBills = [];
+bkBills.sort((a,b) => a.date.localeCompare(b.date));
+let bkMonth = new Date().getMonth();
+let bkYear = new Date().getFullYear();
+let bkSelDate = new Date().toISOString().slice(0,10);
+let bkType = 'expense';
+let bkCatId = 'food';
+let bkSubTab = 'calendar';
+let chartBkCatInst = null, chartBkTrendInst = null;
+
+function saveBills(){ localStorage.setItem('shoreos_bills', JSON.stringify(bkBills)); }
+
+function openBkModal(d){
+  if(d) bkSelDate = d;
+  document.getElementById('bkDate').value = bkSelDate;
+  document.getElementById('bkAmount').value = '';
+  document.getElementById('bkNote').value = '';
+  setBkTypeUI(bkType);
+  renderBkCatGrid();
+  document.getElementById('bkModal').classList.add('show');
+  setTimeout(() => document.getElementById('bkAmount').focus(), 300);
+}
+function closeBkModal(){ document.getElementById('bkModal').classList.remove('show'); }
+
+function setBkType(t){
+  bkType = t;
+  bkCatId = BK_CATEGORIES[t][0].id;
+  setBkTypeUI(t);
+  renderBkCatGrid();
+}
+function setBkTypeUI(t){
+  document.getElementById('bkTypeExp').classList.toggle('active', t==='expense');
+  document.getElementById('bkTypeInc').classList.toggle('active', t==='income');
+}
+
+function renderBkCatGrid(){
+  const grid = document.getElementById('bkCatGrid');
+  const cats = BK_CATEGORIES[bkType];
+  grid.innerHTML = cats.map(c =>
+    `<div class="bk-cat-item ${c.id===bkCatId?'selected':''}" onclick="setBkCat('${c.id}',this)" style="background:${c.id===bkCatId?c.color+'18':'transparent'};border-color:${c.id===bkCatId?c.color:'transparent'}">
+      <div class="cat-icon">${c.icon}</div>
+      <div class="cat-name">${c.name}</div>
+    </div>`
+  ).join('');
+}
+function setBkCat(id, el){
+  bkCatId = id;
+  document.querySelectorAll('#bkCatGrid .bk-cat-item').forEach(i=>{
+    i.classList.remove('selected'); i.style.background='transparent'; i.style.borderColor='transparent';
+  });
+  const cat = BK_CATEGORIES[bkType].find(c=>c.id===id);
+  el.classList.add('selected');
+  el.style.background = (cat?cat.color:'#007aff')+'18';
+  el.style.borderColor = cat?cat.color:'#007aff';
+}
+
+function saveBill(){
+  const amount = parseFloat(document.getElementById('bkAmount').value);
+  if(!amount || amount <= 0){ alert('请输入金额'); return; }
+  const date = document.getElementById('bkDate').value;
+  const note = document.getElementById('bkNote').value.trim();
+  const cat = BK_CATEGORIES[bkType].find(c=>c.id===bkCatId) || BK_CATEGORIES[bkType][0];
+  const bill = {
+    id: date+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    date, type: bkType, amount, category: cat.name, catId: cat.id,
+    icon: cat.icon, color: cat.color, note, createdAt: new Date().toISOString()
+  };
+  bkBills.push(bill);
+  bkBills.sort((a,b) => a.date.localeCompare(b.date));
+  saveBills();
+  closeBkModal();
+  bkSelDate = date;
+  const [y,m] = date.split('-').map(Number);
+  bkYear = y; bkMonth = m-1;
+  renderBkCalendar();
+  renderBkAnalysis();
+}
+
+function deleteBill(id){
+  if(!confirm('确定删除这条记录？')) return;
+  bkBills = bkBills.filter(b=>b.id!==id);
+  saveBills();
+  renderBkCalendar();
+  renderBkAnalysis();
+}
+
+function bkPrevMonth(){
+  bkMonth--;
+  if(bkMonth < 0){ bkMonth = 11; bkYear--; }
+  renderBkCalendar();
+  renderBkAnalysis();
+}
+function bkGoToday(){
+  const now = new Date();
+  bkYear = now.getFullYear();
+  bkMonth = now.getMonth();
+  bkSelDate = now.toISOString().slice(0,10);
+  renderBkCalendar();
+  renderBkAnalysis();
+}
+
+function getMonthBills(){
+  const prefix = `${bkYear}-${String(bkMonth+1).padStart(2,'0')}`;
+  return bkBills.filter(b => b.date.startsWith(prefix));
+}
+function getDayBills(dateStr){
+  return bkBills.filter(b => b.date === dateStr);
+}
+
+function renderBkCalendar(){
+  document.getElementById('bkMonthLabel').textContent = `${bkYear}年${bkMonth+1}月`;
+  const monthBills = getMonthBills();
+  const expTotal = monthBills.filter(b=>b.type==='expense').reduce((s,b)=>s+b.amount,0);
+  const incTotal = monthBills.filter(b=>b.type==='income').reduce((s,b)=>s+b.amount,0);
+  document.getElementById('bkSumExp').textContent = '¥'+expTotal.toFixed(0);
+  document.getElementById('bkSumInc').textContent = '¥'+incTotal.toFixed(0);
+  document.getElementById('bkSumNet').textContent = (incTotal-expTotal>=0?'+':'')+'¥'+(incTotal-expTotal).toFixed(0);
+  document.getElementById('bkSumCount').textContent = monthBills.length;
+
+  const dailyExp = {};
+  monthBills.filter(b=>b.type==='expense').forEach(b => {
+    dailyExp[b.date] = (dailyExp[b.date]||0) + b.amount;
+  });
+
+  const firstDay = new Date(bkYear, bkMonth, 1).getDay();
+  const daysInMonth = new Date(bkYear, bkMonth+1, 0).getDate();
+  const today = new Date().toISOString().slice(0,10);
+
+  let html = '<div class="bk-cal-header">';
+  ['日','一','二','三','四','五','六'].forEach(d => html += `<div>${d}</div>`);
+  html += '</div><div class="bk-cal-body">';
+  for(let i=0; i<firstDay; i++) html += '<div class="bk-day empty"></div>';
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = `${bkYear}-${String(bkMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === today;
+    const isSel = dateStr === bkSelDate;
+    const exp = dailyExp[dateStr] || 0;
+    let cls = 'bk-day';
+    if(isToday) cls += ' today';
+    if(isSel && !isToday) cls += ' selected';
+    html += `<div class="${cls}" onclick="bkSelDate='${dateStr}';renderBkDayDetail();renderBkCalendar();">
+      <span>${d}</span>
+      ${exp>0 ? `<span class="day-exp">${exp.toFixed(0)}</span>` : ''}
+    </div>`;
+  }
+  html += '</div>';
+  document.getElementById('bkCalendar').innerHTML = html;
+  renderBkDayDetail();
+}
+
+function renderBkDayDetail(){
+  const bills = getDayBills(bkSelDate);
+  const container = document.getElementById('bkDayDetail');
+  if(bills.length === 0){
+    container.innerHTML = `<div class="bdd-date"><span>${bkSelDate}</span><span class="bdd-total"></span></div>
+      <div class="bdd-empty">这天没有账单，点右下角 + 记一笔</div>`;
+    return;
+  }
+  const expSum = bills.filter(b=>b.type==='expense').reduce((s,b)=>s+b.amount,0);
+  const incSum = bills.filter(b=>b.type==='income').reduce((s,b)=>s+b.amount,0);
+  let html = `<div class="bdd-date"><span>${bkSelDate}</span><span class="bdd-total">支出 ¥${expSum.toFixed(2)} · 收入 ¥${incSum.toFixed(2)}</span></div>`;
+  bills.forEach(b => {
+    html += `<div class="bk-bill-row">
+      <div class="bill-icon" style="background:${b.color}22">${b.icon}</div>
+      <div class="bill-info">
+        <div class="bill-cat">${b.category}</div>
+        <div class="bill-note">${b.note || '—'}</div>
+      </div>
+      <div class="bill-amt ${b.type}">${b.type==='income'?'+':'-'}¥${b.amount.toFixed(2)}</div>
+      <div class="bill-del" onclick="event.stopPropagation();deleteBill('${b.id}')">🗑️</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function bkSwitchSub(tab){
+  bkSubTab = tab;
+  document.getElementById('bkSubCal').classList.toggle('active', tab==='calendar');
+  document.getElementById('bkSubAna').classList.toggle('active', tab==='analysis');
+  document.getElementById('bkPageCalendar').classList.toggle('active', tab==='calendar');
+  document.getElementById('bkPageAnalysis').classList.toggle('active', tab==='analysis');
+  if(tab==='analysis') renderBkAnalysis();
+}
+
+function getAnalysisBills(){
+  const prefix = `${bkYear}-${String(bkMonth+1).padStart(2,'0')}`;
+  return bkBills.filter(b => b.date.startsWith(prefix));
+}
+
+function renderBkAnalysis(){
+  if(bkSubTab !== 'analysis') return;
+  const monthBills = getAnalysisBills();
+  const expTotal = monthBills.filter(b=>b.type==='expense').reduce((s,b)=>s+b.amount,0);
+  const incTotal = monthBills.filter(b=>b.type==='income').reduce((s,b)=>s+b.amount,0);
+  document.getElementById('bkAnaExp').textContent = '¥'+expTotal.toFixed(0);
+  document.getElementById('bkAnaInc').textContent = '¥'+incTotal.toFixed(0);
+  document.getElementById('bkAnaNet').textContent = (incTotal-expTotal>=0?'+':'')+'¥'+(incTotal-expTotal).toFixed(0);
+
+  const catMap = {};
+  monthBills.filter(b=>b.type==='expense').forEach(b => {
+    const key = b.catId;
+    if(!catMap[key]) catMap[key] = { name: b.category, icon: b.icon, color: b.color, total: 0, count: 0 };
+    catMap[key].total += b.amount;
+    catMap[key].count++;
+  });
+  const catList = Object.values(catMap).sort((a,b) => b.total - a.total);
+
+  if(chartBkCatInst) chartBkCatInst.destroy();
+  const ctx = document.getElementById('chartBkCat');
+  if(ctx && catList.length > 0){
+    chartBkCatInst = new Chart(ctx.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: catList.map(c=>c.name),
+        datasets: [{ data: catList.map(c=>c.total), backgroundColor: catList.map(c=>c.color), borderWidth: 0, cutout: '65%' }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, boxWidth: 8, font: { size: 10 }, color: '#666' } },
+          tooltip: { callbacks: { label: ctx => `${ctx.label}: ¥${ctx.raw.toFixed(2)} (${(ctx.raw/expTotal*100).toFixed(1)}%)` } }
+        }
+      }
+    });
+  }
+
+  const catListEl = document.getElementById('bkCatList');
+  if(catList.length === 0){
+    catListEl.innerHTML = '<div style="padding:16px;text-align:center;color:#8e8e93;font-size:13px;">本月暂无支出数据</div>';
+  } else {
+    catListEl.innerHTML = catList.map((c,i) => {
+      const pct = expTotal>0 ? (c.total/expTotal*100).toFixed(1) : '0';
+      return `<div class="bk-cat-list-row">
+        <div class="cat-rank">${i+1}</div>
+        <div class="cat-icon-sm">${c.icon}</div>
+        <div class="cat-info">
+          <div class="cat-name-sm">${c.name}</div>
+          <div class="cat-meta">${c.count}笔 · ${pct}%</div>
+          <div class="bk-cat-bar-wrap"><div class="bk-cat-bar-fill" style="width:${pct}%;background:${c.color};"></div></div>
+        </div>
+        <div><div class="cat-amount">¥${c.total.toFixed(0)}</div><div class="cat-pct">${pct}%</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  if(chartBkTrendInst) chartBkTrendInst.destroy();
+  const trendCtx = document.getElementById('chartBkTrend');
+  if(trendCtx){
+    const months = [];
+    const expData = [], incData = [];
+    for(let i=11; i>=0; i--){
+      let m = bkMonth - i, y = bkYear;
+      while(m < 0){ m += 12; y--; }
+      const prefix = `${y}-${String(m+1).padStart(2,'0')}`;
+      months.push(`${m+1}月`);
+      const mb = bkBills.filter(b=>b.date.startsWith(prefix));
+      expData.push(mb.filter(b=>b.type==='expense').reduce((s,b)=>s+b.amount,0));
+      incData.push(mb.filter(b=>b.type==='income').reduce((s,b)=>s+b.amount,0));
+    }
+    chartBkTrendInst = new Chart(trendCtx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: months,
+        datasets: [
+          { label: '支出', data: expData, backgroundColor: '#FF6B6B88', borderColor: '#FF6B6B', borderWidth: 1, borderRadius: 4 },
+          { label: '收入', data: incData, backgroundColor: '#34C75988', borderColor: '#34C759', borderWidth: 1, borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { usePointStyle: true, boxWidth: 6, padding: 12, font: { size: 10 }, color: '#666' } } },
+        scales: {
+          x: { ticks: { color: '#999', font: { size: 9 } }, grid: { display: false } },
+          y: { ticks: { color: '#999', font: { size: 9 }, callback: v=>'¥'+v }, grid: { color: '#f2f2f7' } }
+        }
+      }
+    });
+  }
+
+  const tableBody = document.getElementById('bkMonthTableBody');
+  const tableMonths = [];
+  for(let i=11; i>=0; i--){
+    let m = bkMonth - i, y = bkYear;
+    while(m < 0){ m += 12; y--; }
+    const prefix = `${y}-${String(m+1).padStart(2,'0')}`;
+    const mb = bkBills.filter(b=>b.date.startsWith(prefix));
+    tableMonths.push({
+      label: `${y}年${m+1}月`,
+      exp: mb.filter(b=>b.type==='expense').reduce((s,b)=>s+b.amount,0),
+      inc: mb.filter(b=>b.type==='income').reduce((s,b)=>s+b.amount,0),
+    });
+  }
+  tableBody.innerHTML = tableMonths.map(tm => {
+    const net = tm.inc - tm.exp;
+    return `<tr>
+      <td><b>${tm.label}</b></td>
+      <td style="color:var(--green);">${tm.inc>0?'¥'+tm.inc.toFixed(0):'—'}</td>
+      <td style="color:var(--red);">${tm.exp>0?'¥'+tm.exp.toFixed(0):'—'}</td>
+      <td style="font-weight:700;color:${net>=0?'var(--green)':'var(--red)'};">${net>=0?'+':''}¥${net.toFixed(0)}</td>
+    </tr>`;
+  }).join('');
+}
 
 recalc();
 </script>
