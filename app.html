@@ -6,6 +6,11 @@
 <title>ShoreOS · 人生自由度仪表盘</title>
 <meta name="description" content="算清楚你离财务自由还差多远。每多坚持一年，安全垫就厚一层。">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script type="module">
+// CloudBase Web SDK - ESM module loading
+import cloudbase from 'https://cdn.jsdelivr.net/npm/@cloudbase/js-sdk@2.22.0/+esm';
+window._cloudbase = cloudbase;
+</script>
 <style>
 :root {
   --bg: #f2f2f7; --card: #fff; --sep: #e5e5ea; --text: #1c1c1e; --sub: #8e8e93;
@@ -463,7 +468,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v1.0.0</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v1.1.0</span></span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
@@ -1012,6 +1017,170 @@ td.wn { color: var(--orange); font-weight: 600; }
 </div>
 
 <script>
+// ===== CloudBase 数据层 =====
+const CB_CONFIG = {
+  env: 'shoreos-d5g5fcp0mce497e3c',
+  region: 'ap-shanghai'
+};
+
+let cbApp = null, cbDb = null, cbReady = false, cbUid = null;
+
+// 初始化 CloudBase - 异步执行，不阻塞页面
+(async function initCloudBase(){
+  try {
+    // 等待 ESM 模块加载
+    let retries = 0;
+    while(!window._cloudbase && retries < 50){
+      await new Promise(r => setTimeout(r, 100));
+      retries++;
+    }
+    if(!window._cloudbase){ console.warn('[CB] SDK 加载超时，使用本地存储'); return; }
+
+    cbApp = window._cloudbase.init(CB_CONFIG);
+    const auth = cbApp.auth;
+
+    // 尝试恢复登录状态
+    let loginState = await auth.getLoginState();
+    if(!loginState){
+      // 匿名登录
+      const { data, error } = await auth.signInAnonymously();
+      if(error){ console.warn('[CB] 匿名登录失败:', error.message); return; }
+      loginState = data;
+    }
+    cbUid = loginState?.user?.uid || loginState?.user?.id || 'anon';
+    cbDb = cbApp.database();
+    cbReady = true;
+    console.log('[CB] CloudBase 已连接, uid:', cbUid);
+  } catch(e){
+    console.warn('[CB] CloudBase 初始化失败，降级到本地存储:', e.message);
+  }
+})();
+
+// 数据层抽象：云端优先 + 本地 fallback
+const CloudStore = {
+  // 记账数据
+  async loadBills(){
+    if(!cbReady || !cbDb){
+      return JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+    }
+    try {
+      const res = await cbDb.collection('bills').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
+      return res.data || [];
+    } catch(e){
+      console.warn('[CB] 读取账单失败，使用本地:', e.message);
+      return JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+    }
+  },
+  async saveBill(bill){
+    // 始终存本地作为备份
+    const local = JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+    const idx = local.findIndex(b=>b.id===bill.id);
+    if(idx>=0) local[idx] = bill; else local.push(bill);
+    localStorage.setItem('shoreos_bills', JSON.stringify(local));
+
+    // 云端
+    if(!cbReady || !cbDb) return;
+    try {
+      bill._uid = cbUid;
+      await cbDb.collection('bills').add(bill);
+    } catch(e){ console.warn('[CB] 保存账单失败:', e.message); }
+  },
+  async deleteBill(id){
+    const local = JSON.parse(localStorage.getItem('shoreos_bills') || '[]').filter(b=>b.id!==id);
+    localStorage.setItem('shoreos_bills', JSON.stringify(local));
+
+    if(!cbReady || !cbDb) return;
+    try {
+      const res = await cbDb.collection('bills').where({ id, _uid: cbUid }).get();
+      if(res.data?.length > 0){
+        await cbDb.collection('bills').doc(res.data[0]._id).remove();
+      }
+    } catch(e){ console.warn('[CB] 删除账单失败:', e.message); }
+  },
+  // 批量同步：从云端拉取并合并到本地
+  async syncBills(){
+    if(!cbReady || !cbDb) return;
+    try {
+      const res = await cbDb.collection('bills').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
+      const cloud = (res.data || []).map(b => { delete b._id; delete b._uid; return b; });
+      const local = JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+      // 合并：云端有的保留云端版本，本地独有的也保留
+      const merged = new Map();
+      local.forEach(b => merged.set(b.id, b));
+      cloud.forEach(b => merged.set(b.id, b));
+      const result = Array.from(merged.values()).sort((a,b)=>a.date.localeCompare(b.date));
+      localStorage.setItem('shoreos_bills', JSON.stringify(result));
+      bkBills = result;
+      return true;
+    } catch(e){ console.warn('[CB] 同步账单失败:', e.message); return false; }
+  },
+
+  // 体重数据
+  async loadBodyRecords(){
+    if(!cbReady || !cbDb){
+      return JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+    }
+    try {
+      const res = await cbDb.collection('body_records').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
+      return (res.data || []).map(r => ({ date: r.date, weight: r.weight, fat: r.fat }));
+    } catch(e){
+      return JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+    }
+  },
+  async saveBodyRecord(record){
+    const local = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+    const idx = local.findIndex(r=>r.date===record.date);
+    if(idx>=0) local[idx] = record; else local.push(record);
+    localStorage.setItem('shoreos_body', JSON.stringify(local));
+
+    if(!cbReady || !cbDb) return;
+    try {
+      record._uid = cbUid;
+      // 检查是否存在同日期记录
+      const exist = await cbDb.collection('body_records').where({ date: record.date, _uid: cbUid }).get();
+      if(exist.data?.length > 0){
+        await cbDb.collection('body_records').doc(exist.data[0]._id).update(record);
+      } else {
+        await cbDb.collection('body_records').add(record);
+      }
+    } catch(e){ console.warn('[CB] 保存体重记录失败:', e.message); }
+  },
+  async syncBodyRecords(){
+    if(!cbReady || !cbDb) return;
+    try {
+      const res = await cbDb.collection('body_records').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
+      const cloud = (res.data || []).map(r => ({ date: r.date, weight: r.weight, fat: r.fat }));
+      const local = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+      const merged = new Map();
+      local.forEach(r => merged.set(r.date, r));
+      cloud.forEach(r => merged.set(r.date, r));
+      const result = Array.from(merged.values()).sort((a,b)=>a.date.localeCompare(b.date));
+      localStorage.setItem('shoreos_body', JSON.stringify(result));
+      bodyRecords = result;
+      return true;
+    } catch(e){ return false; }
+  }
+};
+
+// 等待 CloudBase 就绪后自动同步数据
+(async function autoSync(){
+  // 等待最多 5 秒
+  for(let i=0; i<50; i++){
+    if(cbReady){ break; }
+    await new Promise(r => setTimeout(r, 100));
+  }
+  if(cbReady){
+    const syncedBills = await CloudStore.syncBills();
+    const syncedBody = await CloudStore.syncBodyRecords();
+    if(syncedBills || syncedBody){
+      console.log('[CB] 数据同步完成');
+      // 重新渲染
+      if(typeof renderBkCalendar === 'function') renderBkCalendar();
+      if(typeof renderBodyPage === 'function') renderBodyPage();
+    }
+  }
+})();
+
 // ===== STATE =====
 let houseTypeCur = 'rent', houseTypeMin = 'rent', childPlan = 'none';
 let gender = '', ssStrategy = 'min'; // 'min' = stop at minimum, 'retire' = pay until retire
@@ -1909,6 +2078,7 @@ function saveBodyRecord(){
   if(idx >= 0) bodyRecords[idx] = entry; else bodyRecords.push(entry);
   bodyRecords.sort((a,b)=>a.date.localeCompare(b.date));
   saveBodyData();
+  CloudStore.saveBodyRecord(entry); // 云端同步
   closeBodyModal();
   renderBodyPage();
 }
@@ -2062,7 +2232,9 @@ let bkCatId = 'food';
 let bkSubTab = 'calendar';
 let chartBkCatInst = null, chartBkTrendInst = null;
 
-function saveBills(){ localStorage.setItem('shoreos_bills', JSON.stringify(bkBills)); }
+function saveBills(){
+  localStorage.setItem('shoreos_bills', JSON.stringify(bkBills));
+}
 
 function openBkModal(d){
   if(d) bkSelDate = d;
@@ -2122,6 +2294,7 @@ function saveBill(){
   bkBills.push(bill);
   bkBills.sort((a,b) => a.date.localeCompare(b.date));
   saveBills();
+  CloudStore.saveBill(bill); // 云端同步
   closeBkModal();
   bkSelDate = date;
   const [y,m] = date.split('-').map(Number);
@@ -2134,6 +2307,7 @@ function deleteBill(id){
   if(!confirm('确定删除这条记录？')) return;
   bkBills = bkBills.filter(b=>b.id!==id);
   saveBills();
+  CloudStore.deleteBill(id); // 云端同步
   renderBkCalendar();
   renderBkAnalysis();
 }
