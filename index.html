@@ -14,14 +14,23 @@ window._cloudbase = cloudbase;
 </script>
 <style>
 :root {
-  --bg: #f2f2f7; --card: #fff; --sep: #e5e5ea; --text: #1c1c1e; --sub: #8e8e93;
-  --blue: #007aff; --green: #34c759; --orange: #ff9500; --red: #ff3b30;
-  --radius: 14px; --radius-sm: 10px;
+  --bg: #fff7ed; --bg2: #fef3e2; --card: #fff; --sep: #fde8d5; --text: #1f2937; --sub: #9ca3af;
+  --blue: #007aff; --green: #34c759; --orange: #fb923c; --red: #ff3b30;
+  --mint: #6ee7b7; --mint-deep: #34d399; --mint-soft: #d1fae5;
+  --pink: #fda4af; --pink-deep: #fb7185; --pink-soft: #ffe4e6;
+  --peach: #fdba74; --peach-soft: #ffedd5;
+  --radius: 16px; --radius-sm: 12px; --radius-lg: 20px; --radius-xl: 28px;
+  --shadow-sm: 0 2px 8px rgba(251,113,133,0.08);
+  --shadow-md: 0 6px 20px rgba(251,113,133,0.12);
+  --grad-hero: linear-gradient(135deg, #ffe4e6 0%, #ffedd5 50%, #d1fae5 100%);
+  --grad-pink: linear-gradient(135deg, #fda4af, #fb7185);
+  --grad-peach: linear-gradient(135deg, #fdba74, #fb7185);
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'PingFang SC', 'Helvetica Neue', sans-serif;
   background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased;
   display: flex; justify-content: center; min-height: 100%;
 }
@@ -34,14 +43,14 @@ body {
   font-size: 13px; font-weight: 600; background: var(--bg);
   position: sticky; top: 0; z-index: 10;
 }
-.app-header { padding: 8px 20px 16px; }
-.app-header .greeting { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
-.app-header .subtitle { font-size: 14px; color: var(--sub); margin-top: 4px; }
+.app-header { padding: 8px 20px 12px; }
+.app-header .greeting { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+.app-header .subtitle { font-size: 13px; color: var(--sub); margin-top: 2px; }
 .sec-label {
   font-size: 12px; font-weight: 600; color: var(--sub); text-transform: uppercase;
-  letter-spacing: 0.5px; padding: 16px 20px 8px;
+  letter-spacing: 0.5px; padding: 12px 20px 8px;
 }
-.card-group { margin: 0 12px 20px; background: var(--card); border-radius: var(--radius); overflow: hidden; }
+.card-group { margin: 0 12px 16px; background: var(--card); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
 .card-row {
   display: flex; align-items: center; padding: 13px 16px;
   border-bottom: 0.5px solid var(--sep); min-height: 44px;
@@ -60,7 +69,7 @@ body {
 .seg-row { padding: 8px 12px; border-bottom: 0.5px solid var(--sep); }
 .seg-row:last-child { border-bottom: none; }
 .seg-label { font-size: 12px; color: var(--sub); margin-bottom: 6px; padding: 0 4px; }
-.seg { display: flex; background: #f2f2f7; border-radius: 9px; padding: 2px; }
+.seg { display: flex; background: var(--bg2); border-radius: 9px; padding: 2px; }
 .seg button {
   flex: 1; padding: 7px 2px; border: none; background: transparent; border-radius: 7px;
   font-size: 13px; font-weight: 600; color: var(--sub); cursor: pointer;
@@ -68,7 +77,7 @@ body {
 }
 .seg button.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04); }
 .note-row {
-  padding: 10px 16px; font-size: 12px; color: #8e8e93; background: #f9f9fb;
+  padding: 10px 16px; font-size: 12px; color: var(--sub); background: var(--bg2);
   border-bottom: 0.5px solid var(--sep); display: flex; align-items: flex-start;
   gap: 6px; line-height: 1.5;
 }
@@ -77,46 +86,52 @@ body {
 
 /* Dashboard */
 .highlight-card {
-  margin: 0 12px 12px; padding: 16px; border-radius: var(--radius);
-  color: #fff; position: relative; overflow: hidden;
+  margin: 0 12px 12px; padding: 20px 16px; border-radius: var(--radius-xl);
+  color: #1f2937; position: relative; overflow: hidden;
 }
-.highlight-card .hl-emoji { font-size: 36px; margin-bottom: 8px; }
+.highlight-card .hl-emoji { font-size: 40px; margin-bottom: 6px; }
 .highlight-card .hl-value { font-size: 32px; font-weight: 900; letter-spacing: -1.5px; line-height: 1; }
-.highlight-card .hl-label { font-size: 13px; opacity: 0.85; margin-top: 4px; }
-.highlight-card .hl-meta { font-size: 12px; opacity: 0.7; margin-top: 10px; display: flex; gap: 20px; flex-wrap: wrap; }
-.highlight-card .hl-meta b { font-weight: 700; }
-.hl-g1 { background: linear-gradient(135deg, #ff6b35, #f7931e); }
+.highlight-card .hl-label { font-size: 13px; color: var(--sub); margin-top: 4px; }
+.highlight-card .hl-meta { font-size: 12px; color: var(--sub); margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap; }
+.highlight-card .hl-meta b { font-weight: 700; color: var(--text); }
+.hl-g1 { background: var(--grad-hero); box-shadow: var(--shadow-md); }
+.hl-bg-blob {
+  position: absolute; top: -30px; right: -20px; width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(255,255,255,0.5), transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
 
-.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 12px 12px; }
-.mini-card { background: var(--card); border-radius: var(--radius); padding: 14px; text-align: center; }
+.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 12px 12px; }
+.mini-card { background: var(--card); border-radius: var(--radius); padding: 14px; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.15s var(--ease-spring); }
+.mini-card:active { transform: scale(0.97); }
 .mini-card .mc-emoji { font-size: 22px; margin-bottom: 4px; }
 .mini-card .mc-value { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
 .mini-card .mc-label { font-size: 11px; color: var(--sub); margin-top: 2px; }
 .mini-card .mc-sub { font-size: 10px; color: var(--sub); margin-top: 1px; }
-.mc-green .mc-value { color: var(--green); } .mc-blue .mc-value { color: var(--blue); }
-.mc-orange .mc-value { color: var(--orange); } .mc-red .mc-value { color: var(--red); }
+.mc-green .mc-value { color: var(--mint-deep); } .mc-blue .mc-value { color: var(--blue); }
+.mc-orange .mc-value { color: var(--peach); } .mc-red .mc-value { color: var(--red); }
 
-.chart-card { margin: 0 12px 12px; background: var(--card); border-radius: var(--radius); padding: 12px; }
+.chart-card { margin: 0 12px 12px; background: var(--card); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow-sm); }
 .chart-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
 .chart-wrap { position: relative; height: 180px; }
 
-.table-card { margin: 0 12px 12px; background: var(--card); border-radius: var(--radius); padding: 16px; overflow-x: auto; }
+.table-card { margin: 0 12px 12px; background: var(--card); border-radius: var(--radius); padding: 16px; overflow-x: auto; box-shadow: var(--shadow-sm); }
 .table-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th { text-align: left; padding: 7px 6px; font-size: 10px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 1px solid var(--sep); }
 td { padding: 8px 6px; border-bottom: 0.5px solid #f5f5f7; font-size: 11px; }
 tr:last-child td { border-bottom: none; }
 td.hi { color: var(--blue); font-weight: 700; }
-td.ok { color: var(--green); font-weight: 600; }
+td.ok { color: var(--mint-deep); font-weight: 600; }
 td.wn { color: var(--orange); font-weight: 600; }
 .pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 9px; font-weight: 700; }
-.pill-g { background: #e8f8ed; color: #1a7a3a; }
-.pill-o { background: #fff3e5; color: #b06500; }
+.pill-g { background: var(--mint-soft); color: var(--mint-deep); }
+.pill-o { background: var(--peach-soft); color: var(--orange); }
 
 /* Welcome card */
 .welcome-card {
-  margin: 0 12px 12px; background: var(--card); border-radius: var(--radius);
-  padding: 32px 24px; text-align: center;
+  margin: 0 12px 12px; background: var(--card); border-radius: var(--radius-lg);
+  padding: 32px 24px; text-align: center; box-shadow: var(--shadow-sm);
 }
 .welcome-card .wc-emoji { font-size: 48px; margin-bottom: 12px; }
 .welcome-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
@@ -124,25 +139,29 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 .tab-bar {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 430px; background: rgba(249,249,249,0.92);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-top: 0.5px solid var(--sep); display: flex;
+  width: 100%; max-width: 430px; background: rgba(255,247,237,0.88);
+  backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-top: 1px solid rgba(251,113,133,0.12); display: flex;
   padding: 6px 0 env(safe-area-inset-bottom, 8px); z-index: 20;
+  border-radius: 20px 20px 0 0;
 }
 .tab-item {
   flex: 1; display: flex; flex-direction: column; align-items: center;
   padding: 4px 0; cursor: pointer; border: none; background: transparent; font-family: inherit;
+  transition: transform 0.2s var(--ease-spring);
 }
-.tab-item .tab-icon { font-size: 22px; margin-bottom: 2px; }
+.tab-item:active { transform: scale(0.92); }
+.tab-item .tab-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s var(--ease-spring); }
 .tab-item .tab-text { font-size: 10px; font-weight: 600; color: var(--sub); transition: color 0.15s; }
-.tab-item.active .tab-text { color: var(--blue); }
+.tab-item.active .tab-text { color: var(--pink-deep); }
+.tab-item.active .tab-icon { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 2px 4px rgba(251,113,133,0.4)); }
 
 .scroll-section { display: none; }
 .scroll-section.active { display: block; }
 
 @media (min-width: 431px) {
   .phone {
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 20px 60px rgba(0,0,0,0.12);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 20px 60px rgba(251,113,133,0.1);
     border-radius: 20px; margin: 24px 0; min-height: calc(100vh - 48px);
     overflow-y: auto; overflow-x: hidden; max-height: 900px;
   }
@@ -172,7 +191,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   width: 6px; height: 6px; border-radius: 50%; background: var(--sep); margin-left: 6px;
   transition: background 0.3s;
 }
-.acc-header .acc-dot.done { background: var(--green); }
+.acc-header .acc-dot.done { background: var(--mint-deep); }
 .acc-body {
   max-height: 0; overflow: hidden; transition: max-height 0.35s ease;
 }
@@ -181,9 +200,9 @@ td.wn { color: var(--orange); font-weight: 600; }
 /* Voice button */
 .voice-fab {
   position: fixed; bottom: 110px; right: calc(50% - 215px + 16px); z-index: 30;
-  width: 48px; height: 48px; border-radius: 50%; background: var(--blue);
-  color: #fff; border: none; font-size: 22px; cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0,122,255,0.3); display: flex;
+  width: 44px; height: 44px; border-radius: 50%; background: var(--pink-deep);
+  color: #fff; border: none; font-size: 20px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(251,113,133,0.3); display: flex;
   align-items: center; justify-content: center; transition: all 0.2s;
 }
 .voice-fab:active { transform: scale(0.92); }
@@ -207,11 +226,89 @@ td.wn { color: var(--orange); font-weight: 600; }
   background: var(--card); font-size: 12px; font-weight: 600; color: var(--sub);
   cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.15s;
 }
-.quick-chip:active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.quick-chip:active { background: var(--pink-deep); color: #fff; border-color: var(--pink-deep); }
 
 @media (max-width: 430px) {
   .voice-fab { right: 16px; }
 }
+
+/* ===== USER SWITCHER ===== */
+.user-switcher {
+  display: flex; gap: 12px; padding: 8px 16px 10px; overflow-x: auto;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  background: transparent;
+}
+.user-switcher::-webkit-scrollbar { display: none; }
+.user-avatar-btn {
+  flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; border: 0; padding: 4px 4px; cursor: pointer;
+  transition: transform 0.25s var(--ease-spring);
+}
+.user-avatar-btn:active { transform: scale(0.92); }
+.user-avatar-circle {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; box-shadow: var(--shadow-sm); position: relative;
+  transition: all 0.3s ease;
+}
+.user-avatar-btn.active .user-avatar-circle {
+  background: var(--grad-pink); color: #fff;
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--pink-deep), 0 8px 16px rgba(251,113,133,0.3);
+  transform: scale(1.05);
+}
+.user-avatar-name {
+  font-size: 10px; color: var(--sub); font-weight: 500; max-width: 52px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.user-avatar-btn.active .user-avatar-name { color: var(--pink-deep); font-weight: 700; }
+.user-add-btn .user-avatar-circle {
+  border: 2px dashed var(--sep); box-shadow: none; font-size: 22px; color: var(--sub);
+}
+
+/* ===== PARAM PANEL ===== */
+.param-panel {
+  margin: 0 12px 12px; background: var(--card); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.param-header {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; background: none; border: 0; font-size: 14px; font-weight: 700;
+  color: var(--text); cursor: pointer; font-family: inherit;
+}
+.param-chevron {
+  font-size: 16px; color: var(--pink-deep); transition: transform 0.35s var(--ease-spring);
+}
+.param-panel.open .param-chevron { transform: rotate(180deg); }
+.param-body {
+  max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease-spring), padding 0.3s ease;
+}
+.param-panel.open .param-body { max-height: 800px; padding: 0 16px 16px; }
+.param-seg {
+  display: flex; gap: 3px; background: var(--bg2); padding: 3px; border-radius: 999px; margin-bottom: 14px;
+}
+.param-seg-btn {
+  flex: 1; padding: 7px 6px; border: 0; background: none; border-radius: 999px;
+  font-size: 12px; font-weight: 600; color: var(--sub); cursor: pointer;
+  font-family: inherit; transition: all 0.25s ease;
+}
+.param-seg-btn.active { background: var(--card); color: var(--pink-deep); box-shadow: 0 2px 6px rgba(251,113,133,0.12); }
+.param-page { display: none; }
+.param-page.active { display: block; }
+.param-field { margin-bottom: 12px; }
+.param-field label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 4px; font-weight: 500; }
+.param-input {
+  width: 100%; padding: 10px 14px; border: 2px solid var(--bg2); border-radius: var(--radius-sm);
+  background: var(--bg2); font-size: 14px; color: var(--text); font-family: inherit;
+  transition: all 0.25s ease; outline: none;
+}
+.param-input:focus { border-color: var(--pink); background: var(--card); box-shadow: 0 0 0 4px var(--pink-soft); }
+.param-save-btn {
+  width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm);
+  background: var(--grad-pink); color: #fff; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: all 0.2s var(--ease-spring);
+  margin-top: 8px;
+}
+.param-save-btn:active { transform: scale(0.96); }
 
 /* ===== WIZARD STYLES ===== */
 .wizard-progress {
@@ -335,8 +432,9 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 /* Summary page */
 .summary-card {
-  background: linear-gradient(135deg, #ff6b35, #f7931e); border-radius: var(--radius);
-  padding: 20px 16px; color: #fff; text-align: center; margin: 12px 4px;
+  background: var(--grad-hero); border-radius: var(--radius-lg);
+  padding: 20px 16px; color: var(--text); text-align: center; margin: 12px 4px;
+  box-shadow: var(--shadow-md);
 }
 .summary-avatar {
   width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.2);
@@ -469,27 +567,26 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🏝️ ShoreOS <span style="font-size:10px;color:var(--sub);">v1.1.0</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v2.0</span></span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
 
-    <div class="app-header">
-      <div class="greeting">🏝️ 自由指数</div>
-      <div class="subtitle">每多坚持一年，安全垫就厚一层</div>
-    </div>
+    <!-- User Switcher -->
+    <div class="user-switcher" id="userSwitcher"></div>
 
     <!-- Welcome (no data) -->
     <div class="welcome-card" id="welcomeCard">
-      <div class="wc-emoji">👋</div>
-      <h2>欢迎使用 ShoreOS</h2>
-      <p>切换到「参数」Tab 填写你的财务数据，<br>然后回来看看你离自由还有多远。</p>
+      <div class="wc-emoji">🌸</div>
+      <h2>还没有小伙伴呢</h2>
+      <p>点上方「＋」添加第一位用户<br>一起开启可爱的财务自由之旅 ✨</p>
     </div>
 
     <!-- Dashboard (has data) -->
     <div id="dashboardContent" style="display:none;">
       <div class="highlight-card hl-g1 fade-in">
-        <div class="hl-emoji">🎯</div>
+        <div class="hl-bg-blob"></div>
+        <div class="hl-emoji">🌸</div>
         <div class="hl-value" id="hlFreedom">--</div>
         <div class="hl-label" id="hlFreedomLabel">自由指数</div>
         <div class="hl-meta">
@@ -515,6 +612,55 @@ td.wn { color: var(--orange); font-weight: 600; }
         <div class="mini-card mc-red">
           <div class="mc-emoji">📉</div><div class="mc-value" id="mcGap">--</div>
           <div class="mc-label">离目标缺口</div><div class="mc-sub" id="mcGapSub">--</div>
+        </div>
+      </div>
+
+      <!-- ===== PARAM PANEL (collapsible) ===== -->
+      <div class="param-panel" id="paramPanel">
+        <button class="param-header" onclick="toggleParamPanel()">
+          <span>⚙️ 我的参数</span>
+          <span class="param-chevron">⌃</span>
+        </button>
+        <div class="param-body">
+          <div class="param-seg">
+            <button class="param-seg-btn active" onclick="switchParamTab(0,this)">👤 基本</button>
+            <button class="param-seg-btn" onclick="switchParamTab(1,this)">💰 收支</button>
+            <button class="param-seg-btn" onclick="switchParamTab(2,this)">🏠 住房</button>
+            <button class="param-seg-btn" onclick="switchParamTab(3,this)">📦 资产</button>
+          </div>
+          <div class="param-page active" id="paramPage0">
+            <div class="param-field"><label>昵称</label><input class="param-input" id="pName" placeholder="给自己取个名" onchange="pDirty=true"></div>
+            <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
+            <div class="param-field"><label>性别</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pGenderM" onclick="setParamGender('male',this)" style="flex:1;">👨 男</button><button class="param-seg-btn" id="pGenderF" onclick="setParamGender('female',this)" style="flex:1;">👩 女</button></div></div>
+            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="1995" onchange="pDirty=true"></div>
+            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="7" onchange="pDirty=true"></div>
+            <div class="param-field"><label>城市</label><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="param-seg-btn" onclick="applyCityPresetParam('beijing');pDirty=true" style="font-size:11px;">📍北京</button><button class="param-seg-btn" onclick="applyCityPresetParam('shanghai');pDirty=true" style="font-size:11px;">📍上海</button><button class="param-seg-btn" onclick="applyCityPresetParam('guangzhou');pDirty=true" style="font-size:11px;">📍广州</button><button class="param-seg-btn" onclick="applyCityPresetParam('shenzhen');pDirty=true" style="font-size:11px;">📍深圳</button><button class="param-seg-btn" onclick="applyCityPresetParam('other');pDirty=true" style="font-size:11px;">📍其他</button></div></div>
+            <div class="param-field"><label>社保策略</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pSSMin" onclick="setParamSS('min',this)" style="flex:1;">🛑 达标即停</button><button class="param-seg-btn" id="pSSRetire" onclick="setParamSS('retire',this)" style="flex:1;">💪 缴到退休</button></div></div>
+          </div>
+          <div class="param-page" id="paramPage1">
+            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="20" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="2000" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="500" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="1000" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="500" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="300" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="500" onchange="pDirty=true"></div>
+          </div>
+          <div class="param-page" id="paramPage2">
+            <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
+            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="5000" onchange="pDirty=true"></div></div>
+            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="8000" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="20" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="300" onchange="pDirty=true"></div></div>
+            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="0" onchange="pDirty=true"></div></div>
+          </div>
+          <div class="param-page" id="paramPage3">
+            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="10" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>子女计划</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pChildNone" onclick="setParamChild('none',this)" style="flex:1;">暂无计划</button><button class="param-seg-btn" id="pChildOne" onclick="setParamChild('one',this)" style="flex:1;">计划要孩子</button></div></div>
+            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="5" step="0.5" onchange="pDirty=true"></div></div>
+          </div>
+          <button class="param-save-btn" onclick="saveParamPanel()">💾 保存并重算</button>
         </div>
       </div>
 
@@ -600,21 +746,42 @@ td.wn { color: var(--orange); font-weight: 600; }
   </div>
 
   <!-- ===== INPUTS ===== -->
-  <div class="scroll-section" id="sec-inputs">
-
+  <div class="scroll-section" id="sec-inputs" style="display:none;">
     <!-- Voice button (floating) -->
     <button class="voice-fab" id="voiceBtn" onclick="toggleVoice()" title="语音输入填表">🎤</button>
     <div class="voice-toast" id="voiceToast"></div>
 
-    <!-- ===== WIZARD ===== -->
+    <!-- New User Wizard (8 steps, reused from old wizard) -->
     <div class="wizard-progress" id="wizProgress">
       <div class="wiz-bar-fill" id="wizBarFill"></div>
     </div>
 
     <div class="wizard-steps" id="wizSteps">
-
-      <!-- Step 0: Gender + Birth + City -->
+      <!-- Step 0: Name + Avatar -->
       <div class="wiz-step active" data-step="0">
+        <div class="wiz-card">
+          <div class="wiz-emoji">🌸</div>
+          <h2 class="wiz-question">你好呀，怎么称呼？</h2>
+          <div class="wiz-fields">
+            <label class="wiz-label">昵称</label>
+            <input type="text" class="wiz-input" id="wizNewName" placeholder="给自己取个可爱的名字" onchange="document.getElementById('pName').value=this.value">
+            <label class="wiz-label">选一个头像吧</label>
+            <div class="wiz-chips" id="wizAvatars">
+              <button class="wiz-chip" onclick="setWizAvatar('🐱',this)">🐱</button>
+              <button class="wiz-chip" onclick="setWizAvatar('🐶',this)">🐶</button>
+              <button class="wiz-chip" onclick="setWizAvatar('🐰',this)">🐰</button>
+              <button class="wiz-chip" onclick="setWizAvatar('🦊',this)">🦊</button>
+              <button class="wiz-chip" onclick="setWizAvatar('🐼',this)">🐼</button>
+              <button class="wiz-chip" onclick="setWizAvatar('🐨',this)">🐨</button>
+              <button class="wiz-chip" onclick="setWizAvatar('🐸',this)">🐸</button>
+              <button class="wiz-chip" onclick="setWizAvatar('🐻',this)">🐻</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Gender + Birth + City -->
+      <div class="wiz-step" data-step="1">
         <div class="wiz-card">
           <div class="wiz-emoji">👤</div>
           <h2 class="wiz-question">先简单认识一下你</h2>
@@ -648,8 +815,9 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 1: Social Security -->
-      <div class="wiz-step" data-step="1">
+      <!-- Steps 2-7: Same as old wizard but with data sync to profile -->
+      <!-- Step 2: SS -->
+      <div class="wiz-step" data-step="2">
         <div class="wiz-card">
           <div class="wiz-emoji">🛡️</div>
           <h2 class="wiz-question">你的社保情况</h2>
@@ -665,15 +833,15 @@ td.wn { color: var(--orange); font-weight: 600; }
             <label class="wiz-label">社保缴纳策略</label>
             <div class="wiz-chips" id="wizSSStrategy">
               <button class="wiz-chip active" onclick="setSSStrategy('min',this)">🛑 达标即停</button>
-              <button class="wiz-chip" onclick="setSSStrategy('retire',this)">💪 缴到退休（养老金更高）</button>
+              <button class="wiz-chip" onclick="setSSStrategy('retire',this)">💪 缴到退休</button>
             </div>
             <div class="wiz-hint" id="wizSSHint">达标后不再自缴社保，省下的钱就是安全垫</div>
           </div>
         </div>
       </div>
 
-      <!-- Step 2: Income -->
-      <div class="wiz-step" data-step="2">
+      <!-- Step 3: Income -->
+      <div class="wiz-step" data-step="3">
         <div class="wiz-card">
           <div class="wiz-emoji">💸</div>
           <h2 class="wiz-question">你一年到手多少钱？</h2>
@@ -693,8 +861,8 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 3: Housing -->
-      <div class="wiz-step" data-step="3">
+      <!-- Step 4: Housing -->
+      <div class="wiz-step" data-step="4">
         <div class="wiz-card">
           <div class="wiz-emoji">🏠</div>
           <h2 class="wiz-question">你的住房情况</h2>
@@ -705,37 +873,22 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="setWizHouseType('none',this)">🏡 无房贷</button>
             </div>
             <div id="wizHouseRent">
-              <div class="wiz-input-row">
-                <input type="number" class="wiz-input" id="wizRent" placeholder="月租金（含物业取暖）" onchange="document.getElementById('expRent').value=this.value;recalc()">
-                <span class="wiz-input-suffix">元/月</span>
-              </div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizRent" placeholder="月租金" onchange="document.getElementById('expRent').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
             <div id="wizHouseMortgage" style="display:none;">
-              <div class="wiz-input-row">
-                <input type="number" class="wiz-input" id="wizMtg" placeholder="月供" onchange="document.getElementById('expMortgage').value=this.value;recalc()">
-                <span class="wiz-input-suffix">元/月</span>
-              </div>
-              <div class="wiz-input-row">
-                <input type="number" class="wiz-input" id="wizMtgYrs" placeholder="剩余年限" onchange="document.getElementById('mortgageYearsLeft').value=this.value;recalc()">
-                <span class="wiz-input-suffix">年</span>
-              </div>
-              <div class="wiz-input-row">
-                <input type="number" class="wiz-input" id="wizProp" placeholder="物业取暖月均" onchange="document.getElementById('expProperty').value=this.value;recalc()">
-                <span class="wiz-input-suffix">元/月</span>
-              </div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtg" placeholder="月供" onchange="document.getElementById('expMortgage').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtgYrs" placeholder="剩余年限" onchange="document.getElementById('mortgageYearsLeft').value=this.value;recalc()"><span class="wiz-input-suffix">年</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp" placeholder="物业取暖月均" onchange="document.getElementById('expProperty').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
             <div id="wizHouseNone" style="display:none;">
-              <div class="wiz-input-row">
-                <input type="number" class="wiz-input" id="wizProp2" placeholder="物业取暖月均（可选）" onchange="document.getElementById('expProperty2').value=this.value;recalc()">
-                <span class="wiz-input-suffix">元/月</span>
-              </div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp2" placeholder="物业取暖月均" onchange="document.getElementById('expProperty2').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Step 4: Current expenses -->
-      <div class="wiz-step" data-step="4">
+      <!-- Step 5: Expenses -->
+      <div class="wiz-step" data-step="5">
         <div class="wiz-card">
           <div class="wiz-emoji">🛒</div>
           <h2 class="wiz-question">你现在每月花多少钱？</h2>
@@ -763,8 +916,8 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 5: Minimum expenses -->
-      <div class="wiz-step" data-step="5">
+      <!-- Step 6: Min expenses -->
+      <div class="wiz-step" data-step="6">
         <div class="wiz-card">
           <div class="wiz-emoji">🛟</div>
           <h2 class="wiz-question">如果不再工作，你最低每月要花多少？</h2>
@@ -794,8 +947,8 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 6: Assets & Future -->
-      <div class="wiz-step" data-step="6">
+      <!-- Step 7: Assets -->
+      <div class="wiz-step" data-step="7">
         <div class="wiz-card">
           <div class="wiz-emoji">🏦</div>
           <h2 class="wiz-question">你现在有多少积蓄？</h2>
@@ -817,26 +970,14 @@ td.wn { color: var(--orange); font-weight: 600; }
               <div class="wiz-input-row wiz-sm"><span>📈 股票</span><input type="number" id="wizStock" placeholder="万" onchange="document.getElementById('assetStock').value=this.value;recalc()"><span>万</span></div>
             </div>
             <div class="wiz-summary"><span>总资产</span><b id="wizAssetTotal">--</b></div>
-            <div class="wiz-divider" style="margin-top:10px;"></div>
-            <label class="wiz-label">子女计划</label>
-            <div class="wiz-chips" id="wizChild">
-              <button class="wiz-chip active" onclick="setWizChild('none',this)">暂无计划</button>
-              <button class="wiz-chip" onclick="setWizChild('one',this)">计划要孩子</button>
-            </div>
-            <div id="wizChildCost" style="display:none;">
-              <div class="wiz-input-row">
-                <input type="number" class="wiz-input" id="wizCC" placeholder="预计年支出" onchange="document.getElementById('childCost').value=this.value;recalc()">
-                <span class="wiz-input-suffix">万元/年</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
-      <!-- Step 7: Summary -->
-      <div class="wiz-step" data-step="7">
+      <!-- Step 8: Summary -->
+      <div class="wiz-step" data-step="8">
         <div class="summary-card" id="summaryCard">
-          <div class="summary-avatar" id="sumAvatar">👤</div>
+          <div class="summary-avatar" id="sumAvatar">🐱</div>
           <h2 id="sumName">你的财务画像</h2>
           <div class="sum-tags">
             <span class="sum-tag" id="sumAge">--</span>
@@ -849,21 +990,20 @@ td.wn { color: var(--orange); font-weight: 600; }
             <div class="sum-item"><div class="si-val" id="sumAssets">--</div><div class="si-lbl">总资产</div></div>
             <div class="sum-item"><div class="si-val" id="sumSS">--</div><div class="si-lbl">社保年限</div></div>
           </div>
-          <p style="opacity:0.8;font-size:13px;margin-top:16px;">数据已自动保存。点下方按钮查看你的自由指数 👇</p>
+          <p style="opacity:0.8;font-size:13px;margin-top:16px;">数据已自动保存。点下方按钮创建档案 👇</p>
         </div>
       </div>
-
     </div>
 
     <!-- Wizard nav -->
     <div class="wiz-nav" id="wizNav">
       <button class="wiz-btn wiz-btn-back" id="wizBack" onclick="wizPrev()">← 上一题</button>
-      <span class="wiz-count" id="wizCount">1/8</span>
+      <span class="wiz-count" id="wizCount">1/9</span>
       <button class="wiz-btn wiz-btn-next" id="wizNext" onclick="wizNext()">下一题 →</button>
-      <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinish()" style="display:none;">✨ 完成，看结果</button>
+      <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinishNew()" style="display:none;">🌸 创建档案</button>
     </div>
 
-    <!-- Hidden fields (keep old IDs for calculation engine) -->
+    <!-- Hidden fields for calc engine -->
     <input type="hidden" id="birthYear">
     <input type="hidden" id="currentYear" value="2026">
     <input type="hidden" id="pensionYears" step="0.5">
@@ -889,7 +1029,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
   <!-- Tab Bar -->
   <div class="tab-bar">
-    <button class="tab-item active" onclick="switchTab('dashboard', this)"><span class="tab-icon">📊</span><span class="tab-text">仪表盘</span></button>
+    <button class="tab-item active" onclick="switchTab('dashboard', this)"><span class="tab-icon">🏠</span><span class="tab-text">仪表盘</span></button>
     <button class="tab-item" onclick="switchTab('body', this)">
       <span class="tab-icon">⚖️</span>
       <span class="tab-text">体重</span>
@@ -898,7 +1038,6 @@ td.wn { color: var(--orange); font-weight: 600; }
       <span class="tab-icon">🧾</span>
       <span class="tab-text">记账</span>
     </button>
-    <button class="tab-item" onclick="switchTab('inputs', this)"><span class="tab-icon">⚙️</span><span class="tab-text">参数</span></button>
   </div>
 
   <!-- Body Record Modal -->
@@ -1185,10 +1324,366 @@ const CloudStore = {
   }
 })();
 
+// ===== MULTI-USER DATA LAYER =====
+const PROFILES_KEY = 'shoreos:v2:profiles';
+const ACTIVE_KEY = 'shoreos:v2:active';
+
+let userProfiles = [];
+let activeUid = null;
+
+function loadProfiles(){
+  try {
+    const raw = localStorage.getItem(PROFILES_KEY);
+    userProfiles = raw ? JSON.parse(raw) : [];
+  } catch(e){ userProfiles = []; }
+}
+function saveProfiles(){
+  localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
+  renderUserSwitcher();
+}
+function getActiveProfile(){
+  if(!activeUid) return null;
+  return userProfiles.find(p => p.uid === activeUid) || null;
+}
+
+function switchUser(uid){
+  activeUid = uid;
+  localStorage.setItem(ACTIVE_KEY, uid);
+  // Load profile data into hidden fields
+  const p = getActiveProfile();
+  if(p) loadProfileToFields(p);
+  renderUserSwitcher();
+  recalc();
+  refreshDashboard();
+}
+
+function createProfile(name, avatar){
+  const uid = 'u_' + Date.now().toString(36);
+  const profile = {
+    uid, name, avatar,
+    gender: '', ssStrategy: 'min', houseTypeCur: 'rent', houseTypeMin: 'rent', childPlan: 'none',
+    birthYear: 1995, workYears: 7, city: 'other',
+    incomePost: '', expRent: '', expMortgage: '', mortgageYearsLeft: '', expProperty: '', expProperty2: '',
+    expFood: '', expTransport: '', expPet: '', expEntertain: '', expInsurance: '', expOther: '',
+    expQRent: '', expQMortgage: '', mortgageYearsLeftQ: '', expQProperty: '', expQProperty2: '',
+    expQFood: '', expQTransport: '', expQPet: '', expQEntertain: '', expQInsurance: '', expQOther: '',
+    assetCash: '', assetDeposit: '', assetFund: '', assetStock: '', assetPension: '', assetReturn: '', childCost: '',
+    pensionYears: '', medicalYears: '', pensionMin: '15', medicalMin: '25', pensionSelfPay: '', medicalSelfPay: '',
+  };
+  userProfiles.push(profile);
+  saveProfiles();
+  activeUid = profile.uid;
+  localStorage.setItem(ACTIVE_KEY, activeUid);
+  return profile;
+}
+
+function deleteProfile(uid){
+  if(!confirm('确定删除「'+ (userProfiles.find(p=>p.uid===uid)?.name||'') +'」的所有数据？此操作不可撤销。')) return;
+  userProfiles = userProfiles.filter(p => p.uid !== uid);
+  // Also clean up weight and bill data for this user
+  localStorage.removeItem('shoreos_body_' + uid);
+  localStorage.removeItem('shoreos_bills_' + uid);
+  if(activeUid === uid){
+    activeUid = userProfiles.length > 0 ? userProfiles[0].uid : null;
+    localStorage.setItem(ACTIVE_KEY, activeUid || '');
+  }
+  saveProfiles();
+  if(activeUid){
+    switchUser(activeUid);
+  } else {
+    renderUserSwitcher();
+    document.getElementById('welcomeCard').style.display = 'block';
+    document.getElementById('dashboardContent').style.display = 'none';
+  }
+}
+
+// Save current fields back to active profile
+function saveFieldsToProfile(){
+  const p = getActiveProfile();
+  if(!p) return;
+  p.gender = gender; p.ssStrategy = ssStrategy;
+  p.houseTypeCur = houseTypeCur; p.houseTypeMin = houseTypeMin; p.childPlan = childPlan;
+  p.birthYear = val('birthYear'); p.workYears = parseFloat(document.getElementById('pensionYears').value) || 0;
+  for(const id of FIELD_IDS){
+    const el = document.getElementById(id);
+    if(el) p[id] = el.value;
+  }
+  saveProfiles();
+}
+
+// Load profile data into hidden fields and global state
+function loadProfileToFields(p){
+  gender = p.gender || ''; ssStrategy = p.ssStrategy || 'min';
+  houseTypeCur = p.houseTypeCur || 'rent'; houseTypeMin = p.houseTypeMin || 'rent';
+  childPlan = p.childPlan || 'none';
+  for(const id of FIELD_IDS){
+    const el = document.getElementById(id);
+    if(el && p[id] !== undefined) el.value = p[id];
+  }
+  // Sync wizard year stepper
+  if(p.birthYear) { birthYearSel = p.birthYear; document.getElementById('yearDisplay').textContent = p.birthYear; }
+  if(p.workYears) { currentWorkYears = p.workYears; document.getElementById('workYearsDisplay').textContent = p.workYears; }
+  // Restore toggles
+  restoreToggles();
+  // Also sync param panel fields
+  syncParamPanelFromProfile();
+}
+
+function syncParamPanelFromProfile(){
+  const p = getActiveProfile();
+  if(!p) return;
+  document.getElementById('pName').value = p.name || '';
+  document.getElementById('pAvatar').value = p.avatar || '🐱';
+  document.getElementById('pBirthYear').value = p.birthYear || '';
+  document.getElementById('pWorkYears').value = p.workYears || '';
+  document.getElementById('pIncome').value = p.incomePost || '';
+  document.getElementById('pFood').value = p.expFood || '';
+  document.getElementById('pTransport').value = p.expTransport || '';
+  document.getElementById('pPet').value = p.expPet || '';
+  document.getElementById('pEntertain').value = p.expEntertain || '';
+  document.getElementById('pInsurance').value = p.expInsurance || '';
+  document.getElementById('pOther').value = p.expOther || '';
+  document.getElementById('pRent').value = p.expRent || '';
+  document.getElementById('pMtg').value = p.expMortgage || '';
+  document.getElementById('pMtgYrs').value = p.mortgageYearsLeft || '';
+  document.getElementById('pProp').value = p.expProperty || '';
+  document.getElementById('pProp2').value = p.expProperty2 || '';
+  document.getElementById('pCash').value = p.assetCash || '';
+  document.getElementById('pDeposit').value = p.assetDeposit || '';
+  document.getElementById('pFund').value = p.assetFund || '';
+  document.getElementById('pStock').value = p.assetStock || '';
+  document.getElementById('pChildCost').value = p.childCost || '';
+  // Restore toggle buttons
+  setParamGenderUI(p.gender);
+  setParamSSUI(p.ssStrategy);
+  setParamHouseUI(p.houseTypeCur);
+  setParamChildUI(p.childPlan);
+}
+
+// ===== USER SWITCHER RENDER =====
+function renderUserSwitcher(){
+  const container = document.getElementById('userSwitcher');
+  if(!container) return;
+  let html = '';
+  for(const p of userProfiles){
+    const active = p.uid === activeUid ? ' active' : '';
+    html += `<button class="user-avatar-btn${active}" onclick="switchUser('${p.uid}')" oncontextmenu="event.preventDefault();showUserMenu('${p.uid}')">
+      <div class="user-avatar-circle">${p.avatar||'🐱'}</div>
+      <div class="user-avatar-name">${p.name||'未命名'}</div>
+    </button>`;
+  }
+  html += `<button class="user-avatar-btn user-add-btn" onclick="startNewUserWizard()">
+    <div class="user-avatar-circle">＋</div>
+    <div class="user-avatar-name">新增</div>
+  </button>`;
+  container.innerHTML = html;
+}
+
+function showUserMenu(uid){
+  const p = userProfiles.find(x => x.uid === uid);
+  if(!p) return;
+  const act = prompt('编辑「'+p.name+'」：\n输入新昵称（留空则取消）\n输入 :delete 删除此用户');
+  if(act === ':delete') deleteProfile(uid);
+  else if(act && act.trim()){
+    p.name = act.trim();
+    saveProfiles();
+    syncParamPanelFromProfile();
+  }
+}
+
+// ===== PARAM PANEL =====
+let pDirty = false, pTabIdx = 0;
+
+function toggleParamPanel(){
+  document.getElementById('paramPanel').classList.toggle('open');
+}
+
+function switchParamTab(idx, btn){
+  pTabIdx = idx;
+  document.querySelectorAll('.param-seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.param-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('paramPage'+idx).classList.add('active');
+}
+
+function setParamGender(g, btn){
+  gender = g;
+  setParamGenderUI(g);
+  pDirty = true;
+}
+function setParamGenderUI(g){
+  const m = document.getElementById('pGenderM'), f = document.getElementById('pGenderF');
+  if(m) m.classList.toggle('active', g==='male');
+  if(f) f.classList.toggle('active', g==='female');
+}
+function setParamSS(s, btn){
+  ssStrategy = s;
+  setParamSSUI(s);
+  pDirty = true;
+}
+function setParamSSUI(s){
+  const min = document.getElementById('pSSMin'), ret = document.getElementById('pSSRetire');
+  if(min) min.classList.toggle('active', s==='min');
+  if(ret) ret.classList.toggle('active', s==='retire');
+}
+function setParamHouse(type, btn){
+  houseTypeCur = type;
+  setParamHouseUI(type);
+  pDirty = true;
+}
+function setParamHouseUI(type){
+  ['rent','mortgage','none'].forEach(t => {
+    const el = document.getElementById('pHouse'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el) el.classList.toggle('active', type===t);
+  });
+  document.getElementById('pRentDiv').style.display = type==='rent'?'block':'none';
+  document.getElementById('pMtgDiv').style.display = type==='mortgage'?'block':'none';
+  document.getElementById('pNoneDiv').style.display = type==='none'?'block':'none';
+}
+function setParamChild(plan, btn){
+  childPlan = plan;
+  setParamChildUI(plan);
+  pDirty = true;
+}
+function setParamChildUI(plan){
+  document.getElementById('pChildNone').classList.toggle('active', plan==='none');
+  document.getElementById('pChildOne').classList.toggle('active', plan==='one');
+  document.getElementById('pChildCostDiv').style.display = plan==='one'?'block':'none';
+}
+
+function saveParamPanel(){
+  const p = getActiveProfile();
+  if(!p){ alert('请先创建用户'); return; }
+  p.name = document.getElementById('pName').value || p.name;
+  p.avatar = document.getElementById('pAvatar').value || p.avatar;
+  p.birthYear = parseInt(document.getElementById('pBirthYear').value) || p.birthYear;
+  p.workYears = parseInt(document.getElementById('pWorkYears').value) || p.workYears;
+
+  // Sync to hidden fields for calc engine
+  document.getElementById('birthYear').value = p.birthYear;
+  document.getElementById('pensionYears').value = p.workYears;
+  document.getElementById('medicalYears').value = p.workYears;
+  document.getElementById('incomePost').value = document.getElementById('pIncome').value;
+  document.getElementById('expFood').value = document.getElementById('pFood').value;
+  document.getElementById('expTransport').value = document.getElementById('pTransport').value;
+  document.getElementById('expPet').value = document.getElementById('pPet').value;
+  document.getElementById('expEntertain').value = document.getElementById('pEntertain').value;
+  document.getElementById('expInsurance').value = document.getElementById('pInsurance').value;
+  document.getElementById('expOther').value = document.getElementById('pOther').value;
+  document.getElementById('expRent').value = document.getElementById('pRent').value;
+  document.getElementById('expMortgage').value = document.getElementById('pMtg').value;
+  document.getElementById('mortgageYearsLeft').value = document.getElementById('pMtgYrs').value;
+  document.getElementById('expProperty').value = document.getElementById('pProp').value;
+  document.getElementById('expProperty2').value = document.getElementById('pProp2').value;
+  document.getElementById('assetCash').value = document.getElementById('pCash').value;
+  document.getElementById('assetDeposit').value = document.getElementById('pDeposit').value;
+  document.getElementById('assetFund').value = document.getElementById('pFund').value;
+  document.getElementById('assetStock').value = document.getElementById('pStock').value;
+  document.getElementById('childCost').value = document.getElementById('pChildCost').value;
+
+  saveFieldsToProfile();
+  pDirty = false;
+  recalc();
+  renderUserSwitcher();
+  document.getElementById('paramPanel').classList.remove('open');
+  showToast('✅ 已保存并重算');
+}
+
+function applyCityPresetParam(city){
+  applyCityPreset(city);
+  pDirty = true;
+}
+
+// ===== NEW USER WIZARD =====
+function startNewUserWizard(){
+  // Reset fields
+  for(const id of FIELD_IDS){
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  }
+  document.getElementById('pensionMin').value = '15';
+  document.getElementById('medicalMin').value = '25';
+  document.getElementById('currentYear').value = '2026';
+  gender = ''; ssStrategy = 'min'; houseTypeCur = 'rent'; childPlan = 'none';
+  birthYearSel = 1995; currentWorkYears = 7;
+  document.getElementById('yearDisplay').textContent = '1995';
+  document.getElementById('workYearsDisplay').textContent = '7';
+  document.getElementById('wizNewName').value = '';
+  // Reset wizard UI
+  document.querySelectorAll('#wizGender .wiz-chip').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#wizSSStrategy .wiz-chip').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#wizSSStrategy .wiz-chip')[0]?.classList.add('active');
+  document.querySelectorAll('#wizHouseType .wiz-chip').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#wizHouseType .wiz-chip')[0]?.classList.add('active');
+  document.querySelectorAll('#wizAvatars .wiz-chip').forEach(b=>b.classList.remove('active'));
+
+  // Show wizard section
+  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-inputs').style.display = 'block';
+  document.getElementById('sec-inputs').classList.add('active');
+  wizStep = 0; WIZ_TOTAL_NEW = 9;
+  wizGoTo(0);
+}
+
+let WIZ_TOTAL_NEW = 9;
+let wizNewAvatar = '🐱';
+
+function setWizAvatar(a, btn){
+  wizNewAvatar = a;
+  document.querySelectorAll('#wizAvatars .wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pAvatar').value = a;
+}
+
+function wizFinishNew(){
+  const name = document.getElementById('wizNewName').value.trim() || '新用户';
+  const profile = createProfile(name, wizNewAvatar);
+  // Save current field values to profile
+  saveFieldsToProfile();
+  // Hide wizard
+  document.getElementById('sec-inputs').style.display = 'none';
+  document.getElementById('sec-inputs').classList.remove('active');
+  // Switch to dashboard
+  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-dashboard').classList.add('active');
+  document.querySelectorAll('.tab-item').forEach((t,i)=>t.classList.toggle('active', i===0));
+  switchUser(profile.uid);
+  showToast('🌸 欢迎「'+name+'」加入 ShoreOS！');
+}
+
+// Override wizFinish for old code compatibility
+const origWizFinish = wizFinish;
+wizFinish = function(){ origWizFinish(); };
+
+// Simple toast
+function showToast(msg){
+  const el = document.getElementById('voiceToast');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// Refresh dashboard: re-render UserSwitcher + show/hide welcome
+function refreshDashboard(){
+  const hasData = hasAnyData();
+  document.getElementById('welcomeCard').style.display = hasData ? 'none' : 'block';
+  document.getElementById('dashboardContent').style.display = hasData ? 'block' : 'none';
+}
+
+// Override recalc to also refresh dashboard
+const origRecalc = recalc;
+recalc = function(){
+  saveState();
+  const d = calcAll();
+  render(d);
+  refreshDashboard();
+};
+
 // ===== STATE =====
 let houseTypeCur = 'rent', houseTypeMin = 'rent', childPlan = 'none';
 let gender = '', ssStrategy = 'min'; // 'min' = stop at minimum, 'retire' = pay until retire
-let wizStep = 0; const WIZ_TOTAL = 8;
+let wizStep = 0; const WIZ_TOTAL_OLD = 8; let WIZ_TOTAL = 9;
 
 // ===== STORAGE =====
 const PREFIX = 'shoreos_v05_';
@@ -2017,40 +2512,41 @@ function parseVoiceText(text){
 }
 
 // ===== INIT =====
+loadProfiles();
+activeUid = localStorage.getItem(ACTIVE_KEY) || '';
+// Migrate v1 data if exists
+const v1State = localStorage.getItem('shoreos_v05_state');
+if(v1State && userProfiles.length === 0){
+  try {
+    const name = prompt('🌸 检测到旧版数据！请输入你的昵称以创建档案：', '我自己');
+    if(name){
+      const profile = createProfile(name.trim() || '我自己', '🐱');
+      // Load v1 data into hidden fields
+      loadState();
+      saveFieldsToProfile();
+      activeUid = profile.uid;
+      localStorage.setItem(ACTIVE_KEY, activeUid);
+      showToast('✨ 数据已迁移到「'+profile.name+'」');
+    }
+  } catch(e){ console.warn('v1 migration failed:', e); }
+}
+
+// Validate activeUid
+if(activeUid && !userProfiles.find(p=>p.uid===activeUid)){
+  activeUid = userProfiles.length > 0 ? userProfiles[0].uid : null;
+  localStorage.setItem(ACTIVE_KEY, activeUid || '');
+}
+
+// Load active profile data
+if(activeUid){
+  const p = getActiveProfile();
+  if(p) loadProfileToFields(p);
+}
+
 wizGoTo(0);
 initVoice();
-loadState();
-// Sync stepper from saved values
-birthYearSel = parseInt(document.getElementById('birthYear').value) || 1995;
-currentWorkYears = parseInt(document.getElementById('pensionYears').value) || 7;
-document.getElementById('yearDisplay').textContent = birthYearSel;
-document.getElementById('workYearsDisplay').textContent = currentWorkYears;
-// Sync hidden → wizard fields
-['birthYear','pensionYears','incomePost','expRent','expMortgage','mortgageYearsLeft','expProperty','expProperty2',
- 'expFood','expTransport','expPet','expEntertain','expInsurance','expOther',
- 'expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2',
- 'expQFood','expQTransport','expQPet','expQEntertain','expQInsurance','expQOther',
- 'assetCash','assetDeposit','assetFund','assetStock','childCost'].forEach(id=>{
-  const h = document.getElementById(id);
-  const wMap = {
-    birthYear:'', pensionYears:'wizPensionY', incomePost:'wizIncome',
-    expRent:'wizRent', expMortgage:'wizMtg', mortgageYearsLeft:'wizMtgYrs',
-    expProperty:'wizProp', expProperty2:'wizProp2',
-    expFood:'wizFood', expTransport:'wizTransport', expPet:'wizPet',
-    expEntertain:'wizEntertain', expInsurance:'wizInsurance', expOther:'wizOther',
-    expQRent:'wizQHouse', expQFood:'wizQFood', expQTransport:'wizQTransport',
-    expQPet:'wizQPet', expQEntertain:'wizQEntertain', expQInsurance:'wizQInsurance', expQOther:'wizQOther',
-    assetCash:'wizCash', assetDeposit:'wizDep', assetFund:'wizFund', assetStock:'wizStock', childCost:'wizCC'
-  };
-  const wId = wMap[id];
-  if(h && h.value && wId){ const w = document.getElementById(wId); if(w) w.value = h.value; }
-});
-// Restore toggle positions
-if(gender){ const gBtn = document.querySelector(gender==='female'?'#wizGender .wiz-chip:last-child':'#wizGender .wiz-chip:first-child'); if(gBtn) gBtn.classList.add('active'); }
-if(ssStrategy==='retire'){
-  const rBtn = document.querySelector('#wizSSStrategy .wiz-chip:last-child');
-  if(rBtn){ rBtn.classList.add('active'); document.getElementById('wizSSHint').textContent = '一直缴到60岁退休，养老金领得更多。每月固定支出多一份'; }
-}
+renderUserSwitcher();
+recalc();
 
 // ===== BODY WEIGHT MANAGEMENT =====
 let bodyRecords = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
@@ -2298,6 +2794,9 @@ switchTab = function(tab, btn){
   if(tab === 'bookkeeping'){
     renderBkCalendar();
     renderBkAnalysis();
+  }
+  if(tab === 'dashboard'){
+    syncParamPanelFromProfile();
   }
 };
 
