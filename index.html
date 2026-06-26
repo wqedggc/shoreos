@@ -2110,11 +2110,12 @@ function setChild(p, btn){
 
 function switchTab(tab, btn){
   document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sec-'+tab).classList.add('active');
+  const sec = document.getElementById('sec-'+tab);
+  if(sec) sec.classList.add('active');
   document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
+  if(btn) btn.classList.add('active');
   document.getElementById('phone').scrollTop = 0;
-  recalc();
+  if(tab !== 'inputs') recalc();
 }
 
 // ===== WIZARD NAVIGATION =====
@@ -3137,8 +3138,6 @@ function renderBkAnalysis(){
     </tr>`;
   }).join('');
 }
-
-recalc();
 </script>
 </body>
 </html>
