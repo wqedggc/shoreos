@@ -1601,6 +1601,9 @@ function startNewUserWizard(){
     const el = document.getElementById(id);
     if(el) el.value = '';
   }
+  document.getElementById('birthYear').value = '1995';
+  document.getElementById('pensionYears').value = '7';
+  document.getElementById('medicalYears').value = '7';
   document.getElementById('pensionMin').value = '15';
   document.getElementById('medicalMin').value = '25';
   document.getElementById('currentYear').value = '2026';
@@ -1674,17 +1677,17 @@ function showToast(msg){
 
 // Refresh dashboard: re-render UserSwitcher + show/hide welcome
 function refreshDashboard(){
-  const hasData = hasAnyData();
-  document.getElementById('welcomeCard').style.display = hasData ? 'none' : 'block';
-  document.getElementById('dashboardContent').style.display = hasData ? 'block' : 'none';
+  const hasData = hasAnyData() || (getActiveProfile() !== null);
+  const wc = document.getElementById('welcomeCard');
+  const dc = document.getElementById('dashboardContent');
+  if(wc) wc.style.display = hasData ? 'none' : 'block';
+  if(dc) dc.style.display = hasData ? 'block' : 'none';
 }
 
 // Override recalc to also refresh dashboard
 const origRecalc = recalc;
 recalc = function(){
-  saveState();
-  const d = calcAll();
-  render(d);
+  origRecalc();
   refreshDashboard();
 };
 
@@ -2288,11 +2291,18 @@ function fillQuickExpenses(total){
   document.getElementById('expEntertain').value = Math.round(remaining*ratios.entertain);
   document.getElementById('expInsurance').value = Math.round(remaining*ratios.insurance);
   document.getElementById('expOther').value = Math.round(remaining*ratios.other);
-  // Sync wizard fields
-  syncWizToHidden('expFood','wizFood'); syncWizToHidden('expTransport','wizTransport');
-  syncWizToHidden('expPet','wizPet'); syncWizToHidden('expEntertain','wizEntertain');
-  syncWizToHidden('expInsurance','wizInsurance'); syncWizToHidden('expOther','wizOther');
+  // Sync hidden → wizard fields (copy values to wizard display)
+  syncHidToWiz('expFood','wizFood'); syncHidToWiz('expTransport','wizTransport');
+  syncHidToWiz('expPet','wizPet'); syncHidToWiz('expEntertain','wizEntertain');
+  syncHidToWiz('expInsurance','wizInsurance'); syncHidToWiz('expOther','wizOther');
   recalc();
+}
+
+// Renamed: sync hidden → wizard
+function syncHidToWiz(hiddenId, wizId){
+  const h = document.getElementById(hiddenId);
+  const w = document.getElementById(wizId);
+  if(h && w) w.value = h.value || '';
 }
 
 function fillQuickMinExp(ratio){
@@ -2307,10 +2317,10 @@ function fillQuickMinExp(ratio){
     if(el) el.value = Math.round(v * ratio);
   });
   // Sync wiz fields
-  syncWizToHidden('expQRent','wizQHouse');
-  syncWizToHidden('expQFood','wizQFood'); syncWizToHidden('expQTransport','wizQTransport');
-  syncWizToHidden('expQPet','wizQPet'); syncWizToHidden('expQEntertain','wizQEntertain');
-  syncWizToHidden('expQInsurance','wizQInsurance'); syncWizToHidden('expQOther','wizQOther');
+  syncHidToWiz('expQRent','wizQHouse');
+  syncHidToWiz('expQFood','wizQFood'); syncHidToWiz('expQTransport','wizQTransport');
+  syncHidToWiz('expQPet','wizQPet'); syncHidToWiz('expQEntertain','wizQEntertain');
+  syncHidToWiz('expQInsurance','wizQInsurance'); syncHidToWiz('expQOther','wizQOther');
   recalc();
 }
 
@@ -2320,11 +2330,13 @@ function fillQuickAssets(total){
   document.getElementById('assetDeposit').value = Math.round(total*0.4);
   document.getElementById('assetFund').value = Math.round(total*0.2);
   document.getElementById('assetStock').value = Math.round(total*0.2);
-  syncWizToHidden('assetCash','wizCash'); syncWizToHidden('assetDeposit','wizDep');
-  syncWizToHidden('assetFund','wizFund'); syncWizToHidden('assetStock','wizStock');
+  syncHidToWiz('assetCash','wizCash'); syncHidToWiz('assetDeposit','wizDep');
+  syncHidToWiz('assetFund','wizFund'); syncHidToWiz('assetStock','wizStock');
   recalc();
 }
 
+// Deprecated alias
+function syncWizToHidden(hiddenId, wizId){ syncHidToWiz(hiddenId, wizId); }
 function syncWizToHidden(hiddenId, wizId){
   const h = document.getElementById(hiddenId);
   const w = document.getElementById(wizId);
