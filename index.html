@@ -1350,14 +1350,16 @@ function getActiveProfile(){
 }
 
 function switchUser(uid){
-  activeUid = uid;
-  localStorage.setItem(ACTIVE_KEY, uid);
-  // Load profile data into hidden fields
-  const p = getActiveProfile();
-  if(p) loadProfileToFields(p);
-  renderUserSwitcher();
-  recalc();
-  refreshDashboard();
+  try {
+    activeUid = uid;
+    localStorage.setItem(ACTIVE_KEY, uid);
+    // Load profile data into hidden fields
+    const p = getActiveProfile();
+    if(p) loadProfileToFields(p);
+    renderUserSwitcher();
+    recalc();
+    refreshDashboard();
+  } catch(e){ console.error('switchUser error:', e); }
 }
 
 
@@ -1708,8 +1710,8 @@ function refreshDashboard(){
 // Override recalc to also refresh dashboard
 const origRecalc = recalc;
 recalc = function(){
-  origRecalc();
-  refreshDashboard();
+  try { origRecalc(); } catch(e){ console.error('recalc error:', e); }
+  try { refreshDashboard(); } catch(e){ console.error('refreshDashboard error:', e); }
 };
 
 // ===== STATE =====
@@ -1913,21 +1915,6 @@ function calcAll(){
   const assets=(val('assetCash')+val('assetDeposit')+val('assetFund')+val('assetStock')+val('assetPension'))*10000;
   const ret=val('assetReturn')/100;
   const inflation=val('inflation')/100 || 0.03;
-  // 精确自由年月
-  let fireYearExact=null, fireMonthExact=null;
-  if(eSave>0 && gap>0){
-    let mos=0, a=eAssets;
-    const ms = eSave/12;
-    while(a<fire && mos<1200){
-      mos++;
-      a = a*(1+ret/12) + ms;
-    }
-    if(a>=fire){
-      fireYearExact = now + Math.floor(mos/12);
-      fireMonthExact = mos%12 || 12;
-      if(fireMonthExact===12){ fireYearExact--; fireMonthExact=12; }
-    }
-  }
   // 养老金估算（简化）
   const retireAgeX = 60;
   const pyAtRetire = penY + Math.max(retireAgeX-age,0);
@@ -1963,6 +1950,22 @@ function calcAll(){
   const ytf = eSave>0 ? gap/eSave : 999;
   const fireYear = ytf<100 ? Math.round(now+ytf) : null;
   const perYearMo = eSave/eQA*12;
+
+  // 精确自由年月（必须在 eSave/eAssets/fire/gap 声明之后）
+  let fireYearExact=null, fireMonthExact=null;
+  if(eSave>0 && gap>0){
+    let mos=0, a=eAssets;
+    const ms = eSave/12;
+    while(a<fire && mos<1200){
+      mos++;
+      a = a*(1+ret/12) + ms;
+    }
+    if(a>=fire){
+      fireYearExact = now + Math.floor(mos/12);
+      fireMonthExact = mos%12 || 12;
+      if(fireMonthExact===12){ fireYearExact--; fireMonthExact=12; }
+    }
+  }
 
   // Scenarios
   const sc=[]; const ages2=[age];
