@@ -567,7 +567,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v2.0</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v2.2</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
@@ -632,33 +632,36 @@ td.wn { color: var(--orange); font-weight: 600; }
             <div class="param-field"><label>昵称</label><input class="param-input" id="pName" placeholder="给自己取个名" onchange="pDirty=true"></div>
             <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
             <div class="param-field"><label>性别</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pGenderM" onclick="setParamGender('male',this)" style="flex:1;">👨 男</button><button class="param-seg-btn" id="pGenderF" onclick="setParamGender('female',this)" style="flex:1;">👩 女</button></div></div>
-            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="1995" onchange="pDirty=true"></div>
-            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="7" onchange="pDirty=true"></div>
+            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="" onchange="pDirty=true"></div>
             <div class="param-field"><label>城市</label><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="param-seg-btn" onclick="applyCityPresetParam('beijing');pDirty=true" style="font-size:11px;">📍北京</button><button class="param-seg-btn" onclick="applyCityPresetParam('shanghai');pDirty=true" style="font-size:11px;">📍上海</button><button class="param-seg-btn" onclick="applyCityPresetParam('guangzhou');pDirty=true" style="font-size:11px;">📍广州</button><button class="param-seg-btn" onclick="applyCityPresetParam('shenzhen');pDirty=true" style="font-size:11px;">📍深圳</button><button class="param-seg-btn" onclick="applyCityPresetParam('other');pDirty=true" style="font-size:11px;">📍其他</button></div></div>
             <div class="param-field"><label>社保策略</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pSSMin" onclick="setParamSS('min',this)" style="flex:1;">🛑 达标即停</button><button class="param-seg-btn" id="pSSRetire" onclick="setParamSS('retire',this)" style="flex:1;">💪 缴到退休</button></div></div>
           </div>
           <div class="param-page" id="paramPage1">
-            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="20" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="2000" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="500" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="1000" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="500" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="300" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="500" onchange="pDirty=true"></div>
+            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="" onchange="pDirty=true"></div>
           </div>
           <div class="param-page" id="paramPage2">
             <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
-            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="5000" onchange="pDirty=true"></div></div>
-            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="8000" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="20" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="300" onchange="pDirty=true"></div></div>
-            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="0" onchange="pDirty=true"></div></div>
+            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="" onchange="pDirty=true"></div></div>
           </div>
           <div class="param-page" id="paramPage3">
-            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="5" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="10" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="5" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>年化收益率（%）</label><input type="number" class="param-input" id="pReturn" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>通胀率（%）</label><input type="number" class="param-input" id="pInflation" placeholder="3" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>社保档位</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pTierLow" onclick="setParamTier('low',this)" style="flex:1;">最低档</button><button class="param-seg-btn" id="pTierMid" onclick="setParamTier('mid',this)" style="flex:1;">标准档</button><button class="param-seg-btn" id="pTierHigh" onclick="setParamTier('high',this)" style="flex:1;">最高档</button></div></div>
             <div class="param-field"><label>子女计划</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pChildNone" onclick="setParamChild('none',this)" style="flex:1;">暂无计划</button><button class="param-seg-btn" id="pChildOne" onclick="setParamChild('one',this)" style="flex:1;">计划要孩子</button></div></div>
-            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="5" step="0.5" onchange="pDirty=true"></div></div>
+            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="" step="0.5" onchange="pDirty=true"></div></div>
           </div>
           <button class="param-save-btn" onclick="saveParamPanel()">💾 保存并重算</button>
         </div>
@@ -794,13 +797,13 @@ td.wn { color: var(--orange); font-weight: 600; }
             <label class="wiz-label">出生年份</label>
             <div class="stepper">
               <button class="stepper-btn" onclick="stepYear(-1)">−</button>
-              <div><span class="stepper-val" id="yearDisplay">1995</span><span class="stepper-unit">年</span></div>
+              <div><span class="stepper-val" id="yearDisplay">--</span><span class="stepper-unit">年</span></div>
               <button class="stepper-btn" onclick="stepYear(1)">+</button>
             </div>
             <label class="wiz-label">已工作年限</label>
             <div class="stepper">
               <button class="stepper-btn" onclick="stepWorkYears(-1)">−</button>
-              <div><span class="stepper-val" id="workYearsDisplay">7</span><span class="stepper-unit">年</span></div>
+              <div><span class="stepper-val" id="workYearsDisplay">--</span><span class="stepper-unit">年</span></div>
               <button class="stepper-btn" onclick="stepWorkYears(1)">+</button>
             </div>
             <label class="wiz-label">工作城市（点一下自动填社保参数）</label>
@@ -1357,18 +1360,34 @@ function switchUser(uid){
   refreshDashboard();
 }
 
+
+function setParamTier(tier, btn){
+  document.querySelectorAll('#paramPage3 .param-seg-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  // 根据档位调整 penSelf/medSelf（以城市预设为基准）
+  const city = getActiveProfile()?.city || 'other';
+  const base = {beijing:{low:760,mid:1265,high:2530}, shanghai:{low:840,mid:1400,high:2800}, guangzhou:{low:660,mid:1100,high:2200}, shenzhen:{low:600,mid:1000,high:2000}};
+  const t = base[city] || base['beijing'];
+  if(tier!=='none' && t[tier]){
+    document.getElementById('pensionSelfPay') && (document.getElementById('pensionSelfPay').value = t[tier]);
+    // medical 约为 pension 的 40%
+    document.getElementById('medicalSelfPay') && (document.getElementById('medicalSelfPay').value = Math.round(t[tier]*0.41));
+  }
+  pDirty=true;
+}
+
 function createProfile(name, avatar){
   const uid = 'u_' + Date.now().toString(36);
   const profile = {
     uid, name, avatar,
     gender: '', ssStrategy: 'min', houseTypeCur: 'rent', houseTypeMin: 'rent', childPlan: 'none',
-    birthYear: 1995, workYears: 7, city: 'other',
+    birthYear: '', workYears: '', city: 'other',
     incomePost: '', expRent: '', expMortgage: '', mortgageYearsLeft: '', expProperty: '', expProperty2: '',
     expFood: '', expTransport: '', expPet: '', expEntertain: '', expInsurance: '', expOther: '',
     expQRent: '', expQMortgage: '', mortgageYearsLeftQ: '', expQProperty: '', expQProperty2: '',
     expQFood: '', expQTransport: '', expQPet: '', expQEntertain: '', expQInsurance: '', expQOther: '',
     assetCash: '', assetDeposit: '', assetFund: '', assetStock: '', assetPension: '', assetReturn: '', childCost: '',
-    pensionYears: '', medicalYears: '', pensionMin: '15', medicalMin: '25', pensionSelfPay: '', medicalSelfPay: '',
+    pensionYears: '', medicalYears: '', pensionMin: '15', medicalMin: '25', pensionSelfPay: '', medicalSelfPay: '', inflation:'3',
   };
   userProfiles.push(profile);
   saveProfiles();
@@ -1422,7 +1441,9 @@ function loadProfileToFields(p){
   }
   // Sync wizard year stepper
   if(p.birthYear) { birthYearSel = p.birthYear; document.getElementById('yearDisplay').textContent = p.birthYear; }
+  else { birthYearSel = null; document.getElementById('yearDisplay').textContent = '--'; }
   if(p.workYears) { currentWorkYears = p.workYears; document.getElementById('workYearsDisplay').textContent = p.workYears; }
+  else { currentWorkYears = null; document.getElementById('workYearsDisplay').textContent = '--'; }
   // Restore toggles
   restoreToggles();
   // Also sync param panel fields
@@ -1608,9 +1629,9 @@ function startNewUserWizard(){
   document.getElementById('medicalMin').value = '25';
   document.getElementById('currentYear').value = '2026';
   gender = ''; ssStrategy = 'min'; houseTypeCur = 'rent'; childPlan = 'none';
-  birthYearSel = 1995; currentWorkYears = 7;
-  document.getElementById('yearDisplay').textContent = '1995';
-  document.getElementById('workYearsDisplay').textContent = '7';
+  birthYearSel = null; currentWorkYears = null;
+  document.getElementById('yearDisplay').textContent = '--';
+  document.getElementById('workYearsDisplay').textContent = '--';
   document.getElementById('wizNewName').value = '';
   // Also clear all wizard input fields
   ['wizPensionY','wizIncome','wizRent','wizMtg','wizMtgYrs','wizProp','wizProp2',
@@ -1704,7 +1725,8 @@ const FIELD_IDS = ['birthYear','currentYear','pensionYears','medicalYears','pens
   'expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2',
   'expQFood','expQTransport','expQPet','expQEntertain','expQInsurance','expQOther',
   'assetCash','assetDeposit','assetFund','assetStock','assetPension','assetReturn',
-  'childCost'];
+  'childCost','inflation'];
+
 
 function saveState(){
   const data = {};
@@ -1830,6 +1852,19 @@ function getMortgageYears(section){
 }
 
 // ===== CORE =====
+
+// ===== ASSET HIDE GLOBAL =====
+let assetHide = false;
+function toggleAssetHide(){
+  assetHide = !assetHide;
+  document.getElementById('assetHideBtn').textContent = assetHide ? '🙈' : '👁️';
+  recalc(); refreshDashboard();
+}
+function maskAsset(v){
+  if(!assetHide) return v;
+  if(typeof v === 'string') return '****';
+  return '****';
+}
 function calcAll(){
   const birth=val('birthYear'), now=val('currentYear'), age=now-birth;
   if(age<=0||age>120) return null;
@@ -1877,6 +1912,27 @@ function calcAll(){
 
   const assets=(val('assetCash')+val('assetDeposit')+val('assetFund')+val('assetStock')+val('assetPension'))*10000;
   const ret=val('assetReturn')/100;
+  const inflation=val('inflation')/100 || 0.03;
+  // 精确自由年月
+  let fireYearExact=null, fireMonthExact=null;
+  if(eSave>0 && gap>0){
+    let mos=0, a=eAssets;
+    const ms = eSave/12;
+    while(a<fire && mos<1200){
+      mos++;
+      a = a*(1+ret/12) + ms;
+    }
+    if(a>=fire){
+      fireYearExact = now + Math.floor(mos/12);
+      fireMonthExact = mos%12 || 12;
+      if(fireMonthExact===12){ fireYearExact--; fireMonthExact=12; }
+    }
+  }
+  // 养老金估算（简化）
+  const retireAgeX = 60;
+  const pyAtRetire = penY + Math.max(retireAgeX-age,0);
+  const estPensionMonthly = penSelf>0 ? Math.round(penSelf * Math.min(pyAtRetire,35) * 0.7) : 0;
+  const estPensionAnnual = estPensionMonthly * 12;
   const cCost=val('childCost')*10000;
 
   let eCA=ca, eAssets=assets, eQA=qa;
@@ -1973,7 +2029,7 @@ function calcAll(){
 
   const pY=[1,2,3,5,8,10], sLbl=pY.map(y=>'多干'+y+'年'), sMo=pY.map(y=>eSave*y/eQA*12);
 
-  return {age,penY,medY,penMin,medMin,penSelf,medSelf,penToMin,medToMin,agePenMin,ageMedMin,ssTotalCost,ssSelfNow,income,cm,ca,eCA,qm,qmBase,qa,eQA,assets,eAssets,investableAssets,eSave,fire,fi,gap,ytf,fireYear,qYears,qMonths,ret,perYearMo,mgPrincipalQ,mgMonthlyQ,mgYearsQ,sc,labels,cw,qn,q35,q40,sLbl,sMo};
+  return {age,penY,medY,penMin,medMin,penSelf,medSelf,penToMin,medToMin,agePenMin,ageMedMin,ssTotalCost,ssSelfNow,income,cm,ca,eCA,qm,qmBase,qa,eQA,assets,eAssets,investableAssets,eSave,fire,fi,gap,ytf,fireYear,qYears,qMonths,ret,perYearMo,mgPrincipalQ,mgMonthlyQ,mgYearsQ,sc,labels,cw,qn,q35,q40,sLbl,sMo,fireYearExact,fireMonthExact,estPensionMonthly,estPensionAnnual};
 }
 
 // ===== RENDER =====
@@ -1983,7 +2039,7 @@ function render(d){
   const safeText = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
   safeText('totalNowExp', d ? d.cm.toFixed(0)+' 元' : '--');
   safeText('totalQuitExp', d ? d.qm.toFixed(0)+' 元' : '--');
-  safeText('totalAssets', d ? (d.assets/10000).toFixed(0)+' 万元' : '--');
+  safeText('totalAssets', d ? (assetHide ? '****' : (d.assets/10000).toFixed(0)+' 万元') : '--');
   safeText('totalSSSelfPay', d ? fmtW(d.ssSelfNow)+'/月 （养老'+fmtW(d.penSelf)+' + 医保'+fmtW(d.medSelf)+'）' : '--');
 
   const hasData = hasAnyData();
@@ -1994,13 +2050,23 @@ function render(d){
   if(!hasData||!d) return;
 
   // Freedom highlight
-  document.getElementById('hlFreedom').textContent = fmtP(d.fi);
+  document.getElementById('hlFreedom').textContent = assetHide ? '**%' : fmtP(d.fi);
   const moods = ['起步积累','路走一半','曙光在前','接近自由','可以选择不工作了'];
   const mi = d.fi<20?0:d.fi<40?1:d.fi<60?2:d.fi<80?3:4;
   document.getElementById('hlFreedomLabel').textContent = moods[mi];
-  document.getElementById('hlTarget').textContent = fmtW(d.fire);
+  document.getElementById('hlTarget').textContent = assetHide ? '****' : fmtW(d.fire);
   document.getElementById('hlGap').textContent = fmtW(d.gap);
-  document.getElementById('hlETA').textContent = d.fireYear?d.fireYear+'年':(d.gap<=0?'✨ 已到':'—');
+  if(d.fireYearExact){
+    document.getElementById('hlETA').textContent = d.fireYearExact+'年'+(d.fireMonthExact||'')+'月';
+  } else {
+    document.getElementById('hlETA').textContent = d.fireYear?d.fireYear+'年':(d.gap<=0?'✨ 已到':'—');
+  }
+  // 退休节点
+  if(d.estPensionMonthly>0){
+    const retireInfo = '60岁退休 · 养老金约'+d.estPensionMonthly+'元/月';
+    const existing = document.getElementById('retireInfo');
+    if(existing) existing.textContent = retireInfo;
+  }
 
   // Mini cards
   document.getElementById('mcSave').textContent = fmtW(d.eSave);
@@ -2014,7 +2080,7 @@ function render(d){
   document.getElementById('mcSSSub').textContent = ssStatus.join(' · ');
   document.getElementById('mcQuit').textContent = d.qMonths>120?fmtY(d.qYears):fmtM(d.qMonths);
   document.getElementById('mcQuitSub').textContent = '最低月均'+fmtW(d.eQA/12);
-  document.getElementById('mcGap').textContent = fmtW(d.gap);
+  document.getElementById('mcGap').textContent = assetHide ? '****' : fmtW(d.gap);
   document.getElementById('mcGapSub').textContent = d.gap<=0?'够了！🎉':'继续积累';
 
   // Gauge card
@@ -2050,20 +2116,30 @@ function render(d){
 
   // Charts
   if(cA) cA.destroy();
+
+  // 如果隐藏资产，改为显示"距离FIRE还差多少"（相对值）
+  let cwData = d.cw, qnData = d.qn, q35Data = d.q35, q40Data = d.q40;
+  if(assetHide){
+    cwData = d.cw.map(v => Math.max(v - d.fire/10000, -999));
+    qnData = d.qn.map(v => Math.max(v - d.fire/10000, -999));
+    q35Data = d.q35.map(v => Math.max(v - d.fire/10000, -999));
+    q40Data = d.q40.map(v => Math.max(v - d.fire/10000, -999));
+  }
+
   cA=new Chart(document.getElementById('chartAssets').getContext('2d'),{
     type:'line',
     data:{labels:d.labels,datasets:[
-      {label:'继续工作',data:d.cw,borderColor:'#34c759',backgroundColor:'rgba(52,199,89,0.06)',fill:true,tension:0.35,borderWidth:2.5,pointRadius:0},
-      {label:'35岁不工作',data:d.q35,borderColor:'#007aff',fill:false,tension:0.35,borderWidth:2,pointRadius:0,borderDash:[8,4]},
-      {label:'40岁不工作',data:d.q40,borderColor:'#ff9500',fill:false,tension:0.35,borderWidth:2,pointRadius:0,borderDash:[4,4]},
-      {label:'现在就不工作',data:d.qn,borderColor:'#ff3b30',fill:false,tension:0.35,borderWidth:1.5,pointRadius:0,borderDash:[3,5]}
+      {label:'继续工作',data:cwData,borderColor:'#34c759',backgroundColor:'rgba(52,199,89,0.06)',fill:true,tension:0.35,borderWidth:2.5,pointRadius:0},
+      {label:'35岁不工作',data:q35Data,borderColor:'#007aff',fill:false,tension:0.35,borderWidth:2,pointRadius:0,borderDash:[8,4]},
+      {label:'40岁不工作',data:q40Data,borderColor:'#ff9500',fill:false,tension:0.35,borderWidth:2,pointRadius:0,borderDash:[4,4]},
+      {label:'现在就不工作',data:qnData,borderColor:'#ff3b30',fill:false,tension:0.35,borderWidth:1.5,pointRadius:0,borderDash:[3,5]}
     ]},
     options:{
       responsive:true,maintainAspectRatio:false,
       plugins:{legend:{labels:{usePointStyle:true,boxWidth:6,padding:12,font:{size:10},color:'#666'}}},
       scales:{
         x:{ticks:{color:'#999',font:{size:9},maxTicksLimit:8,callback:(_,i)=>i%5===0?d.labels[i]:''},grid:{color:'#f2f2f7'}},
-        y:{ticks:{color:'#999',font:{size:9},callback:v=>v+'万'},grid:{color:'#f2f2f7'}}
+        y:{ticks:{color:'#999',font:{size:9},callback:v=>assetHide?'差'+v+'万':v+'万'},grid:{color:'#f2f2f7'}}
       },
       interaction:{intersect:false,mode:'index'}
     }
@@ -2185,14 +2261,16 @@ function updateWizNav(){
 }
 
 // Stepper functions
-let birthYearSel = 1995, currentWorkYears = 7;
+let birthYearSel = null, currentWorkYears = null;
 function stepYear(delta){
+  if(birthYearSel === null || birthYearSel === '') birthYearSel = 1990;
   birthYearSel = Math.max(1960, Math.min(2010, birthYearSel + delta));
   document.getElementById('yearDisplay').textContent = birthYearSel;
   document.getElementById('birthYear').value = birthYearSel;
   recalc();
 }
 function stepWorkYears(delta){
+  if(currentWorkYears === null || currentWorkYears === '') currentWorkYears = 0;
   currentWorkYears = Math.max(0, Math.min(50, currentWorkYears + delta));
   document.getElementById('workYearsDisplay').textContent = currentWorkYears;
   document.getElementById('pensionYears').value = currentWorkYears;
