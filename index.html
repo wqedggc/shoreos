@@ -6,6 +6,7 @@
 <title>ShoreOS · 人生自由度仪表盘</title>
 <meta name="description" content="算清楚你离财务自由还差多远。每多坚持一年，安全垫就厚一层。">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script type="module">
 // CloudBase Web SDK - ESM module loading
 import cloudbase from 'https://cdn.jsdelivr.net/npm/@cloudbase/js-sdk@2.22.0/+esm';
@@ -924,7 +925,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     <!-- Quick Actions -->
     <div style="margin: 0 12px 8px;display:flex;gap:8px;">
       <button onclick="openBkModal()" style="flex:1;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;font-size:14px;font-weight:700;cursor:pointer;">✏️ 记一笔</button>
-      <button onclick="importMumuCSV()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#fff;color:#1c1c1e;font-size:14px;font-weight:700;cursor:pointer;">📥 导入木木记账</button>
+      <button onclick="importMumuXLSX()" style="flex:1;padding:12px;border:none;border-radius:12px;background:#fff;color:#1c1c1e;font-size:14px;font-weight:700;cursor:pointer;">📥 导入木木记账</button>
     </div>
 
     <!-- Month Navigator -->
@@ -2116,123 +2117,111 @@ function importBodyCSV(){
   input.click();
 }
 
-// 木木记账 CSV 导入
-// 木木记账导出格式：日期,类型(支出/收入),分类,金额,备注
-// 也兼容：日期,金额,分类,备注 这种常见格式
-function importMumuCSV(){
+// 木木记账导入（支持 .xlsx 和 .csv）
+function importMumuXLSX(){
   const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.csv';
+  input.type = 'file';
+  input.accept = '.xlsx,.csv,.xls';
   input.onchange = function(e){
     const file = e.target.files[0];
     if(!file){ return; }
     const reader = new FileReader();
     reader.onload = function(ev){
-      const text = ev.target.result;
-      // 处理 BOM 头
-      const clean = text.replace(/^\uFEFF/, '');
-      const lines = clean.split(/\r?\n/).filter(l => l.trim());
-      let imported = 0, skipped = 0;
-
-      // 尝试检测格式：第一行是不是表头
-      const firstLine = lines[0].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-      let hasHeader = false;
-      const headerKeywords = ['日期','时间','类型','分类','金额','备注','收入','支出'];
-      if(firstLine.some(c => headerKeywords.includes(c))){
-        hasHeader = true;
-      }
-
-      const startIdx = hasHeader ? 1 : 0;
-
-      for(let i = startIdx; i < lines.length; i++){
-        const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-        if(cols.length < 2) continue;
-
-        // 尝试多种列顺序解析
-        let date, type, category, amount, note;
-
-        // 判断列数决定解析策略
-        if(cols.length >= 5){
-          // 标准格式：日期,类型,分类,金额,备注
-          date = cols[0];
-          type = cols[1].includes('收入') ? 'income' : 'expense';
-          category = cols[2];
-          amount = parseFloat(cols[3]);
-          note = cols.slice(4).join(' ');
-        } else if(cols.length === 4){
-          date = cols[0];
-          // 判断第二列是类型还是金额
-          if(cols[1].includes('支出') || cols[1].includes('收入')){
-            type = cols[1].includes('收入') ? 'income' : 'expense';
-            amount = parseFloat(cols[2]);
-            note = cols[3];
-          } else {
-            amount = parseFloat(cols[1]);
-            category = cols[2];
-            note = cols[3];
-            type = 'expense'; // 默认支出
+      try {
+        let rows = [];
+        if(file.name.endsWith('.csv')){
+          // CSV 处理
+          const text = ev.target.result.replace(/^\uFEFF/, '');
+          const lines = text.split(/\r?\n/).filter(l => l.trim());
+          const firstRow = lines[0].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+          let hasHeader = firstRow.some(c => ['时间','日期','类型','分类','金额'].includes(c));
+          const start = hasHeader ? 1 : 0;
+          for(let i=start; i<lines.length; i++){
+            rows.push(lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, '')));
           }
-        } else if(cols.length === 3){
-          date = cols[0];
-          amount = parseFloat(cols[1]);
-          category = cols[2];
-          type = 'expense';
-          note = '';
         } else {
-          date = cols[0];
-          amount = parseFloat(cols[1]);
-          type = 'expense';
-          category = '其他';
-          note = '';
+          // XLSX 处理
+          const wb = XLSX.read(ev.target.result, { type: 'array' });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+          // 第一行是表头
+          if(json.length < 2) return;
+          rows = json.slice(1); // 跳过表头
         }
 
-        if(!date || isNaN(amount) || amount <= 0){ skipped++; continue; }
+        // 解析行数据
+        // 木木记账格式：[时间, 类型, 分类, 二级分类, 金额, 账本, 转出账户, 转入账户, 备注, ...]
+        let imported = 0, skipped = 0;
+        const now = new Date().toISOString();
 
-        // 标准化日期格式
-        let dateStr = date.replace(/\//g, '-').replace(/\./g, '-');
-        if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(dateStr)){
-          const parts = dateStr.split('-');
-          dateStr = `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
-        } else { skipped++; continue; }
+        for(const row of rows){
+          if(!row || row.length < 4) continue;
+          const dateTime = String(row[0] || '').trim();
+          const typeStr = String(row[1] || '').trim();
+          const category = String(row[2] || '').trim();
+          const amountStr = String(row[4] || row[3] || '').trim();
+          const note = String(row[8] || '').trim();
 
-        // 匹配分类
-        if(!category) category = '其他';
-        const cats = type==='income' ? BK_CATEGORIES.income : BK_CATEGORIES.expense;
-        let matchedCat = cats.find(c => c.name === category);
-        if(!matchedCat){
-          // 模糊匹配
-          matchedCat = cats.find(c => category.includes(c.name) || c.name.includes(category));
+          if(!dateTime || !typeStr || !amountStr) continue;
+
+          // 提取日期
+          const dateMatch = dateTime.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+          if(!dateMatch){ skipped++; continue; }
+          const dateStr = `${dateMatch[1]}-${dateMatch[2].padStart(2,'0')}-${dateMatch[3].padStart(2,'0')}`;
+
+          // 类型判断
+          const type = typeStr.includes('收入') ? 'income' : 'expense';
+
+          // 金额（木木记账支出为负数）
+          const amount = Math.abs(parseFloat(amountStr));
+          if(isNaN(amount) || amount <= 0){ skipped++; continue; }
+
+          // 匹配分类
+          const cats = type==='income' ? BK_CATEGORIES.income : BK_CATEGORIES.expense;
+          let matchedCat = cats.find(c => c.name === category);
+          if(!matchedCat){
+            matchedCat = cats.find(c => category.includes(c.name) || c.name.includes(category));
+          }
+          if(!matchedCat) matchedCat = cats[cats.length-1]; // fallback to 其他
+
+          const bill = {
+            id: dateStr+'_mumu_'+imported+'_'+Math.random().toString(36).slice(2,6),
+            date: dateStr,
+            type,
+            amount,
+            category: matchedCat.name,
+            catId: matchedCat.id,
+            icon: matchedCat.icon,
+            color: matchedCat.color,
+            note: note || '',
+            createdAt: now
+          };
+
+          // 去重：同日期+同金额+同分类
+          const dup = bkBills.find(b => b.date===dateStr && Math.abs(b.amount-amount)<0.01 && b.category===matchedCat.name);
+          if(dup){ skipped++; continue; }
+
+          bkBills.push(bill);
+          CloudStore.saveBill(bill);
+          imported++;
         }
-        if(!matchedCat) matchedCat = type==='income' ? cats[cats.length-1] : cats[cats.length-1];
 
-        const bill = {
-          id: dateStr+'_import_'+imported+'_'+Math.random().toString(36).slice(2,6),
-          date: dateStr,
-          type,
-          amount: Math.abs(amount),
-          category: matchedCat.name,
-          catId: matchedCat.id,
-          icon: matchedCat.icon,
-          color: matchedCat.color,
-          note: note || '',
-          createdAt: new Date().toISOString()
-        };
-
-        // 避免重复（同日期+同金额+同分类视为重复）
-        const dup = bkBills.find(b => b.date===dateStr && Math.abs(b.amount-amount)<0.01 && b.category===matchedCat.name);
-        if(dup){ skipped++; continue; }
-
-        bkBills.push(bill);
-        CloudStore.saveBill(bill);
-        imported++;
+        bkBills.sort((a,b) => a.date.localeCompare(b.date));
+        saveBills();
+        renderBkCalendar();
+        renderBkAnalysis();
+        alert(`✅ 导入完成！\n成功 ${imported} 条\n跳过 ${skipped} 条（重复或格式错误）`);
+      } catch(err){
+        alert('❌ 导入失败：' + err.message);
+        console.error(err);
       }
-
-      bkBills.sort((a,b) => a.date.localeCompare(b.date));
-      saveBills();
-      renderBkCalendar();
-      renderBkAnalysis();
-      alert(`✅ 导入完成！\n成功 ${imported} 条\n跳过 ${skipped} 条（重复或格式错误）`);
     };
-    reader.readAsText(file, 'UTF-8');
+
+    if(file.name.endsWith('.csv')){
+      reader.readAsText(file, 'UTF-8');
+    } else {
+      reader.readAsArrayBuffer(file);
+    }
   };
   input.click();
 }
