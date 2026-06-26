@@ -567,7 +567,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v2.0</span></span></div>
+  <div class="status-bar"><span>9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v2.1</span></span></div>
 
   <!-- ===== DASHBOARD ===== -->
   <div class="scroll-section active" id="sec-dashboard">
@@ -632,33 +632,33 @@ td.wn { color: var(--orange); font-weight: 600; }
             <div class="param-field"><label>昵称</label><input class="param-input" id="pName" placeholder="给自己取个名" onchange="pDirty=true"></div>
             <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
             <div class="param-field"><label>性别</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pGenderM" onclick="setParamGender('male',this)" style="flex:1;">👨 男</button><button class="param-seg-btn" id="pGenderF" onclick="setParamGender('female',this)" style="flex:1;">👩 女</button></div></div>
-            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="1995" onchange="pDirty=true"></div>
-            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="7" onchange="pDirty=true"></div>
+            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="" onchange="pDirty=true"></div>
             <div class="param-field"><label>城市</label><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="param-seg-btn" onclick="applyCityPresetParam('beijing');pDirty=true" style="font-size:11px;">📍北京</button><button class="param-seg-btn" onclick="applyCityPresetParam('shanghai');pDirty=true" style="font-size:11px;">📍上海</button><button class="param-seg-btn" onclick="applyCityPresetParam('guangzhou');pDirty=true" style="font-size:11px;">📍广州</button><button class="param-seg-btn" onclick="applyCityPresetParam('shenzhen');pDirty=true" style="font-size:11px;">📍深圳</button><button class="param-seg-btn" onclick="applyCityPresetParam('other');pDirty=true" style="font-size:11px;">📍其他</button></div></div>
             <div class="param-field"><label>社保策略</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pSSMin" onclick="setParamSS('min',this)" style="flex:1;">🛑 达标即停</button><button class="param-seg-btn" id="pSSRetire" onclick="setParamSS('retire',this)" style="flex:1;">💪 缴到退休</button></div></div>
           </div>
           <div class="param-page" id="paramPage1">
-            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="20" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="2000" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="500" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="1000" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="500" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="300" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="500" onchange="pDirty=true"></div>
+            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="" onchange="pDirty=true"></div>
           </div>
           <div class="param-page" id="paramPage2">
             <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
-            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="5000" onchange="pDirty=true"></div></div>
-            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="8000" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="20" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="300" onchange="pDirty=true"></div></div>
-            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="0" onchange="pDirty=true"></div></div>
+            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="" onchange="pDirty=true"></div></div>
           </div>
           <div class="param-page" id="paramPage3">
-            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="5" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="10" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="5" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="" step="0.5" onchange="pDirty=true"></div>
             <div class="param-field"><label>子女计划</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pChildNone" onclick="setParamChild('none',this)" style="flex:1;">暂无计划</button><button class="param-seg-btn" id="pChildOne" onclick="setParamChild('one',this)" style="flex:1;">计划要孩子</button></div></div>
-            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="5" step="0.5" onchange="pDirty=true"></div></div>
+            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="" step="0.5" onchange="pDirty=true"></div></div>
           </div>
           <button class="param-save-btn" onclick="saveParamPanel()">💾 保存并重算</button>
         </div>
@@ -794,13 +794,13 @@ td.wn { color: var(--orange); font-weight: 600; }
             <label class="wiz-label">出生年份</label>
             <div class="stepper">
               <button class="stepper-btn" onclick="stepYear(-1)">−</button>
-              <div><span class="stepper-val" id="yearDisplay">1995</span><span class="stepper-unit">年</span></div>
+              <div><span class="stepper-val" id="yearDisplay">--</span><span class="stepper-unit">年</span></div>
               <button class="stepper-btn" onclick="stepYear(1)">+</button>
             </div>
             <label class="wiz-label">已工作年限</label>
             <div class="stepper">
               <button class="stepper-btn" onclick="stepWorkYears(-1)">−</button>
-              <div><span class="stepper-val" id="workYearsDisplay">7</span><span class="stepper-unit">年</span></div>
+              <div><span class="stepper-val" id="workYearsDisplay">--</span><span class="stepper-unit">年</span></div>
               <button class="stepper-btn" onclick="stepWorkYears(1)">+</button>
             </div>
             <label class="wiz-label">工作城市（点一下自动填社保参数）</label>
@@ -1362,7 +1362,7 @@ function createProfile(name, avatar){
   const profile = {
     uid, name, avatar,
     gender: '', ssStrategy: 'min', houseTypeCur: 'rent', houseTypeMin: 'rent', childPlan: 'none',
-    birthYear: 1995, workYears: 7, city: 'other',
+    birthYear: '', workYears: '', city: 'other',
     incomePost: '', expRent: '', expMortgage: '', mortgageYearsLeft: '', expProperty: '', expProperty2: '',
     expFood: '', expTransport: '', expPet: '', expEntertain: '', expInsurance: '', expOther: '',
     expQRent: '', expQMortgage: '', mortgageYearsLeftQ: '', expQProperty: '', expQProperty2: '',
@@ -1422,7 +1422,9 @@ function loadProfileToFields(p){
   }
   // Sync wizard year stepper
   if(p.birthYear) { birthYearSel = p.birthYear; document.getElementById('yearDisplay').textContent = p.birthYear; }
+  else { birthYearSel = null; document.getElementById('yearDisplay').textContent = '--'; }
   if(p.workYears) { currentWorkYears = p.workYears; document.getElementById('workYearsDisplay').textContent = p.workYears; }
+  else { currentWorkYears = null; document.getElementById('workYearsDisplay').textContent = '--'; }
   // Restore toggles
   restoreToggles();
   // Also sync param panel fields
@@ -1605,9 +1607,9 @@ function startNewUserWizard(){
   document.getElementById('medicalMin').value = '25';
   document.getElementById('currentYear').value = '2026';
   gender = ''; ssStrategy = 'min'; houseTypeCur = 'rent'; childPlan = 'none';
-  birthYearSel = 1995; currentWorkYears = 7;
-  document.getElementById('yearDisplay').textContent = '1995';
-  document.getElementById('workYearsDisplay').textContent = '7';
+  birthYearSel = null; currentWorkYears = null;
+  document.getElementById('yearDisplay').textContent = '--';
+  document.getElementById('workYearsDisplay').textContent = '--';
   document.getElementById('wizNewName').value = '';
   // Reset wizard UI
   document.querySelectorAll('#wizGender .wiz-chip').forEach(b=>b.classList.remove('active'));
@@ -2174,14 +2176,16 @@ function updateWizNav(){
 }
 
 // Stepper functions
-let birthYearSel = 1995, currentWorkYears = 7;
+let birthYearSel = null, currentWorkYears = null;
 function stepYear(delta){
+  if(birthYearSel === null || birthYearSel === '') birthYearSel = 1990;
   birthYearSel = Math.max(1960, Math.min(2010, birthYearSel + delta));
   document.getElementById('yearDisplay').textContent = birthYearSel;
   document.getElementById('birthYear').value = birthYearSel;
   recalc();
 }
 function stepWorkYears(delta){
+  if(currentWorkYears === null || currentWorkYears === '') currentWorkYears = 0;
   currentWorkYears = Math.max(0, Math.min(50, currentWorkYears + delta));
   document.getElementById('workYearsDisplay').textContent = currentWorkYears;
   document.getElementById('pensionYears').value = currentWorkYears;
