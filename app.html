@@ -690,6 +690,9 @@ td.wn { color: var(--orange); font-weight: 600; }
 
     <!-- Dashboard (has data) -->
     <div id="dashboardContent" style="display:none;">
+
+      <!-- Tab Content: Core Metrics -->
+      <div class="dash-tab-content active" id="dashTab0">
       <div class="highlight-card hl-g1 fade-in">
         <div class="hl-bg-blob"></div>
         <div class="hl-emoji">🌸</div>
@@ -720,59 +723,6 @@ td.wn { color: var(--orange); font-weight: 600; }
           <div class="mc-label">离目标缺口</div><div class="mc-sub" id="mcGapSub">--</div>
         </div>
       </div>
-
-      <!-- ===== PARAM PANEL (collapsible) ===== -->
-      <div class="param-panel" id="paramPanel">
-        <button class="param-header" onclick="toggleParamPanel()">
-          <span>⚙️ 我的参数</span>
-          <span class="param-chevron">⌃</span>
-        </button>
-        <div class="param-body">
-          <div class="param-seg">
-            <button class="param-seg-btn active" onclick="switchParamTab(0,this)">👤 基本</button>
-            <button class="param-seg-btn" onclick="switchParamTab(1,this)">💰 收支</button>
-            <button class="param-seg-btn" onclick="switchParamTab(2,this)">🏠 住房</button>
-            <button class="param-seg-btn" onclick="switchParamTab(3,this)">📦 资产</button>
-          </div>
-          <div class="param-page active" id="paramPage0">
-            <div class="param-field"><label>昵称</label><input class="param-input" id="pName" placeholder="给自己取个名" onchange="pDirty=true"></div>
-            <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
-            <div class="param-field"><label>性别</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pGenderM" onclick="setParamGender('male',this)" style="flex:1;">👨 男</button><button class="param-seg-btn" id="pGenderF" onclick="setParamGender('female',this)" style="flex:1;">👩 女</button></div></div>
-            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>城市</label><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="param-seg-btn" onclick="applyCityPresetParam('beijing');pDirty=true" style="font-size:11px;">📍北京</button><button class="param-seg-btn" onclick="applyCityPresetParam('shanghai');pDirty=true" style="font-size:11px;">📍上海</button><button class="param-seg-btn" onclick="applyCityPresetParam('guangzhou');pDirty=true" style="font-size:11px;">📍广州</button><button class="param-seg-btn" onclick="applyCityPresetParam('shenzhen');pDirty=true" style="font-size:11px;">📍深圳</button><button class="param-seg-btn" onclick="applyCityPresetParam('other');pDirty=true" style="font-size:11px;">📍其他</button></div></div>
-            <div class="param-field"><label>社保策略</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pSSMin" onclick="setParamSS('min',this)" style="flex:1;">🛑 达标即停</button><button class="param-seg-btn" id="pSSRetire" onclick="setParamSS('retire',this)" style="flex:1;">💪 缴到退休</button></div></div>
-          </div>
-          <div class="param-page" id="paramPage1">
-            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="" onchange="pDirty=true"></div>
-          </div>
-          <div class="param-page" id="paramPage2">
-            <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
-            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="" onchange="pDirty=true"></div></div>
-            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="" onchange="pDirty=true"></div></div>
-            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="" onchange="pDirty=true"></div></div>
-          </div>
-          <div class="param-page" id="paramPage3">
-            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>年化收益率（%）</label><input type="number" class="param-input" id="pReturn" placeholder="5" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>通胀率（%）</label><input type="number" class="param-input" id="pInflation" placeholder="3" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>社保档位</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pTierLow" onclick="setParamTier('low',this)" style="flex:1;">最低档</button><button class="param-seg-btn" id="pTierMid" onclick="setParamTier('mid',this)" style="flex:1;">标准档</button><button class="param-seg-btn" id="pTierHigh" onclick="setParamTier('high',this)" style="flex:1;">最高档</button></div></div>
-            <div class="param-field"><label>子女计划</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pChildNone" onclick="setParamChild('none',this)" style="flex:1;">暂无计划</button><button class="param-seg-btn" id="pChildOne" onclick="setParamChild('one',this)" style="flex:1;">计划要孩子</button></div></div>
-            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="" step="0.5" onchange="pDirty=true"></div></div>
-          </div>
-          <button class="param-save-btn" onclick="saveParamPanel()">💾 保存并重算</button>
-        </div>
-      </div>
-
       <div class="chart-card fade-in" style="text-align:center;">
         <canvas id="gaugeCanvas" width="200" height="200" style="display:inline-block;"></canvas>
         <div style="margin-top:-30px;">
@@ -785,10 +735,10 @@ td.wn { color: var(--orange); font-weight: 600; }
           <div><span style="color:var(--sub)">社保自缴预估</span><br><b id="giSelfPay">--</b></div>
         </div>
       </div>
+      </div><!-- end dashTab0 -->
 
-      <div class="chart-card fade-in"><h3>📈 不同选择的资产变化</h3><div class="chart-wrap"><canvas id="chartAssets"></canvas></div></div>
-      <div class="chart-card fade-in"><h3>🛡️ 多坚持N年，安全垫变化</h3><div class="chart-wrap"><canvas id="chartSafety"></canvas></div></div>
-
+      <!-- Tab Content: Scenario -->
+      <div class="dash-tab-content" id="dashTab1">
       <div class="table-card fade-in">
         <h3>🔮 情景推演</h3>
         <table>
@@ -796,9 +746,16 @@ td.wn { color: var(--orange); font-weight: 600; }
           <tbody id="scenarioBody"></tbody>
         </table>
       </div>
+      </div><!-- end dashTab1 -->
+
+      <!-- Tab Content: Charts -->
+      <div class="dash-tab-content" id="dashTab2">
+      <div class="chart-card fade-in"><h3>📈 不同选择的资产变化</h3><div class="chart-wrap"><canvas id="chartAssets"></canvas></div></div>
+      <div class="chart-card fade-in"><h3>🛡️ 多坚持N年，安全垫变化</h3><div class="chart-wrap"><canvas id="chartSafety"></canvas></div></div>
+      </div><!-- end dashTab2 -->
+
       <div style="height:20px;"></div>
     </div>
-  </div>
 
   <!-- ===== BODY WEIGHT ===== -->
   <div class="scroll-section" id="sec-body">
@@ -1270,6 +1227,68 @@ td.wn { color: var(--orange); font-weight: 600; }
     </div>
   </div>
 </div>
+
+
+
+
+    <!-- Param Panel Overlay (bottom sheet) -->
+    <div class="param-overlay" id="paramOverlay" onclick="toggleParamOverlay()"></div>
+    <div class="param-sheet" id="paramSheet">
+      <div class="param-sheet-handle" onclick="toggleParamOverlay()"></div>
+      <div style="padding: 0 16px 16px;">
+        <div style="font-size:18px;font-weight:800;margin:8px 0 12px;">⚙️ 我的参数</div>
+        <div class="param-seg">
+          <button class="param-seg-btn active" onclick="switchParamTab(0,this)">👤 基本</button>
+          <button class="param-seg-btn" onclick="switchParamTab(1,this)">💰 收支</button>
+          <button class="param-seg-btn" onclick="switchParamTab(2,this)">🏠 住房</button>
+          <button class="param-seg-btn" onclick="switchParamTab(3,this)">📦 资产</button>
+        </div>
+        <div class="param-body">
+          <div class="param-seg">
+            <button class="param-seg-btn active" onclick="switchParamTab(0,this)">👤 基本</button>
+            <button class="param-seg-btn" onclick="switchParamTab(1,this)">💰 收支</button>
+            <button class="param-seg-btn" onclick="switchParamTab(2,this)">🏠 住房</button>
+            <button class="param-seg-btn" onclick="switchParamTab(3,this)">📦 资产</button>
+          </div>
+          <div class="param-page active" id="paramPage0">
+            <div class="param-field"><label>昵称</label><input class="param-input" id="pName" placeholder="给自己取个名" onchange="pDirty=true"></div>
+            <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
+            <div class="param-field"><label>性别</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pGenderM" onclick="setParamGender('male',this)" style="flex:1;">👨 男</button><button class="param-seg-btn" id="pGenderF" onclick="setParamGender('female',this)" style="flex:1;">👩 女</button></div></div>
+            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>城市</label><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="param-seg-btn" onclick="applyCityPresetParam('beijing');pDirty=true" style="font-size:11px;">📍北京</button><button class="param-seg-btn" onclick="applyCityPresetParam('shanghai');pDirty=true" style="font-size:11px;">📍上海</button><button class="param-seg-btn" onclick="applyCityPresetParam('guangzhou');pDirty=true" style="font-size:11px;">📍广州</button><button class="param-seg-btn" onclick="applyCityPresetParam('shenzhen');pDirty=true" style="font-size:11px;">📍深圳</button><button class="param-seg-btn" onclick="applyCityPresetParam('other');pDirty=true" style="font-size:11px;">📍其他</button></div></div>
+            <div class="param-field"><label>社保策略</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pSSMin" onclick="setParamSS('min',this)" style="flex:1;">🛑 达标即停</button><button class="param-seg-btn" id="pSSRetire" onclick="setParamSS('retire',this)" style="flex:1;">💪 缴到退休</button></div></div>
+          </div>
+          <div class="param-page" id="paramPage1">
+            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="" onchange="pDirty=true"></div>
+          </div>
+          <div class="param-page" id="paramPage2">
+            <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
+            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="" onchange="pDirty=true"></div></div>
+          </div>
+          <div class="param-page" id="paramPage3">
+            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>年化收益率（%）</label><input type="number" class="param-input" id="pReturn" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>通胀率（%）</label><input type="number" class="param-input" id="pInflation" placeholder="3" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>社保档位</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pTierLow" onclick="setParamTier('low',this)" style="flex:1;">最低档</button><button class="param-seg-btn" id="pTierMid" onclick="setParamTier('mid',this)" style="flex:1;">标准档</button><button class="param-seg-btn" id="pTierHigh" onclick="setParamTier('high',this)" style="flex:1;">最高档</button></div></div>
+            <div class="param-field"><label>子女计划</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pChildNone" onclick="setParamChild('none',this)" style="flex:1;">暂无计划</button><button class="param-seg-btn" id="pChildOne" onclick="setParamChild('one',this)" style="flex:1;">计划要孩子</button></div></div>
+            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="" step="0.5" onchange="pDirty=true"></div></div>
+          </div>
+          <button class="param-save-btn" onclick="saveParamPanel()">💾 保存并重算</button>
+        </div>
+      </div>
+    </div>
 
 <script>
 // ===== CloudBase 数据层 =====
@@ -2597,6 +2616,7 @@ const origRender = render;
 render = function(d){
   origRender(d);
   updateWizSubtotals(d);
+  updateUserInfoBar(d);
 };
 
 // ===== CITY PRESETS (keep for wizard) =====
@@ -2798,7 +2818,8 @@ if(activeUid){
 wizGoTo(0);
 initVoice();
 renderUserSwitcher();
-recalc();
+try { recalc(); } catch(e){ console.error('init recalc error:', e); }
+try { refreshDashboard(); } catch(e){ console.error('init refreshDashboard error:', e); }
 updateStatusTime();
 setInterval(updateStatusTime, 60000);
 
@@ -2810,6 +2831,62 @@ function updateStatusTime(){
   const m = String(now.getMinutes()).padStart(2,'0');
   el.textContent = h + ':' + m;
 }
+
+
+// ===== DASHBOARD TAB SWITCHING =====
+function switchDashTab(idx, btn){
+  document.querySelectorAll('.dash-tab-content').forEach(c=>c.classList.remove('active'));
+  const tab = document.getElementById('dashTab'+idx);
+  if(tab) tab.classList.add('active');
+  document.querySelectorAll('.dash-tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  // Trigger chart resize when switching to chart tab
+  if(idx === 2 && typeof chartAssets !== 'undefined' && chartAssets) chartAssets.resize();
+  if(idx === 2 && typeof chartSafety !== 'undefined' && chartSafety) chartSafety.resize();
+}
+
+// ===== UPDATE USER INFO BAR =====
+function updateUserInfoBar(d){
+  const p = getActiveProfile();
+  if(!p) return;
+  const avEl = document.getElementById('uibarAvatar');
+  const nmEl = document.getElementById('uibarName');
+  const fiEl = document.getElementById('uibarFreedom');
+  const tgEl = document.getElementById('uibarTarget');
+  const gpEl = document.getElementById('uibarGap');
+  const etaEl = document.getElementById('uibarETA');
+  if(avEl) avEl.textContent = p.avatar || '🐱';
+  if(nmEl) nmEl.textContent = p.name || '未命名';
+  if(d){
+    if(fiEl) fiEl.textContent = 'FI ' + (d.fi||0).toFixed(1) + '%';
+    if(tgEl) tgEl.textContent = '目标 ' + fmtW(d.fire);
+    if(gpEl) gpEl.textContent = 'Gap ' + fmtW(Math.max(d.fire - d.investableAssets, 0));
+    if(etaEl){
+      if(d.fireYearExact) etaEl.textContent = 'ETA ' + d.fireYearExact + '年';
+      else etaEl.textContent = 'ETA --';
+    }
+  }
+}
+
+// ===== PARAM OVERLAY (bottom sheet) =====
+function toggleParamOverlay(){
+  const overlay = document.getElementById('paramOverlay');
+  const sheet = document.getElementById('paramSheet');
+  if(!overlay || !sheet) return;
+  const isActive = overlay.classList.contains('active');
+  if(isActive){
+    overlay.classList.remove('active');
+    sheet.classList.remove('active');
+  } else {
+    // Sync param panel from profile first
+    if(typeof syncParamPanelFromProfile === 'function') syncParamPanelFromProfile();
+    overlay.classList.add('active');
+    sheet.classList.add('active');
+  }
+}
+
+// Override old toggleParamPanel to use new overlay
+function toggleParamPanel(){ toggleParamOverlay(); }
 
 // ===== BODY WEIGHT MANAGEMENT =====
 let bodyRecords = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
@@ -3401,5 +3478,7 @@ function renderBkAnalysis(){
   }).join('');
 }
 </script>
+
+
 </body>
 </html>
