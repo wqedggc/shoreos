@@ -156,7 +156,61 @@ td.wn { color: var(--orange); font-weight: 600; }
 .tab-item.active .tab-text { color: var(--pink-deep); }
 .tab-item.active .tab-icon { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 2px 4px rgba(251,113,133,0.4)); }
 
-.wiz-btn-bar {
+/* User Info Bar ( dashboard top) */
+.user-info-bar {
+  margin: 12px; padding: 14px 16px; border-radius: var(--radius-lg);
+  background: var(--grad-hero);
+  color: var(--text); position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: transform 0.15s var(--ease-spring);
+}
+.user-info-bar:active { transform: scale(0.98); }
+.uibar-avatar {
+  font-size: 36px; width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.7); border-radius: var(--radius);
+  flex-shrink: 0;
+}
+.uibar-text { flex: 1; min-width: 0; }
+.uibar-name { font-size: 16px; font-weight: 700; display: block; }
+.uibar-freedom { font-size: 12px; color: var(--sub); display: block; margin-top: 2px; }
+.uibar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 12px; }
+.uibar-right span { white-space: nowrap; }
+
+/* Dashboard Tab Bar */
+.dash-tab-bar {
+  display: flex; margin: 0 12px; background: var(--bg2);
+  border-radius: var(--radius); padding: 3px; gap: 2px;
+}
+.dash-tab-btn {
+  flex: 1; padding: 9px 4px; border: none; background: transparent;
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+  color: var(--sub); cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+}
+.dash-tab-btn.active { background: #fff; color: var(--text); box-shadow: var(--shadow-sm); }
+
+/* Dashboard Tab Content */
+.dash-tab-content { display: none; }
+.dash-tab-content.active { display: block; }
+
+/* Param Panel Overlay */
+.param-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3); z-index: 50;
+}
+.param-overlay.active { display: block; }
+.param-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto;
+  background: #fff; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 80vh; overflow-y: auto; z-index: 51;
+  transform: translateY(100%); transition: transform 0.3s var(--ease-spring);
+}
+.param-sheet.active { transform: translateY(0); }
+.param-sheet-handle {
+  width: 36px; height: 4px; background: #ddd; border-radius: 2px;
+  margin: 10px auto 6px; cursor: grab;
+}
   position: -webkit-sticky; position: sticky;
   bottom: 56px; z-index: 5;
   display: flex; gap: 12px; align-items: center;
@@ -600,11 +654,32 @@ td.wn { color: var(--orange); font-weight: 600; }
 
   <div class="status-bar"><span id="statusTime">9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v3.0</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
 
-  <!-- ===== DASHBOARD ===== -->
-  <div class="scroll-section active" id="sec-dashboard">
+    <!-- ===== DASHBOARD ===== -->
+    <div class="scroll-section active" id="sec-dashboard">
 
-    <!-- User Switcher -->
-    <div class="user-switcher" id="userSwitcher"></div>
+      <!-- User Info Bar (high-density top bar) -->
+      <div class="user-info-bar" id="userInfoBar" onclick="toggleParamOverlay()">
+        <div class="uibar-avatar" id="uibarAvatar">🐱</div>
+        <div class="uibar-text">
+          <span class="uibar-name" id="uibarName">--</span>
+          <span class="uibar-freedom" id="uibarFreedom">FI  --%</span>
+        </div>
+        <div class="uibar-right">
+          <span id="uibarTarget">目标 --</span>
+          <span id="uibarGap">Gap --</span>
+          <span id="uibarETA">ETA --</span>
+        </div>
+      </div>
+
+      <!-- Dashboard Tab Bar -->
+      <div class="dash-tab-bar" id="dashTabBar">
+        <button class="dash-tab-btn active" onclick="switchDashTab(0,this)">📈 核心指标</button>
+        <button class="dash-tab-btn" onclick="switchDashTab(1,this)">🔮 情景推演</button>
+        <button class="dash-tab-btn" onclick="switchDashTab(2,this)">📊 资产图表</button>
+      </div>
+
+      <!-- User Switcher -->
+      <div class="user-switcher" id="userSwitcher"></div>
 
     <!-- Welcome (no data) -->
     <div class="welcome-card" id="welcomeCard">

@@ -156,7 +156,92 @@ td.wn { color: var(--orange); font-weight: 600; }
 .tab-item.active .tab-text { color: var(--pink-deep); }
 .tab-item.active .tab-icon { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 2px 4px rgba(251,113,133,0.4)); }
 
-.scroll-section { display: none; }
+/* User Info Bar ( dashboard top) */
+.user-info-bar {
+  margin: 12px; padding: 14px 16px; border-radius: var(--radius-lg);
+  background: var(--grad-hero);
+  color: var(--text); position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: transform 0.15s var(--ease-spring);
+}
+.user-info-bar:active { transform: scale(0.98); }
+.uibar-avatar {
+  font-size: 36px; width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.7); border-radius: var(--radius);
+  flex-shrink: 0;
+}
+.uibar-text { flex: 1; min-width: 0; }
+.uibar-name { font-size: 16px; font-weight: 700; display: block; }
+.uibar-freedom { font-size: 12px; color: var(--sub); display: block; margin-top: 2px; }
+.uibar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 12px; }
+.uibar-right span { white-space: nowrap; }
+
+/* Dashboard Tab Bar */
+.dash-tab-bar {
+  display: flex; margin: 0 12px; background: var(--bg2);
+  border-radius: var(--radius); padding: 3px; gap: 2px;
+}
+.dash-tab-btn {
+  flex: 1; padding: 9px 4px; border: none; background: transparent;
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+  color: var(--sub); cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+}
+.dash-tab-btn.active { background: #fff; color: var(--text); box-shadow: var(--shadow-sm); }
+
+/* Dashboard Tab Content */
+.dash-tab-content { display: none; }
+.dash-tab-content.active { display: block; }
+
+/* Param Panel Overlay */
+.param-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3); z-index: 50;
+}
+.param-overlay.active { display: block; }
+.param-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto;
+  background: #fff; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 80vh; overflow-y: auto; z-index: 51;
+  transform: translateY(100%); transition: transform 0.3s var(--ease-spring);
+}
+.param-sheet.active { transform: translateY(0); }
+.param-sheet-handle {
+  width: 36px; height: 4px; background: #ddd; border-radius: 2px;
+  margin: 10px auto 6px; cursor: grab;
+}
+  position: -webkit-sticky; position: sticky;
+  bottom: 56px; z-index: 5;
+  display: flex; gap: 12px; align-items: center;
+  padding: 16px 20px;
+  background: rgba(255,247,237,0.95);
+  backdrop-filter: blur(12px);
+  border-top: 0.5px solid var(--sep);
+}
+.wiz-btn {
+  flex: 1; padding: 14px 0; border: none; border-radius: var(--radius-xl);
+  font-size: 16px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: all 0.15s var(--ease-spring);
+}
+.wiz-btn:active { transform: scale(0.96); }
+.wiz-btn-back {
+  background: var(--bg2); color: var(--text);
+  max-width: 100px; flex: 0 0 auto; padding: 14px 24px;
+}
+.wiz-btn-next {
+  background: var(--grad-pink); color: #fff;
+  box-shadow: 0 4px 16px rgba(251,113,133,0.3);
+}
+.wiz-btn-done {
+  background: linear-gradient(135deg, #34d399, #2dd4bf); color: #fff;
+  box-shadow: 0 4px 16px rgba(52,211,153,0.3);
+}
+.wiz-tip {
+  display: none; font-size: 12px; color: var(--sub);
+  background: var(--bg2); border-radius: 8px;
+  padding: 8px 12px; line-height: 1.5; margin-top: 4px;
+}
 .scroll-section.active { display: block; }
 
 @media (min-width: 431px) {
@@ -567,13 +652,34 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span>9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v2.2</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
+  <div class="status-bar"><span id="statusTime">9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v3.0</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
 
-  <!-- ===== DASHBOARD ===== -->
-  <div class="scroll-section active" id="sec-dashboard">
+    <!-- ===== DASHBOARD ===== -->
+    <div class="scroll-section active" id="sec-dashboard">
 
-    <!-- User Switcher -->
-    <div class="user-switcher" id="userSwitcher"></div>
+      <!-- User Info Bar (high-density top bar) -->
+      <div class="user-info-bar" id="userInfoBar" onclick="toggleParamOverlay()">
+        <div class="uibar-avatar" id="uibarAvatar">🐱</div>
+        <div class="uibar-text">
+          <span class="uibar-name" id="uibarName">--</span>
+          <span class="uibar-freedom" id="uibarFreedom">FI  --%</span>
+        </div>
+        <div class="uibar-right">
+          <span id="uibarTarget">目标 --</span>
+          <span id="uibarGap">Gap --</span>
+          <span id="uibarETA">ETA --</span>
+        </div>
+      </div>
+
+      <!-- Dashboard Tab Bar -->
+      <div class="dash-tab-bar" id="dashTabBar">
+        <button class="dash-tab-btn active" onclick="switchDashTab(0,this)">📈 核心指标</button>
+        <button class="dash-tab-btn" onclick="switchDashTab(1,this)">🔮 情景推演</button>
+        <button class="dash-tab-btn" onclick="switchDashTab(2,this)">📊 资产图表</button>
+      </div>
+
+      <!-- User Switcher -->
+      <div class="user-switcher" id="userSwitcher"></div>
 
     <!-- Welcome (no data) -->
     <div class="welcome-card" id="welcomeCard">
@@ -783,11 +889,11 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 1: Gender + Birth + City -->
+      <!-- Step 1: 基本情况 + 社保 (合并原 Step1+2) -->
       <div class="wiz-step" data-step="1">
         <div class="wiz-card">
           <div class="wiz-emoji">👤</div>
-          <h2 class="wiz-question">先简单认识一下你</h2>
+          <h2 class="wiz-question">告诉我你的基本情况</h2>
           <div class="wiz-fields">
             <label class="wiz-label">性别</label>
             <div class="wiz-chips" id="wizGender">
@@ -813,38 +919,40 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="applyCityPreset('guangzhou');flashChip(this)">📍 广州</button>
               <button class="wiz-chip" onclick="applyCityPreset('shenzhen');flashChip(this)">📍 深圳</button>
               <button class="wiz-chip" onclick="applyCityPreset('other');flashChip(this)">📍 其他</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Steps 2-7: Same as old wizard but with data sync to profile -->
-      <!-- Step 2: SS -->
-      <div class="wiz-step" data-step="2">
-        <div class="wiz-card">
-          <div class="wiz-emoji">🛡️</div>
-          <h2 class="wiz-question">你的社保情况</h2>
-          <div class="wiz-fields">
-            <label class="wiz-label">已缴养老保险</label>
-            <div class="wiz-chips">
-              <button class="wiz-chip" onclick="setWizVal('pensionYears','3',this)">3年</button>
-              <button class="wiz-chip" onclick="setWizVal('pensionYears','5',this)">5年</button>
-              <button class="wiz-chip" onclick="setWizVal('pensionYears','7',this)">7年</button>
-              <button class="wiz-chip" onclick="setWizVal('pensionYears','10',this)">10年</button>
-            </div>
-            <input type="number" class="wiz-input" id="wizPensionY" placeholder="或手动输入" step="0.5" onchange="document.getElementById('pensionYears').value=this.value;document.getElementById('medicalYears').value=this.value;recalc()">
+            <div class="wiz-tip" id="wizCityTip"></div>
             <label class="wiz-label">社保缴纳策略</label>
             <div class="wiz-chips" id="wizSSStrategy">
               <button class="wiz-chip active" onclick="setSSStrategy('min',this)">🛑 达标即停</button>
               <button class="wiz-chip" onclick="setSSStrategy('retire',this)">💪 缴到退休</button>
             </div>
-            <div class="wiz-hint" id="wizSSHint">达标后不再自缴社保，省下的钱就是安全垫</div>
+            <div class="wiz-tip" id="wizSSStrategyTip">达标后不再自缴社保，省下的钱就是安全垫</div>
+            <label class="wiz-label">已缴社保年限</label>
+            <div style="display:flex;gap:12px;margin-bottom:8px;">
+              <div style="flex:1;">
+                <label style="font-size:12px;color:var(--sub);">养老</label>
+                <div class="stepper" style="margin-top:4px;">
+                  <button class="stepper-btn" onclick="stepPensionYears(-1)">−</button>
+                  <div><span class="stepper-val" id="pensionYearsDisplay">--</span><span class="stepper-unit">年</span></div>
+                  <button class="stepper-btn" onclick="stepPensionYears(1)">+</button>
+                </div>
+              </div>
+              <div style="flex:1;">
+                <label style="font-size:12px;color:var(--sub);">医保</label>
+                <div class="stepper" style="margin-top:4px;">
+                  <button class="stepper-btn" onclick="stepMedicalYears(-1)">−</button>
+                  <div><span class="stepper-val" id="medicalYearsDisplay">--</span><span class="stepper-unit">年</span></div>
+                  <button class="stepper-btn" onclick="stepMedicalYears(1)">+</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Step 2: Income (原 Step3) -->
+      
       <!-- Step 3: Income -->
-      <div class="wiz-step" data-step="3">
+      <div class="wiz-step" data-step="2">
         <div class="wiz-card">
           <div class="wiz-emoji">💸</div>
           <h2 class="wiz-question">你一年到手多少钱？</h2>
@@ -864,8 +972,8 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 4: Housing -->
-      <div class="wiz-step" data-step="4">
+      <!-- Step 3: Housing -->
+      <div class="wiz-step" data-step="3">
         <div class="wiz-card">
           <div class="wiz-emoji">🏠</div>
           <h2 class="wiz-question">你的住房情况</h2>
@@ -891,7 +999,7 @@ td.wn { color: var(--orange); font-weight: 600; }
       </div>
 
       <!-- Step 5: Expenses -->
-      <div class="wiz-step" data-step="5">
+      <div class="wiz-step" data-step="4">
         <div class="wiz-card">
           <div class="wiz-emoji">🛒</div>
           <h2 class="wiz-question">你现在每月花多少钱？</h2>
@@ -920,7 +1028,7 @@ td.wn { color: var(--orange); font-weight: 600; }
       </div>
 
       <!-- Step 6: Min expenses -->
-      <div class="wiz-step" data-step="6">
+      <div class="wiz-step" data-step="5">
         <div class="wiz-card">
           <div class="wiz-emoji">🛟</div>
           <h2 class="wiz-question">如果不再工作，你最低每月要花多少？</h2>
@@ -950,8 +1058,8 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 7: Assets -->
-      <div class="wiz-step" data-step="7">
+      <!-- Step 6: Assets -->
+      <div class="wiz-step" data-step="6">
         <div class="wiz-card">
           <div class="wiz-emoji">🏦</div>
           <h2 class="wiz-question">你现在有多少积蓄？</h2>
@@ -977,8 +1085,8 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
 
-      <!-- Step 8: Summary -->
-      <div class="wiz-step" data-step="8">
+      <!-- Step 7: Summary -->
+      <div class="wiz-step" data-step="7">
         <div class="summary-card" id="summaryCard">
           <div class="summary-avatar" id="sumAvatar">🐱</div>
           <h2 id="sumName">你的财务画像</h2>
@@ -1001,7 +1109,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     <!-- Wizard nav -->
     <div class="wiz-nav" id="wizNav">
       <button class="wiz-btn wiz-btn-back" id="wizBack" onclick="wizPrev()">← 上一题</button>
-      <span class="wiz-count" id="wizCount">1/9</span>
+      <span class="wiz-count" id="wizCount">1/8</span>
       <button class="wiz-btn wiz-btn-next" id="wizNext" onclick="wizNext()">下一题 →</button>
       <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinishNew()" style="display:none;">🌸 创建档案</button>
     </div>
@@ -1614,8 +1722,15 @@ function saveParamPanel(){
 }
 
 function applyCityPresetParam(city){
-  applyCityPreset(city);
-  pDirty = true;
+  const p = cityPresets[city];
+  if(!p) return;
+  document.getElementById("pensionMin").value = p.pensionMin;
+  document.getElementById("medicalMin").value = p.medicalMin;
+  if(p.penSelf>0) document.getElementById("pensionSelfPay").value = p.penSelf;
+  if(p.medSelf>0) document.getElementById("medicalSelfPay").value = p.medSelf;
+  showVoiceToast("OK: applied "+p.label);
+  setTimeout(()=> hideVoiceToast(), 2000);
+  recalc();
 }
 
 // ===== NEW USER WIZARD =====
@@ -1656,11 +1771,11 @@ function startNewUserWizard(){
   document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-inputs').style.display = 'block';
   document.getElementById('sec-inputs').classList.add('active');
-  wizStep = 0; WIZ_TOTAL_NEW = 9;
+  wizStep = 0; WIZ_TOTAL_NEW = 8;
   wizGoTo(0);
 }
 
-let WIZ_TOTAL_NEW = 9;
+let WIZ_TOTAL_NEW = 8;
 let wizNewAvatar = '🐱';
 
 function setWizAvatar(a, btn){
@@ -1718,7 +1833,7 @@ recalc = function(){
 // ===== STATE =====
 let houseTypeCur = 'rent', houseTypeMin = 'rent', childPlan = 'none';
 let gender = '', ssStrategy = 'min'; // 'min' = stop at minimum, 'retire' = pay until retire
-let wizStep = 0; const WIZ_TOTAL_OLD = 8; let WIZ_TOTAL = 9;
+let wizStep = 0; const WIZ_TOTAL_OLD = 8; let WIZ_TOTAL = 8;
 
 // ===== STORAGE =====
 const PREFIX = 'shoreos_v05_';
@@ -2281,6 +2396,20 @@ function stepWorkYears(delta){
   document.getElementById('medicalYears').value = currentWorkYears;
   recalc();
 }
+function stepPensionYears(delta){
+  let v = parseInt(document.getElementById('pensionYears').value) || 0;
+  v = Math.max(0, Math.min(50, v + delta));
+  document.getElementById('pensionYears').value = v;
+  document.getElementById('pensionYearsDisplay').textContent = v;
+  recalc();
+}
+function stepMedicalYears(delta){
+  let v = parseInt(document.getElementById('medicalYears').value) || 0;
+  v = Math.max(0, Math.min(50, v + delta));
+  document.getElementById('medicalYears').value = v;
+  document.getElementById('medicalYearsDisplay').textContent = v;
+  recalc();
+}
 
 // ===== SUMMARY RENDER =====
 function renderSummary(){
@@ -2325,8 +2454,14 @@ function setSSStrategy(s, btn){
   ssStrategy = s;
   document.querySelectorAll('#wizSSStrategy .wiz-chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const hint = document.getElementById('wizSSHint');
-  hint.textContent = s==='min' ? '达标后不再自缴社保，省下的钱就是安全垫' : '一直缴到60岁退休，养老金领得更多。每月固定支出多一份';
+  // Update strategy tip
+  const tipEl = document.getElementById('wizSSStrategyTip');
+  if(tipEl){
+    tipEl.textContent = s==='min'
+      ? '达标后不再自缴社保，省下的钱就是安全垫。'
+      : '一直缴到60岁退休，养老金领得更多，但每月固定支出多一份社保钱。';
+    tipEl.style.display = 'block';
+  }
   recalc();
 }
 
@@ -2476,12 +2611,25 @@ const cityPresets = {
 function applyCityPreset(city){
   const p = cityPresets[city];
   if(!p) return;
-  document.getElementById('pensionMin').value = p.pensionMin;
-  document.getElementById('medicalMin').value = p.medicalMin;
-  if(p.penSelf>0) document.getElementById('pensionSelfPay').value = p.penSelf;
-  if(p.medSelf>0) document.getElementById('medicalSelfPay').value = p.medSelf;
-  showVoiceToast('✅ 已应用「'+p.label+'」社保参数');
-  setTimeout(() => hideVoiceToast(), 2000);
+  document.getElementById("pensionMin").value = p.pensionMin;
+  document.getElementById("medicalMin").value = p.medicalMin;
+  if(p.penSelf>0) document.getElementById("pensionSelfPay").value = p.penSelf;
+  if(p.medSelf>0) document.getElementById("medicalSelfPay").value = p.medSelf;
+  showVoiceToast("OK: applied "+p.label);
+  setTimeout(()=> hideVoiceToast(), 2000);
+  // Update city tip
+  const tipEl = document.getElementById("wizCityTip");
+  if(tipEl){
+    const tips = {
+      beijing: "Beijing: pension ¥1265/mo, medical ¥520/mo.",
+      shanghai: "Shanghai: pension ¥1400/mo, medical ¥580/mo.",
+      guangzhou: "Guangzhou: pension ¥1100/mo, medical ¥450/mo.",
+      shenzhen: "Shenzhen: pension ¥1000/mo, medical ¥420/mo.",
+      other: "Please enter local social security payment manually."
+    };
+    tipEl.textContent = tips[city] || "";
+    tipEl.style.display = tips[city] ? "block" : "none";
+  }
   recalc();
 }
 
@@ -2651,6 +2799,17 @@ wizGoTo(0);
 initVoice();
 renderUserSwitcher();
 recalc();
+updateStatusTime();
+setInterval(updateStatusTime, 60000);
+
+function updateStatusTime(){
+  const el = document.getElementById('statusTime');
+  if(!el) return;
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  el.textContent = h + ':' + m;
+}
 
 // ===== BODY WEIGHT MANAGEMENT =====
 let bodyRecords = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
