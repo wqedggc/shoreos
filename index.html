@@ -1342,25 +1342,25 @@ let cbApp = null, cbDb = null, cbReady = false, cbUid = null;
 const CloudStore = {
   // 记账数据
   async loadBills(){
+    const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
     if(!cbReady || !cbDb){
-      return JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+      return JSON.parse(localStorage.getItem(key) || '[]');
     }
     try {
       const res = await cbDb.collection('bills').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
       return res.data || [];
     } catch(e){
       console.warn('[CB] 读取账单失败，使用本地:', e.message);
-      return JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+      return JSON.parse(localStorage.getItem(key) || '[]');
     }
   },
   async saveBill(bill){
-    // 始终存本地作为备份
-    const local = JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+    const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
+    const local = JSON.parse(localStorage.getItem(key) || '[]');
     const idx = local.findIndex(b=>b.id===bill.id);
     if(idx>=0) local[idx] = bill; else local.push(bill);
-    localStorage.setItem('shoreos_bills', JSON.stringify(local));
+    localStorage.setItem(key, JSON.stringify(local));
 
-    // 云端
     if(!cbReady || !cbDb) return;
     try {
       bill._uid = cbUid;
@@ -1368,8 +1368,9 @@ const CloudStore = {
     } catch(e){ console.warn('[CB] 保存账单失败:', e.message); }
   },
   async deleteBill(id){
-    const local = JSON.parse(localStorage.getItem('shoreos_bills') || '[]').filter(b=>b.id!==id);
-    localStorage.setItem('shoreos_bills', JSON.stringify(local));
+    const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
+    const local = JSON.parse(localStorage.getItem(key) || '[]').filter(b=>b.id!==id);
+    localStorage.setItem(key, JSON.stringify(local));
 
     if(!cbReady || !cbDb) return;
     try {
@@ -1379,19 +1380,18 @@ const CloudStore = {
       }
     } catch(e){ console.warn('[CB] 删除账单失败:', e.message); }
   },
-  // 批量同步：从云端拉取并合并到本地
   async syncBills(){
     if(!cbReady || !cbDb) return;
+    const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
     try {
       const res = await cbDb.collection('bills').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
       const cloud = (res.data || []).map(b => { delete b._id; delete b._uid; return b; });
-      const local = JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
-      // 合并：云端有的保留云端版本，本地独有的也保留
+      const local = JSON.parse(localStorage.getItem(key) || '[]');
       const merged = new Map();
       local.forEach(b => merged.set(b.id, b));
       cloud.forEach(b => merged.set(b.id, b));
       const result = Array.from(merged.values()).sort((a,b)=>a.date.localeCompare(b.date));
-      localStorage.setItem('shoreos_bills', JSON.stringify(result));
+      localStorage.setItem(key, JSON.stringify(result));
       bkBills = result;
       return true;
     } catch(e){ console.warn('[CB] 同步账单失败:', e.message); return false; }
@@ -1399,26 +1399,27 @@ const CloudStore = {
 
   // 体重数据
   async loadBodyRecords(){
+    const key = typeof bodyKey === 'function' ? bodyKey() : 'shoreos_body';
     if(!cbReady || !cbDb){
-      return JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+      return JSON.parse(localStorage.getItem(key) || '[]');
     }
     try {
       const res = await cbDb.collection('body_records').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
       return (res.data || []).map(r => ({ date: r.date, weight: r.weight, fat: r.fat }));
     } catch(e){
-      return JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+      return JSON.parse(localStorage.getItem(key) || '[]');
     }
   },
   async saveBodyRecord(record){
-    const local = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+    const key = typeof bodyKey === 'function' ? bodyKey() : 'shoreos_body';
+    const local = JSON.parse(localStorage.getItem(key) || '[]');
     const idx = local.findIndex(r=>r.date===record.date);
     if(idx>=0) local[idx] = record; else local.push(record);
-    localStorage.setItem('shoreos_body', JSON.stringify(local));
+    localStorage.setItem(key, JSON.stringify(local));
 
     if(!cbReady || !cbDb) return;
     try {
       record._uid = cbUid;
-      // 检查是否存在同日期记录
       const exist = await cbDb.collection('body_records').where({ date: record.date, _uid: cbUid }).get();
       if(exist.data?.length > 0){
         await cbDb.collection('body_records').doc(exist.data[0]._id).update(record);
@@ -1429,15 +1430,16 @@ const CloudStore = {
   },
   async syncBodyRecords(){
     if(!cbReady || !cbDb) return;
+    const key = typeof bodyKey === 'function' ? bodyKey() : 'shoreos_body';
     try {
       const res = await cbDb.collection('body_records').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
       const cloud = (res.data || []).map(r => ({ date: r.date, weight: r.weight, fat: r.fat }));
-      const local = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+      const local = JSON.parse(localStorage.getItem(key) || '[]');
       const merged = new Map();
       local.forEach(r => merged.set(r.date, r));
       cloud.forEach(r => merged.set(r.date, r));
       const result = Array.from(merged.values()).sort((a,b)=>a.date.localeCompare(b.date));
-      localStorage.setItem('shoreos_body', JSON.stringify(result));
+      localStorage.setItem(key, JSON.stringify(result));
       bodyRecords = result;
       return true;
     } catch(e){ return false; }
@@ -1466,6 +1468,26 @@ const CloudStore = {
 // ===== MULTI-USER DATA LAYER =====
 const PROFILES_KEY = 'shoreos:v2:profiles';
 const ACTIVE_KEY = 'shoreos:v2:active';
+
+// 按用户隔离的 localStorage key
+function userKey(base){ return base + '_' + (activeUid || 'anon'); }
+function billsKey(){ return userKey('shoreos_bills'); }
+function bodyKey(){ return userKey('shoreos_body'); }
+function bodyTargetKey(){ return userKey('shoreos_body_target'); }
+
+// 数据迁移：旧版全局 key → 按用户隔离
+function migrateUserData(){
+  if(!activeUid) return;
+  const oldKeys = ['shoreos_bills', 'shoreos_body', 'shoreos_body_target'];
+  const newKeys = [billsKey(), bodyKey(), bodyTargetKey()];
+  oldKeys.forEach((old, i) => {
+    const oldData = localStorage.getItem(old);
+    if(oldData && !localStorage.getItem(newKeys[i])){
+      localStorage.setItem(newKeys[i], oldData);
+      console.log('[migrate]', old, '→', newKeys[i]);
+    }
+  });
+}
 
 let userProfiles = [];
 let activeUid = null;
@@ -1555,10 +1577,31 @@ function switchUser(uid){
     // Load profile data into hidden fields
     const p = getActiveProfile();
     if(p) loadProfileToFields(p);
+    // Reload per-user data (bills, body)
+    reloadUserData();
     renderUserSwitcher();
     recalc();
     refreshDashboard();
   } catch(e){ console.error('switchUser error:', e); }
+}
+
+// 重载当前用户的记账和体重数据
+function reloadUserData(){
+  if(!activeUid){ bkBills = []; bodyRecords = []; bodyTarget = 0; return; }
+  // 数据迁移（首次切换到该用户时）
+  migrateUserData();
+  // 从按用户隔离的 key 加载
+  bkBills = JSON.parse(localStorage.getItem(billsKey()) || '[]');
+  if(!Array.isArray(bkBills)) bkBills = [];
+  bkBills.sort((a,b) => a.date.localeCompare(b.date));
+  bodyRecords = JSON.parse(localStorage.getItem(bodyKey()) || '[]');
+  if(!Array.isArray(bodyRecords)) bodyRecords = [];
+  bodyRecords.sort((a,b) => a.date.localeCompare(b.date));
+  bodyTarget = parseFloat(localStorage.getItem(bodyTargetKey())) || 0;
+  // 重新渲染相关页面
+  if(typeof renderBkCalendar === 'function') renderBkCalendar();
+  if(typeof renderBodyPage === 'function') renderBodyPage();
+  if(typeof renderBkChart === 'function') renderBkChart();
 }
 
 
@@ -1603,6 +1646,7 @@ function deleteProfile(uid){
   // Also clean up weight and bill data for this user
   localStorage.removeItem('shoreos_body_' + uid);
   localStorage.removeItem('shoreos_bills_' + uid);
+  localStorage.removeItem('shoreos_body_target_' + uid);
   if(activeUid === uid){
     activeUid = userProfiles.length > 0 ? userProfiles[0].uid : null;
     localStorage.setItem(ACTIVE_KEY, activeUid || '');
@@ -2950,6 +2994,9 @@ activeUid = localStorage.getItem(ACTIVE_KEY) || '';
     if(p) loadProfileToFields(p);
   }
 
+  // 按用户加载记账/体重数据（含旧数据迁移）
+  reloadUserData();
+
   wizGoTo(0);
   initVoice();
   renderUserSwitcher();
@@ -3030,16 +3077,16 @@ function toggleParamOverlay(){
 function toggleParamPanel(){ toggleParamOverlay(); }
 
 // ===== BODY WEIGHT MANAGEMENT =====
-let bodyRecords = JSON.parse(localStorage.getItem('shoreos_body') || '[]');
+let bodyRecords = JSON.parse(localStorage.getItem(bodyKey()) || '[]');
 if(!Array.isArray(bodyRecords)) bodyRecords = [];
 bodyRecords.sort((a,b)=>a.date.localeCompare(b.date));
-let bodyTarget = parseFloat(localStorage.getItem('shoreos_body_target')) || 0;
+let bodyTarget = parseFloat(localStorage.getItem(bodyTargetKey())) || 0;
 let chartBW = null;
 
-function saveBodyData(){ localStorage.setItem('shoreos_body', JSON.stringify(bodyRecords)); }
+function saveBodyData(){ localStorage.setItem(bodyKey(), JSON.stringify(bodyRecords)); }
 function setBodyTarget(){
   bodyTarget = parseFloat(document.getElementById('bodyTargetInput').value) || 0;
-  localStorage.setItem('shoreos_body_target', bodyTarget);
+  localStorage.setItem(bodyTargetKey(), bodyTarget);
   renderBodyPage();
 }
 
@@ -3311,7 +3358,7 @@ const BK_CATEGORIES = {
   ]
 };
 
-let bkBills = JSON.parse(localStorage.getItem('shoreos_bills') || '[]');
+let bkBills = JSON.parse(localStorage.getItem(billsKey()) || '[]');
 if(!Array.isArray(bkBills)) bkBills = [];
 bkBills.sort((a,b) => a.date.localeCompare(b.date));
 let bkMonth = new Date().getMonth();
@@ -3323,7 +3370,7 @@ let bkSubTab = 'calendar';
 let chartBkCatInst = null, chartBkTrendInst = null;
 
 function saveBills(){
-  localStorage.setItem('shoreos_bills', JSON.stringify(bkBills));
+  localStorage.setItem(billsKey(), JSON.stringify(bkBills));
 }
 
 function openBkModal(d){
