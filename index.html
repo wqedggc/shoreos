@@ -1572,6 +1572,11 @@ function getActiveProfile(){
 
 function switchUser(uid){
   try {
+    // 保存当前用户数据
+    if(activeUid && activeUid !== uid){
+      saveBills();
+      saveBodyData();
+    }
     activeUid = uid;
     localStorage.setItem(ACTIVE_KEY, uid);
     // Load profile data into hidden fields
@@ -1621,6 +1626,8 @@ function setParamTier(tier, btn){
 }
 
 function createProfile(name, avatar){
+  // 先保存当前用户的数据
+  if(activeUid){ saveBills(); saveBodyData(); }
   const uid = 'u_' + Date.now().toString(36);
   const profile = {
     uid, name, avatar,
@@ -1635,8 +1642,8 @@ function createProfile(name, avatar){
   };
   userProfiles.push(profile);
   saveProfiles();
-  activeUid = profile.uid;
-  localStorage.setItem(ACTIVE_KEY, activeUid);
+  // 通过 switchUser 切换（会自动保存旧用户数据、加载新用户数据）
+  switchUser(profile.uid);
   return profile;
 }
 
