@@ -1468,9 +1468,72 @@ function loadProfiles(){
     userProfiles = raw ? JSON.parse(raw) : [];
   } catch(e){ userProfiles = []; }
 }
+
+// 云端 profiles 同步：本地优先，云端备份 + 合并
+const ProfileCloud = {
+  // 等待 CloudBase 就绪
+  async _waitReady(timeoutMs = 3000){
+    const start = Date.now();
+    while(!cbReady && Date.now() - start < timeoutMs){
+      await new Promise(r => setTimeout(r, 200));
+    }
+    return cbReady;
+  },
+
+  // 从云端拉取 profiles
+  async _fetchCloud(){
+    if(!await this._waitReady()) return null;
+    try {
+      const res = await cbDb.collection('profiles').where({ _uid: cbUid }).limit(1).get();
+      if(res.data?.length > 0){
+        return res.data[0].profiles || [];
+      }
+    } catch(e){ console.warn('[CB] 拉取 profiles 失败:', e.message); }
+    return null;
+  },
+
+  // 推送到云端（全量覆盖）
+  async _pushCloud(profiles){
+    if(!await this._waitReady()) return;
+    try {
+      const exist = await cbDb.collection('profiles').where({ _uid: cbUid }).get();
+      const doc = { _uid: cbUid, profiles, updatedAt: Date.now() };
+      if(exist.data?.length > 0){
+        await cbDb.collection('profiles').doc(exist.data[0]._id).update(doc);
+      } else {
+        await cbDb.collection('profiles').add(doc);
+      }
+      console.log('[CB] profiles 已同步云端, 共', profiles.length, '个用户');
+    } catch(e){ console.warn('[CB] 推送 profiles 失败:', e.message); }
+  },
+
+  // 初始化时从云端合并数据（云端优先）
+  async mergeFromCloud(){
+    const cloudProfiles = await this._fetchCloud();
+    if(!cloudProfiles || cloudProfiles.length === 0) return;
+    // 合并策略：云端有的用云端，本地独有的保留
+    const merged = new Map();
+    userProfiles.forEach(p => merged.set(p.uid, p));
+    cloudProfiles.forEach(p => merged.set(p.uid, p));
+    userProfiles = Array.from(merged.values());
+    localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
+    // 恢复 activeUid
+    const localActive = localStorage.getItem(ACTIVE_KEY);
+    if(localActive && userProfiles.some(p => p.uid === localActive)){
+      activeUid = localActive;
+    } else if(userProfiles.length > 0){
+      activeUid = userProfiles[0].uid;
+      localStorage.setItem(ACTIVE_KEY, activeUid);
+    }
+    console.log('[CB] profiles 云端合并完成, 共', userProfiles.length, '个用户');
+  }
+};
+
 function saveProfiles(){
   localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
   renderUserSwitcher();
+  // 异步推送到云端
+  ProfileCloud._pushCloud([...userProfiles]);
 }
 function getActiveProfile(){
   if(!activeUid) return null;
@@ -2786,40 +2849,51 @@ function parseVoiceText(text){
 // ===== INIT =====
 loadProfiles();
 activeUid = localStorage.getItem(ACTIVE_KEY) || '';
-// Migrate v1 data if exists
-const v1State = localStorage.getItem('shoreos_v05_state');
-if(v1State && userProfiles.length === 0){
-  try {
-    const name = prompt('🌸 检测到旧版数据！请输入你的昵称以创建档案：', '我自己');
-    if(name){
-      const profile = createProfile(name.trim() || '我自己', '🐱');
-      // Load v1 data into hidden fields
-      loadState();
-      saveFieldsToProfile();
-      activeUid = profile.uid;
-      localStorage.setItem(ACTIVE_KEY, activeUid);
-      showToast('✨ 数据已迁移到「'+profile.name+'」');
-    }
-  } catch(e){ console.warn('v1 migration failed:', e); }
-}
 
-// Validate activeUid
-if(activeUid && !userProfiles.find(p=>p.uid===activeUid)){
-  activeUid = userProfiles.length > 0 ? userProfiles[0].uid : null;
-  localStorage.setItem(ACTIVE_KEY, activeUid || '');
-}
+// 异步初始化：先尝试从云端合并 profiles，再渲染
+(async function asyncInit(){
+  // 尝试云端合并（如果 CloudBase 就绪）
+  await ProfileCloud.mergeFromCloud();
 
-// Load active profile data
-if(activeUid){
-  const p = getActiveProfile();
-  if(p) loadProfileToFields(p);
-}
+  // Migrate v1 data if exists
+  const v1State = localStorage.getItem('shoreos_v05_state');
+  if(v1State && userProfiles.length === 0){
+    try {
+      const name = prompt('🌸 检测到旧版数据！请输入你的昵称以创建档案：', '我自己');
+      if(name){
+        const profile = createProfile(name.trim() || '我自己', '🐱');
+        // Load v1 data into hidden fields
+        loadState();
+        saveFieldsToProfile();
+        activeUid = profile.uid;
+        localStorage.setItem(ACTIVE_KEY, activeUid);
+        showToast('✨ 数据已迁移到「'+profile.name+'」');
+      }
+    } catch(e){ console.warn('v1 migration failed:', e); }
+  }
 
-wizGoTo(0);
-initVoice();
-renderUserSwitcher();
-try { recalc(); } catch(e){ console.error('init recalc error:', e); }
-try { refreshDashboard(); } catch(e){ console.error('init refreshDashboard error:', e); }
+  // Validate activeUid
+  if(activeUid && !userProfiles.find(p=>p.uid===activeUid)){
+    activeUid = userProfiles.length > 0 ? userProfiles[0].uid : null;
+    localStorage.setItem(ACTIVE_KEY, activeUid || '');
+  }
+
+  // Load active profile data
+  if(activeUid){
+    const p = getActiveProfile();
+    if(p) loadProfileToFields(p);
+  }
+
+  wizGoTo(0);
+  initVoice();
+  renderUserSwitcher();
+  try { recalc(); } catch(e){ console.error('init recalc error:', e); }
+  try { refreshDashboard(); } catch(e){ console.error('init refreshDashboard error:', e); }
+
+  // 云端同步后推送本地 profiles（确保双向一致）
+  if(cbReady) ProfileCloud._pushCloud([...userProfiles]);
+})();
+
 updateStatusTime();
 setInterval(updateStatusTime, 60000);
 
