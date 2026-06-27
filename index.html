@@ -2981,9 +2981,9 @@ function switchDashTab(idx, btn){
   document.querySelectorAll('.dash-tab-btn').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   // Trigger chart resize when switching to chart tab
-  if(idx === 2 && typeof chartAssets !== 'undefined' && chartAssets) chartAssets.resize();
-  if(idx === 2 && typeof chartSafety !== 'undefined' && chartSafety) chartSafety.resize();
-  if(idx === 2 && typeof cAlloc !== 'undefined' && cAlloc) cAlloc.resize();
+  if(idx === 2 && typeof chartAssets !== 'undefined' && chartAssets && typeof chartAssets.resize === 'function') chartAssets.resize();
+  if(idx === 2 && typeof chartSafety !== 'undefined' && chartSafety && typeof chartSafety.resize === 'function') chartSafety.resize();
+  if(idx === 2 && typeof cAlloc !== 'undefined' && cAlloc && typeof cAlloc.resize === 'function') cAlloc.resize();
 }
 
 // ===== UPDATE USER INFO BAR =====
