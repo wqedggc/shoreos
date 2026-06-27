@@ -114,9 +114,22 @@ body {
 .chart-card { margin: 0 12px 12px; background: var(--card); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow-sm); }
 .chart-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
 .chart-wrap { position: relative; height: 180px; }
+.chart-wrap-sm { height: 200px; }
 
 .table-card { margin: 0 12px 12px; background: var(--card); border-radius: var(--radius); padding: 16px; overflow-x: auto; box-shadow: var(--shadow-sm); }
 .table-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+
+/* Scenario Cards */
+.scenario-list { display: flex; flex-direction: column; gap: 10px; padding: 0 12px 12px; }
+.sc-card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+.sc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.sc-label { font-weight: 700; font-size: 15px; color: var(--text); }
+.sc-age { margin-left: auto; font-size: 13px; color: var(--sub); background: var(--bg2); padding: 2px 10px; border-radius: 10px; }
+.sc-metrics { display: flex; gap: 8px; margin-bottom: 8px; }
+.sc-metric { flex: 1; text-align: center; background: var(--bg2); border-radius: 10px; padding: 8px 4px; }
+.sc-mv { font-size: 15px; font-weight: 700; color: var(--text); }
+.sc-ml { font-size: 11px; color: var(--sub); margin-top: 2px; }
+.sc-ss { font-size: 12px; color: var(--sub); padding: 6px 0 0; border-top: 0.5px solid var(--sep); }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th { text-align: left; padding: 7px 6px; font-size: 10px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; border-bottom: 1px solid var(--sep); }
 td { padding: 8px 6px; border-bottom: 0.5px solid #f5f5f7; font-size: 11px; }
@@ -739,17 +752,12 @@ td.wn { color: var(--orange); font-weight: 600; }
 
       <!-- Tab Content: Scenario -->
       <div class="dash-tab-content" id="dashTab1">
-      <div class="table-card fade-in">
-        <h3>🔮 情景推演</h3>
-        <table>
-          <thead><tr><th>情景</th><th>年龄</th><th>攒到</th><th>可持续</th><th>社保</th><th>自由</th></tr></thead>
-          <tbody id="scenarioBody"></tbody>
-        </table>
-      </div>
+      <div class="scenario-list fade-in" id="scenarioBody"></div>
       </div><!-- end dashTab1 -->
 
       <!-- Tab Content: Charts -->
       <div class="dash-tab-content" id="dashTab2">
+      <div class="chart-card fade-in"><h3>📊 资产配置</h3><div class="chart-wrap chart-wrap-sm"><canvas id="chartAlloc"></canvas></div></div>
       <div class="chart-card fade-in"><h3>📈 不同选择的资产变化</h3><div class="chart-wrap"><canvas id="chartAssets"></canvas></div></div>
       <div class="chart-card fade-in"><h3>🛡️ 多坚持N年，安全垫变化</h3><div class="chart-wrap"><canvas id="chartSafety"></canvas></div></div>
       </div><!-- end dashTab2 -->
@@ -2234,7 +2242,7 @@ function calcAll(){
 }
 
 // ===== RENDER =====
-let gChart=null, cA=null, cS=null;
+let gChart=null, cA=null, cS=null, cAlloc=null;
 
 function render(d){
   const safeText = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
@@ -2300,19 +2308,40 @@ function render(d){
   document.getElementById('gaugeBigPct').textContent = fmtP(v);
   document.getElementById('gaugeBigPct').style.color = clr;
 
-  // Table
+  // Scenario cards
   const tb=document.getElementById('scenarioBody'); tb.innerHTML='';
   for(const s of d.sc){
     const fic=s.fi>=100?'ok':s.fi>=50?'hi':'wn';
     const svc=s.survival>=30?'ok':s.survival>=10?'hi':'wn';
-    let sd=s.survival>500?'不限':s.survival>100?'>100年':s.survival*12>36?fmtY(s.survival):fmtM(s.survival*12);
-    let tag=s.ok?'<span class="pill pill-g">已自由</span>':s.fi>=75?'<span class="pill pill-o">接近</span>':'';
-    let ssInfo = '';
-    if(s.pen>=d.penMin && s.med>=d.medMin) ssInfo = '✅ 养老医保均达标';
-    else if(s.pen>=d.penMin) ssInfo = '养老✅ · 医保'+s.med.toFixed(1)+'年';
-    else if(s.med>=d.medMin) ssInfo = '养老'+s.pen.toFixed(1)+'年 · 医保✅';
-    else ssInfo = '养老'+s.pen.toFixed(1)+' · 医保'+s.med.toFixed(1)+'年';
-    tb.innerHTML+=`<tr><td><b>${s.label}</b>${tag}</td><td>${s.age}岁</td><td class="hi">${fmtW(s.assets)}</td><td class="${svc}">${sd}</td><td>${ssInfo}</td><td class="${fic}">${fmtP(s.fi)}</td></tr>`;
+    let sd=s.survival>500?'♾️ 不限':s.survival>100?'>100年':s.survival*12>36?fmtY(s.survival):fmtM(s.survival*12);
+    let tag=s.ok?'<span class="pill pill-g">✨ 已自由</span>':s.fi>=75?'<span class="pill pill-o">🔥 接近</span>':'';
+    let ssIcon, ssText;
+    if(s.pen>=d.penMin && s.med>=d.medMin){ ssIcon='✅'; ssText='养老医保均达标'; }
+    else if(s.pen>=d.penMin){ ssIcon='⚠️'; ssText='养老✅ · 医保差一点'; }
+    else if(s.med>=d.medMin){ ssIcon='⚠️'; ssText='养老差一点 · 医保✅'; }
+    else { ssIcon='⏳'; ssText='养老'+s.pen.toFixed(1)+'年 · 医保'+s.med.toFixed(1)+'年'; }
+    const fiColor = s.fi>=100?'var(--mint-deep)':s.fi>=75?'#f59e0b':s.fi>=50?'#f97316':'#ef4444';
+    tb.innerHTML+=`<div class="sc-card">
+      <div class="sc-top">
+        <span class="sc-label">${s.label}</span>${tag}
+        <span class="sc-age">${s.age}岁</span>
+      </div>
+      <div class="sc-metrics">
+        <div class="sc-metric">
+          <div class="sc-mv">${fmtW(s.assets)}</div>
+          <div class="sc-ml">攒到</div>
+        </div>
+        <div class="sc-metric">
+          <div class="sc-mv">${sd}</div>
+          <div class="sc-ml">可持续</div>
+        </div>
+        <div class="sc-metric">
+          <div class="sc-mv" style="color:${fiColor};font-weight:900;">${fmtP(s.fi)}</div>
+          <div class="sc-ml">自由指数</div>
+        </div>
+      </div>
+      <div class="sc-ss">${ssIcon} ${ssText}</div>
+    </div>`;
   }
 
   // Charts
@@ -2360,6 +2389,43 @@ function render(d){
       }
     }
   });
+
+  // 资产配置饼图
+  if(cAlloc) cAlloc.destroy();
+  const allocCanvas = document.getElementById('chartAlloc');
+  if(allocCanvas){
+    const allocLabels = [];
+    const allocData = [];
+    const allocColors = [];
+    const cash = parseFloat(document.getElementById('assetCash')?.value) || 0;
+    const deposit = parseFloat(document.getElementById('assetDeposit')?.value) || 0;
+    const fund = parseFloat(document.getElementById('assetFund')?.value) || 0;
+    const stock = parseFloat(document.getElementById('assetStock')?.value) || 0;
+    const pension = parseFloat(document.getElementById('assetPension')?.value) || 0;
+    const items = [
+      { label: '现金', val: cash, color: '#94a3b8' },
+      { label: '存款', val: deposit, color: '#60a5fa' },
+      { label: '基金', val: fund, color: '#34d399' },
+      { label: '股票', val: stock, color: '#fb7185' },
+      { label: '养老金', val: pension, color: '#fbbf24' },
+    ];
+    items.forEach(item => {
+      if(item.val > 0){ allocLabels.push(item.label); allocData.push(item.val); allocColors.push(item.color); }
+    });
+    if(allocData.length === 0){ allocLabels.push('暂无'); allocData.push(1); allocColors.push('#e5e7eb'); }
+    cAlloc = new Chart(allocCanvas.getContext('2d'), {
+      type: 'doughnut',
+      data: { labels: allocLabels, datasets: [{ data: allocData, backgroundColor: allocColors, borderWidth: 2, borderColor: '#fff' }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyleWidth: 8, font: { size: 11 }, color: '#666' } },
+          tooltip: { callbacks: { label: ctx => ctx.label + ': ¥' + ctx.raw.toLocaleString() } }
+        }
+      }
+    });
+  }
 }
 
 // ===== ACTIONS =====
@@ -2917,6 +2983,7 @@ function switchDashTab(idx, btn){
   // Trigger chart resize when switching to chart tab
   if(idx === 2 && typeof chartAssets !== 'undefined' && chartAssets) chartAssets.resize();
   if(idx === 2 && typeof chartSafety !== 'undefined' && chartSafety) chartSafety.resize();
+  if(idx === 2 && typeof cAlloc !== 'undefined' && cAlloc) cAlloc.resize();
 }
 
 // ===== UPDATE USER INFO BAR =====
