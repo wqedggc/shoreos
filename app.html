@@ -665,7 +665,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span id="statusTime">9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v3.0</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
+  <div class="status-bar"><span id="statusTime">9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v3.1</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
 
     <!-- ===== DASHBOARD ===== -->
     <div class="scroll-section active" id="sec-dashboard">
@@ -1114,6 +1114,10 @@ td.wn { color: var(--orange); font-weight: 600; }
     <button class="tab-item" onclick="switchTab('bookkeeping', this)">
       <span class="tab-icon">🧾</span>
       <span class="tab-text">记账</span>
+    </button>
+    <button class="tab-item" onclick="switchTab('inputs', this)">
+      <span class="tab-icon">⚙️</span>
+      <span class="tab-text">设置</span>
     </button>
   </div>
 
@@ -1931,13 +1935,10 @@ function wizFinishNew(){
   const profile = createProfile(name, wizNewAvatar);
   // Save current field values to profile
   saveFieldsToProfile();
-  // Hide wizard
+  // Hide wizard, switch to dashboard
   document.getElementById('sec-inputs').style.display = 'none';
   document.getElementById('sec-inputs').classList.remove('active');
-  // Switch to dashboard
-  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sec-dashboard').classList.add('active');
-  document.querySelectorAll('.tab-item').forEach((t,i)=>t.classList.toggle('active', i===0));
+  switchTab('dashboard', document.querySelectorAll('.tab-item')[0]);
   switchUser(profile.uid);
   showToast('🌸 欢迎「'+name+'」加入 ShoreOS！');
 }
@@ -2516,7 +2517,11 @@ function setChild(p, btn){
 function switchTab(tab, btn){
   document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
   const sec = document.getElementById('sec-'+tab);
-  if(sec) sec.classList.add('active');
+  if(sec){
+    sec.classList.add('active');
+    // 如果 sec-inputs 有 inline display:none，需要移除
+    if(tab === 'inputs') sec.style.display = 'block';
+  }
   document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
   if(btn) btn.classList.add('active');
   document.getElementById('phone').scrollTop = 0;
