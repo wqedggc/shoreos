@@ -754,6 +754,40 @@ td.wn { color: var(--orange); font-weight: 600; }
 .theme-dot.active { border-color: var(--text); box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--pink-deep); }
 .sp-theme-label { font-size: 14px; }
 
+/* Profile & User Manage Pages */
+.page-header { display: flex; align-items: center; padding: 12px 16px; gap: 12px; }
+.page-back { background: none; border: none; font-size: 16px; color: var(--pink-deep); cursor: pointer; padding: 4px 0; }
+.page-title { font-size: 17px; font-weight: 700; }
+.profile-hero { display: flex; align-items: center; gap: 16px; padding: 20px; margin: 0 12px; background: var(--grad-hero); border-radius: var(--radius-lg); }
+.ph-avatar { font-size: 48px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.7); border-radius: var(--radius); }
+.ph-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.ph-info input { padding: 8px 12px; border: 1.5px solid var(--sep); border-radius: 10px; font-size: 15px; background: rgba(255,255,255,0.8); }
+.profile-section { margin: 16px 12px; }
+.profile-section h3 { font-size: 13px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-left: 4px; }
+.profile-field { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 8px; }
+.profile-field span { font-size: 15px; font-weight: 500; }
+.profile-field input { width: 100px; padding: 6px 10px; border: 1.5px solid var(--sep); border-radius: 8px; text-align: right; font-size: 14px; }
+.pf-toggle { display: flex; gap: 6px; }
+.pf-toggle button { padding: 6px 14px; border: 1.5px solid var(--sep); border-radius: 20px; background: var(--bg); font-size: 13px; cursor: pointer; }
+.pf-toggle button.active { background: var(--pink-deep); color: #fff; border-color: var(--pink-deep); }
+.profile-section .summary-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; box-shadow: var(--shadow-sm); }
+.profile-section .summary-card:active { background: var(--bg2); }
+.sc-icon { font-size: 28px; width: 40px; text-align: center; }
+.sc-body { flex: 1; }
+.sc-title { font-size: 14px; font-weight: 600; }
+.sc-detail { font-size: 12px; color: var(--sub); margin-top: 2px; }
+.sc-arrow { font-size: 20px; color: var(--sep); }
+.user-list { margin: 0 12px; }
+.um-user-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; box-shadow: var(--shadow-sm); }
+.um-user-row:active { background: var(--bg2); }
+.um-avatar { font-size: 36px; width: 48px; text-align: center; }
+.um-info { flex: 1; }
+.um-name { font-size: 15px; font-weight: 600; }
+.um-name .current-tag { font-size: 10px; background: var(--pink-soft); color: var(--pink-deep); padding: 1px 6px; border-radius: 8px; margin-left: 6px; }
+.um-summary { font-size: 12px; color: var(--sub); margin-top: 2px; }
+.um-more { font-size: 18px; color: var(--sub); padding: 4px; }
+.um-add-btn { display: block; width: calc(100% - 24px); margin: 8px 12px; padding: 14px; border: 2px dashed var(--sep); border-radius: var(--radius); background: var(--card); font-size: 15px; font-weight: 600; color: var(--sub); cursor: pointer; }
+
 </style>
 </head>
 <body>
@@ -1404,6 +1438,78 @@ td.wn { color: var(--orange); font-weight: 600; }
     <div class="sp-item" onclick="setTheme('purple')"><span class="sp-icon">🍇</span><span class="sp-theme-label">紫色</span><span class="theme-dot" id="themeDotPurple" style="background:#a78bfa;"></span></div>
     <button class="sp-item" onclick="toggleSettings();navigateTo('user-manage');"><span class="sp-icon">👥</span>用户管理</button>
     <button class="sp-item" onclick="toggleSettings();showToast('🌸 ShoreOS v4.0 · 人生自由度仪表盘 · 算清楚你离财务自由还差多远')"><span class="sp-icon">ℹ️</span>关于</button>
+  </div>
+
+  <!-- ===== PROFILE PAGE ===== -->
+  <div class="scroll-section" id="sec-profile" style="display:none;">
+    <div class="page-header">
+      <button class="page-back" onclick="navigateTo('dashboard')">← 返回</button>
+      <span class="page-title">个人管理</span>
+    </div>
+    
+    <!-- 头像+昵称区 -->
+    <div class="profile-hero">
+      <div class="ph-avatar" id="phAvatar">🐱</div>
+      <div class="ph-info">
+        <input type="text" id="phName" placeholder="昵称" onchange="saveProfileInfo()">
+        <input type="text" id="phAvatarInput" placeholder="Emoji头像" maxlength="4" onchange="saveProfileInfo()">
+      </div>
+    </div>
+    
+    <!-- 通用信息 -->
+    <div class="profile-section">
+      <h3>通用信息</h3>
+      <div class="profile-field">
+        <span>性别</span>
+        <div class="pf-toggle">
+          <button id="phGenderM" onclick="setProfileGender('male')">♂ 男</button>
+          <button id="phGenderF" onclick="setProfileGender('female')">♀ 女</button>
+        </div>
+      </div>
+      <div class="profile-field">
+        <span>出生年份</span>
+        <input type="number" id="phBirthYear" placeholder="1995" onchange="saveProfileInfo()">
+      </div>
+    </div>
+    
+    <!-- 三模块摘要 -->
+    <div class="profile-section">
+      <h3>模块摘要</h3>
+      <div class="summary-card" id="summaryFire" onclick="navigateTo('dashboard')">
+        <span class="sc-icon">💰</span>
+        <div class="sc-body">
+          <div class="sc-title">FIRE 自由指数</div>
+          <div class="sc-detail" id="smFireDetail">--</div>
+        </div>
+        <span class="sc-arrow">›</span>
+      </div>
+      <div class="summary-card" id="summaryBody" onclick="navigateTo('body')">
+        <span class="sc-icon">⚖️</span>
+        <div class="sc-body">
+          <div class="sc-title">体重管理</div>
+          <div class="sc-detail" id="smBodyDetail">--</div>
+        </div>
+        <span class="sc-arrow">›</span>
+      </div>
+      <div class="summary-card" id="summaryBk" onclick="navigateTo('bookkeeping')">
+        <span class="sc-icon">🧾</span>
+        <div class="sc-body">
+          <div class="sc-title">记账</div>
+          <div class="sc-detail" id="smBkDetail">--</div>
+        </div>
+        <span class="sc-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== USER MANAGE PAGE ===== -->
+  <div class="scroll-section" id="sec-user-manage" style="display:none;">
+    <div class="page-header">
+      <button class="page-back" onclick="navigateTo('dashboard')">← 返回</button>
+      <span class="page-title">用户管理</span>
+    </div>
+    <div class="user-list" id="userManageList"></div>
+    <button class="um-add-btn" onclick="startNewUserWizard()">＋ 添加新用户</button>
   </div>
 
 <script>
@@ -2619,14 +2725,14 @@ function setChild(p, btn){
 }
 
 function navigateTo(module){
-  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.scroll-section').forEach(s=>{ s.classList.remove('active'); s.style.display = ''; });
   // Map module names to section IDs
   const secMap = {
     'dashboard': 'sec-dashboard',
     'body': 'sec-body',
     'bookkeeping': 'sec-bookkeeping',
-    'profile': 'sec-dashboard',  // profile shows dashboard with param overlay
-    'user-manage': 'sec-dashboard', // user-manage shows dashboard + user switcher
+    'profile': 'sec-profile',
+    'user-manage': 'sec-user-manage',
     'inputs': 'sec-inputs'
   };
   const secId = secMap[module] || 'sec-dashboard';
@@ -2640,8 +2746,16 @@ function navigateTo(module){
   const ho = document.getElementById('hamburgerOverlay');
   if(hm) hm.classList.remove('active');
   if(ho) ho.classList.remove('active');
+  // Close settings panel
+  const sp = document.getElementById('settingsPanel');
+  const so = document.getElementById('settingsOverlay');
+  if(sp) sp.classList.remove('active');
+  if(so) so.classList.remove('active');
   // Scroll to top
   document.getElementById('phone').scrollTop = 0;
+  // Render page-specific content
+  if(module === 'profile') renderProfilePage();
+  if(module === 'user-manage') renderUserManagePage();
   // Recalculate if not on inputs
   if(module !== 'inputs') recalc();
   // Show/hide settings FAB based on module
@@ -3249,6 +3363,157 @@ function updateUserInfoBar(d){
       else etaEl.textContent = 'ETA --';
     }
   }
+}
+
+// ===== PROFILE PAGE =====
+function renderProfilePage(){
+  const p = getActiveProfile();
+  if(!p) return;
+  const phAvatar = document.getElementById('phAvatar');
+  const phName = document.getElementById('phName');
+  const phAvatarInput = document.getElementById('phAvatarInput');
+  const phBirthYear = document.getElementById('phBirthYear');
+  if(phAvatar) phAvatar.textContent = p.avatar || '🐱';
+  if(phName) phName.value = p.name || '';
+  if(phAvatarInput) phAvatarInput.value = p.avatar || '';
+  if(phBirthYear) phBirthYear.value = p.birthYear || '';
+  setProfileGenderUI(p.gender);
+  // Summaries
+  const d = calcAll();
+  const smFireDetail = document.getElementById('smFireDetail');
+  if(smFireDetail && d){
+    smFireDetail.textContent = 
+      '自由指数 ' + (d.fi||0).toFixed(1) + '%  ·  目标 ' + fmtW(d.fire) + '  ·  预计 ' + (d.fireYearExact||'--') + '年';
+  } else if(smFireDetail){
+    smFireDetail.textContent = '请先完善参数信息';
+  }
+  // Body summary
+  const smBodyDetail = document.getElementById('smBodyDetail');
+  if(smBodyDetail){
+    const latestBody = bodyRecords.length > 0 ? bodyRecords[bodyRecords.length-1] : null;
+    smBodyDetail.textContent = latestBody
+      ? '最新 ' + latestBody.weight + 'kg  ·  目标 ' + (bodyTarget||'--') + 'kg  ·  ' + bodyRecords.length + '条记录'
+      : '暂无数据';
+  }
+  // Bookkeeping summary
+  const smBkDetail = document.getElementById('smBkDetail');
+  if(smBkDetail){
+    const now = new Date();
+    const thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const monthBills = bkBills.filter(b => b.date && b.date.startsWith(thisMonth));
+    const monthExp = monthBills.filter(b => b.type === 'expense').reduce((s,b) => s + (b.amount||0), 0);
+    const monthInc = monthBills.filter(b => b.type === 'income').reduce((s,b) => s + (b.amount||0), 0);
+    smBkDetail.textContent = monthBills.length > 0
+      ? '本月支出 ¥' + monthExp.toLocaleString() + '  ·  收入 ¥' + monthInc.toLocaleString() + '  ·  ' + monthBills.length + '笔'
+      : '本月暂无记录';
+  }
+}
+
+function saveProfileInfo(){
+  const p = getActiveProfile();
+  if(!p) return;
+  const phName = document.getElementById('phName');
+  const phAvatarInput = document.getElementById('phAvatarInput');
+  const phBirthYear = document.getElementById('phBirthYear');
+  if(phName) p.name = phName.value.trim() || p.name;
+  if(phAvatarInput){
+    const av = phAvatarInput.value.trim();
+    if(av) p.avatar = av;
+  }
+  if(phBirthYear) p.birthYear = phBirthYear.value || p.birthYear;
+  saveProfiles();
+  const phAvatar = document.getElementById('phAvatar');
+  if(phAvatar) phAvatar.textContent = p.avatar;
+  // Sync to user info bar
+  updateUserInfoBar(calcAll());
+  renderUserSwitcher();
+  // Also sync param panel fields
+  loadProfileToFields(p);
+  recalc();
+  refreshDashboard();
+}
+
+function setProfileGender(g){
+  const p = getActiveProfile();
+  if(!p) return;
+  p.gender = g;
+  setProfileGenderUI(g);
+  saveProfiles();
+  loadProfileToFields(p);
+  recalc();
+  refreshDashboard();
+}
+function setProfileGenderUI(g){
+  const m = document.getElementById('phGenderM'), f = document.getElementById('phGenderF');
+  if(m) m.classList.toggle('active', g==='male');
+  if(f) f.classList.toggle('active', g==='female');
+}
+
+// ===== USER MANAGE PAGE =====
+function renderUserManagePage(){
+  const container = document.getElementById('userManageList');
+  if(!container) return;
+  let html = '';
+  for(const p of userProfiles){
+    const isActive = p.uid === activeUid;
+    const d = calcAllForProfile(p);
+    const fi = d ? (d.fi||0).toFixed(1) + '%' : '--';
+    const body = bodyRecords.length > 0 ? bodyRecords[bodyRecords.length-1].weight + 'kg' : '--';
+    html += '<div class="um-user-row" onclick="switchUserAndGo(\'' + p.uid + '\')">'
+      + '<div class="um-avatar">' + (p.avatar||'🐱') + '</div>'
+      + '<div class="um-info">'
+      + '<div class="um-name">' + (p.name||'未命名') + (isActive?'<span class="current-tag">当前</span>':'') + '</div>'
+      + '<div class="um-summary">FI ' + fi + ' · ' + body + '</div>'
+      + '</div>'
+      + '<div class="um-more" onclick="event.stopPropagation();showUserManageMenu(\'' + p.uid + '\')">⋯</div>'
+      + '</div>';
+  }
+  container.innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--sub);">还没有用户，点击下方按钮添加</div>';
+}
+
+function switchUserAndGo(uid){
+  switchUser(uid);
+  navigateTo('dashboard');
+  const p = getActiveProfile();
+  showToast('已切换到 ' + (p ? p.name : '用户'));
+}
+
+function showUserManageMenu(uid){
+  const p = userProfiles.find(x => x.uid === uid);
+  if(!p) return;
+  const act = prompt('管理「' + p.name + '」：\n输入新昵称（留空则取消）\n输入 :delete 删除此用户');
+  if(act === ':delete'){
+    deleteProfile(uid);
+  } else if(act && act.trim()){
+    p.name = act.trim();
+    saveProfiles();
+  }
+  renderUserManagePage();
+}
+
+// calcAllForProfile: 基于 profile 对象计算 FI，不依赖当前页面字段
+function calcAllForProfile(p){
+  if(!p || !p.birthYear) return null;
+  // Save current state
+  const prevUid = activeUid;
+  const prevBills = bkBills.map(function(b){ return Object.assign({}, b); });
+  const prevBody = bodyRecords.map(function(b){ return Object.assign({}, b); });
+  const prevBodyTarget = bodyTarget;
+  // Switch to target profile temporarily
+  activeUid = p.uid;
+  loadProfileToFields(p);
+  reloadUserData();
+  const d = calcAll();
+  // Restore
+  activeUid = prevUid;
+  bkBills = prevBills;
+  bodyRecords = prevBody;
+  bodyTarget = prevBodyTarget;
+  if(prevUid){
+    const prevP = userProfiles.find(function(x){ return x.uid === prevUid; });
+    if(prevP) loadProfileToFields(prevP);
+  }
+  return d;
 }
 
 // ===== PARAM OVERLAY (bottom sheet) =====
