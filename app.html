@@ -27,6 +27,33 @@ window._cloudbase = cloudbase;
   --grad-peach: linear-gradient(135deg, #fdba74, #fb7185);
   --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
 }
+/* ===== 主题：薄荷绿 ===== */
+:root[data-theme="mint"] {
+  --bg: #f0fdf4; --bg2: #dcfce7; --card: #fff; --sep: #bbf7d0;
+  --pink: #86efac; --pink-deep: #34d399; --pink-soft: #d1fae5;
+  --grad-hero: linear-gradient(135deg, #d1fae5 0%, #fef3c7 50%, #e0f2fe 100%);
+  --grad-pink: linear-gradient(135deg, #6ee7b7, #34d399);
+  --shadow-sm: 0 2px 8px rgba(52,211,153,0.10);
+  --shadow-md: 0 6px 20px rgba(52,211,153,0.14);
+}
+/* ===== 主题：暖橘 ===== */
+:root[data-theme="warm"] {
+  --bg: #fffbeb; --bg2: #fef3c7; --card: #fff; --sep: #fde68a;
+  --pink: #fdba74; --pink-deep: #f97316; --pink-soft: #ffedd5;
+  --grad-hero: linear-gradient(135deg, #ffedd5 0%, #fef3c7 50%, #ffe4e6 100%);
+  --grad-pink: linear-gradient(135deg, #fb923c, #f97316);
+  --shadow-sm: 0 2px 8px rgba(249,115,22,0.10);
+  --shadow-md: 0 6px 20px rgba(249,115,22,0.14);
+}
+/* ===== 主题：紫色 ===== */
+:root[data-theme="purple"] {
+  --bg: #faf5ff; --bg2: #f3e8ff; --card: #fff; --sep: #e9d5ff;
+  --pink: #c4b5fd; --pink-deep: #a78bfa; --pink-soft: #ede9fe;
+  --grad-hero: linear-gradient(135deg, #ede9fe 0%, #fce7f3 50%, #e0f2fe 100%);
+  --grad-pink: linear-gradient(135deg, #c4b5fd, #a78bfa);
+  --shadow-sm: 0 2px 8px rgba(167,139,250,0.10);
+  --shadow-md: 0 6px 20px rgba(167,139,250,0.14);
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; }
 body {
@@ -36,7 +63,7 @@ body {
 }
 .phone {
   width: 100%; max-width: 430px; min-height: 100vh; background: var(--bg);
-  position: relative; padding-bottom: 90px;
+  position: relative; padding-bottom: 20px;
 }
 .status-bar {
   padding: 12px 20px 6px; display: flex; justify-content: space-between;
@@ -150,24 +177,6 @@ td.wn { color: var(--orange); font-weight: 600; }
 .welcome-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
 .welcome-card p { font-size: 13px; color: var(--sub); line-height: 1.7; }
 
-.tab-bar {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 430px; background: rgba(255,247,237,0.88);
-  backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border-top: 1px solid rgba(251,113,133,0.12); display: flex;
-  padding: 6px 0 env(safe-area-inset-bottom, 8px); z-index: 20;
-  border-radius: 20px 20px 0 0;
-}
-.tab-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  padding: 4px 0; cursor: pointer; border: none; background: transparent; font-family: inherit;
-  transition: transform 0.2s var(--ease-spring);
-}
-.tab-item:active { transform: scale(0.92); }
-.tab-item .tab-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s var(--ease-spring); }
-.tab-item .tab-text { font-size: 10px; font-weight: 600; color: var(--sub); transition: color 0.15s; }
-.tab-item.active .tab-text { color: var(--pink-deep); }
-.tab-item.active .tab-icon { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 2px 4px rgba(251,113,133,0.4)); }
 
 /* User Info Bar ( dashboard top) */
 .user-info-bar {
@@ -218,8 +227,9 @@ td.wn { color: var(--orange); font-weight: 600; }
   background: #fff; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   max-height: 80vh; overflow-y: auto; z-index: 51;
   transform: translateY(100%); transition: transform 0.3s var(--ease-spring);
+  pointer-events: none;
 }
-.param-sheet.active { transform: translateY(0); }
+.param-sheet.active { transform: translateY(0); pointer-events: auto; }
 .param-sheet-handle {
   width: 36px; height: 4px; background: #ddd; border-radius: 2px;
   margin: 10px auto 6px; cursor: grab;
@@ -265,7 +275,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   }
   body { align-items: flex-start; padding: 0; }
   .phone::-webkit-scrollbar { width: 0; }
-  .tab-bar { border-radius: 0 0 20px 20px; }
+  .phone { border-radius: 0 0 20px 20px; }
 }
 
 .fade-in { animation: fadeIn 0.4s ease-out; }
@@ -297,7 +307,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 /* Voice button */
 .voice-fab {
-  position: fixed; bottom: 110px; right: calc(50% - 215px + 16px); z-index: 30;
+  position: fixed; bottom: 20px; right: calc(50% - 215px + 16px); z-index: 30;
   width: 44px; height: 44px; border-radius: 50%; background: var(--pink-deep);
   color: #fff; border: none; font-size: 20px; cursor: pointer;
   box-shadow: 0 4px 16px rgba(251,113,133,0.3); display: flex;
@@ -307,7 +317,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 .voice-fab.listening { background: var(--red); animation: pulse 1s infinite; }
 @keyframes pulse { 0%,100% { box-shadow: 0 4px 16px rgba(255,59,48,0.3); } 50% { box-shadow: 0 4px 28px rgba(255,59,48,0.6); } }
 .voice-toast {
-  position: fixed; bottom: 170px; left: 50%; transform: translateX(-50%); z-index: 31;
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 31;
   background: rgba(0,0,0,0.82); color: #fff; padding: 12px 22px; border-radius: 20px;
   font-size: 13px; max-width: 320px; text-align: center; display: none;
   backdrop-filter: blur(10px);
@@ -359,7 +369,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .user-avatar-btn.active .user-avatar-name { color: var(--pink-deep); font-weight: 700; }
-.user-add-btn .user-avatar-circle {
+.user-add-btn .user-avatar-circle, .user-more-btn .user-avatar-circle {
   border: 2px dashed var(--sep); box-shadow: none; font-size: 22px; color: var(--sub);
 }
 
@@ -599,7 +609,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 /* Bookkeeping FAB */
 .bk-fab {
-  position: fixed; bottom: 110px; right: calc(50% - 215px + 16px); z-index: 30;
+  position: fixed; bottom: 20px; right: calc(50% - 215px + 16px); z-index: 30;
   width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #f7931e);
   color: #fff; border: none; font-size: 24px; cursor: pointer;
   box-shadow: 0 4px 16px rgba(255,107,53,0.35); display: none;
@@ -660,12 +670,131 @@ td.wn { color: var(--orange); font-weight: 600; }
 /* Summary table */
 .bk-summary-table { margin: 0 12px; background: var(--card); border-radius: var(--radius); padding: 14px; }
 .bk-summary-table table { width: 100%; }
+/* ===== HAMBURGER MENU ===== */
+.hamburger-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35); z-index: 60;
+}
+.hamburger-overlay.active { display: block; }
+.hamburger-menu {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: 75%; max-width: 320px; background: #fff;
+  z-index: 61; transform: translateX(-100%);
+  transition: transform 0.3s var(--ease-spring);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  box-shadow: var(--shadow-md); display: flex; flex-direction: column;
+  padding: 20px 0;
+}
+.hamburger-menu.active { transform: translateX(0); }
+.hamburger-menu .hm-header {
+  padding: 16px 24px 12px; font-size: 20px; font-weight: 800;
+  border-bottom: 1px solid var(--sep); margin-bottom: 8px;
+}
+.hamburger-menu .hm-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 24px; font-size: 16px; font-weight: 600;
+  color: var(--text); cursor: pointer; border: none;
+  background: transparent; font-family: inherit;
+  transition: background 0.15s; text-align: left;
+}
+.hamburger-menu .hm-item:active { background: var(--bg2); }
+.hamburger-menu .hm-item .hm-icon { font-size: 22px; width: 32px; text-align: center; }
+.hamburger-menu .hm-footer {
+  margin-top: auto; padding: 16px 24px;
+  border-top: 1px solid var(--sep);
+  font-size: 12px; color: var(--sub); text-align: center;
+}
+
+/* ===== SETTINGS FAB ===== */
+.settings-fab {
+  position: fixed; bottom: 20px; left: 20px; z-index: 100;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--grad-pink); color: #fff; border: none;
+  font-size: 22px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(251,113,133,0.35);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s var(--ease-spring);
+}
+.settings-fab:active { transform: scale(0.9); }
+
+/* ===== SETTINGS PANEL ===== */
+.settings-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35); z-index: 150;
+}
+.settings-overlay.active { display: block; }
+.settings-panel {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  max-width: 430px; margin: 0 auto; background: #fff;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 40vh; overflow-y: auto; z-index: 151;
+  transform: translateY(100%);
+  transition: transform 0.3s var(--ease-spring);
+  padding: 0 16px 24px;
+}
+.settings-panel.active { transform: translateY(0); }
+.settings-panel .sp-handle {
+  width: 36px; height: 4px; background: #ddd; border-radius: 2px;
+  margin: 10px auto 6px; cursor: grab;
+}
+.settings-panel .sp-title {
+  font-size: 18px; font-weight: 800; margin: 8px 0 12px; text-align: center;
+}
+.settings-panel .sp-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 8px; font-size: 15px; font-weight: 600;
+  color: var(--text); cursor: pointer; border: none;
+  background: transparent; font-family: inherit;
+  border-bottom: 0.5px solid var(--sep); width: 100%; text-align: left;
+  transition: background 0.15s;
+}
+.settings-panel .sp-item:last-child { border-bottom: none; }
+.settings-panel .sp-item:active { background: var(--bg2); }
+.settings-panel .sp-item .sp-icon { font-size: 22px; width: 32px; text-align: center; }
+.theme-dot { display: inline-block; width: 24px; height: 24px; border-radius: 50%; margin-left: auto; flex-shrink: 0; border: 2px solid transparent; transition: border-color 0.2s; }
+.theme-dot.active { border-color: var(--text); box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--pink-deep); }
+.sp-theme-label { font-size: 14px; }
+
+/* Profile & User Manage Pages */
+.page-header { display: flex; align-items: center; padding: 12px 16px; gap: 12px; }
+.page-back { background: none; border: none; font-size: 16px; color: var(--pink-deep); cursor: pointer; padding: 4px 0; }
+.page-title { font-size: 17px; font-weight: 700; }
+.profile-hero { display: flex; align-items: center; gap: 16px; padding: 20px; margin: 0 12px; background: var(--grad-hero); border-radius: var(--radius-lg); }
+.ph-avatar { font-size: 48px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.7); border-radius: var(--radius); }
+.ph-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.ph-info input { padding: 8px 12px; border: 1.5px solid var(--sep); border-radius: 10px; font-size: 15px; background: rgba(255,255,255,0.8); }
+.profile-section { margin: 16px 12px; }
+.profile-section h3 { font-size: 13px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding-left: 4px; }
+.profile-field { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 8px; }
+.profile-field span { font-size: 15px; font-weight: 500; }
+.profile-field input { width: 100px; padding: 6px 10px; border: 1.5px solid var(--sep); border-radius: 8px; text-align: right; font-size: 14px; }
+.pf-toggle { display: flex; gap: 6px; }
+.pf-toggle button { padding: 6px 14px; border: 1.5px solid var(--sep); border-radius: 20px; background: var(--bg); font-size: 13px; cursor: pointer; }
+.pf-toggle button.active { background: var(--pink-deep); color: #fff; border-color: var(--pink-deep); }
+.profile-section .summary-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; box-shadow: var(--shadow-sm); }
+.profile-section .summary-card:active { background: var(--bg2); }
+.sc-icon { font-size: 28px; width: 40px; text-align: center; }
+.sc-body { flex: 1; }
+.sc-title { font-size: 14px; font-weight: 600; }
+.sc-detail { font-size: 12px; color: var(--sub); margin-top: 2px; }
+.sc-arrow { font-size: 20px; color: var(--sep); }
+.user-list { margin: 0 12px; }
+.um-user-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; box-shadow: var(--shadow-sm); }
+.um-user-row:active { background: var(--bg2); }
+.um-avatar { font-size: 36px; width: 48px; text-align: center; }
+.um-info { flex: 1; }
+.um-name { font-size: 15px; font-weight: 600; }
+.um-name .current-tag { font-size: 10px; background: var(--pink-soft); color: var(--pink-deep); padding: 1px 6px; border-radius: 8px; margin-left: 6px; }
+.um-summary { font-size: 12px; color: var(--sub); margin-top: 2px; }
+.um-more { font-size: 18px; color: var(--sub); padding: 4px; }
+.um-add-btn { display: block; width: calc(100% - 24px); margin: 8px 12px; padding: 14px; border: 2px dashed var(--sep); border-radius: var(--radius); background: var(--card); font-size: 15px; font-weight: 600; color: var(--sub); cursor: pointer; }
+
 </style>
 </head>
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span id="statusTime">9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v3.1</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
+  <div class="status-bar"><span id="hamburgerBtn" onclick="toggleHamburger()" style="cursor:pointer;">☰</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v4.0</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
 
     <!-- ===== DASHBOARD ===== -->
     <div class="scroll-section active" id="sec-dashboard">
@@ -698,7 +827,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     <div class="welcome-card" id="welcomeCard">
       <div class="wc-emoji">🌸</div>
       <h2>还没有小伙伴呢</h2>
-      <p>点上方「＋」添加第一位用户<br>一起开启可爱的财务自由之旅 ✨</p>
+      <p>点击上方「⋯更多」进入用户管理<br>一起开启可爱的财务自由之旅 ✨</p>
     </div>
 
     <!-- Dashboard (has data) -->
@@ -1104,22 +1233,6 @@ td.wn { color: var(--orange); font-weight: 600; }
     <input type="hidden" id="childCost">
   </div>
 
-  <!-- Tab Bar -->
-  <div class="tab-bar">
-    <button class="tab-item active" onclick="switchTab('dashboard', this)"><span class="tab-icon">🏠</span><span class="tab-text">仪表盘</span></button>
-    <button class="tab-item" onclick="switchTab('body', this)">
-      <span class="tab-icon">⚖️</span>
-      <span class="tab-text">体重</span>
-    </button>
-    <button class="tab-item" onclick="switchTab('bookkeeping', this)">
-      <span class="tab-icon">🧾</span>
-      <span class="tab-text">记账</span>
-    </button>
-    <button class="tab-item" onclick="switchTab('inputs', this)">
-      <span class="tab-icon">⚙️</span>
-      <span class="tab-text">设置</span>
-    </button>
-  </div>
 
   <!-- Body Record Modal -->
   <div id="bodyModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:200;align-items:flex-end;justify-content:center;">
@@ -1244,8 +1357,8 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 
     <!-- Param Panel Overlay (bottom sheet) -->
-    <div class="param-overlay" id="paramOverlay" onclick="toggleParamOverlay()"></div>
-    <div class="param-sheet" id="paramSheet">
+    <div class="param-overlay" id="paramOverlay" onclick="if(event.target===event.currentTarget)toggleParamOverlay()"></div>
+    <div class="param-sheet" id="paramSheet" onclick="event.stopPropagation()">
       <div class="param-sheet-handle" onclick="toggleParamOverlay()"></div>
       <div style="padding: 0 16px 16px;">
         <div style="font-size:18px;font-weight:800;margin:8px 0 12px;">⚙️ 我的参数</div>
@@ -1301,6 +1414,104 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
     </div>
+
+  <!-- ===== HAMBURGER MENU ===== -->
+  <div class="hamburger-overlay" id="hamburgerOverlay" onclick="toggleHamburger()"></div>
+  <div class="hamburger-menu" id="hamburgerMenu">
+    <div class="hm-header">🌸 ShoreOS</div>
+    <button class="hm-item" onclick="navigateTo('dashboard')"><span class="hm-icon">🏠</span>FIRE仪表盘</button>
+    <button class="hm-item" onclick="navigateTo('body')"><span class="hm-icon">⚖️</span>体重管理</button>
+    <button class="hm-item" onclick="navigateTo('bookkeeping')"><span class="hm-icon">🧾</span>记账</button>
+    <button class="hm-item" onclick="navigateTo('profile')"><span class="hm-icon">👤</span>个人管理</button>
+    <div class="hm-footer">ShoreOS v4.0 · 人生自由度仪表盘</div>
+  </div>
+
+  <!-- ===== SETTINGS FAB + PANEL ===== -->
+  <button class="settings-fab" id="settingsFab" onclick="toggleSettings()">⚙️</button>
+
+  <div class="settings-overlay" id="settingsOverlay" onclick="toggleSettings()"></div>
+  <div class="settings-panel" id="settingsPanel">
+    <div class="sp-handle" onclick="toggleSettings()"></div>
+    <div class="sp-title">⚙️ 设置</div>
+    <div class="sp-item" onclick="setTheme('pink')"><span class="sp-icon">🌸</span><span class="sp-theme-label">粉色</span><span class="theme-dot" id="themeDotPink" style="background:#fb7185;"></span></div>
+    <div class="sp-item" onclick="setTheme('mint')"><span class="sp-icon">🌿</span><span class="sp-theme-label">薄荷</span><span class="theme-dot" id="themeDotMint" style="background:#34d399;"></span></div>
+    <div class="sp-item" onclick="setTheme('warm')"><span class="sp-icon">🍊</span><span class="sp-theme-label">暖橘</span><span class="theme-dot" id="themeDotWarm" style="background:#f97316;"></span></div>
+    <div class="sp-item" onclick="setTheme('purple')"><span class="sp-icon">🍇</span><span class="sp-theme-label">紫色</span><span class="theme-dot" id="themeDotPurple" style="background:#a78bfa;"></span></div>
+    <button class="sp-item" onclick="toggleSettings();navigateTo('user-manage');"><span class="sp-icon">👥</span>用户管理</button>
+    <button class="sp-item" onclick="toggleSettings();showToast('🌸 ShoreOS v4.0 · 人生自由度仪表盘 · 算清楚你离财务自由还差多远')"><span class="sp-icon">ℹ️</span>关于</button>
+  </div>
+
+  <!-- ===== PROFILE PAGE ===== -->
+  <div class="scroll-section" id="sec-profile" style="display:none;">
+    <div class="page-header">
+      <button class="page-back" onclick="navigateTo('dashboard')">← 返回</button>
+      <span class="page-title">个人管理</span>
+    </div>
+    
+    <!-- 头像+昵称区 -->
+    <div class="profile-hero">
+      <div class="ph-avatar" id="phAvatar">🐱</div>
+      <div class="ph-info">
+        <input type="text" id="phName" placeholder="昵称" onchange="saveProfileInfo()">
+        <input type="text" id="phAvatarInput" placeholder="Emoji头像" maxlength="4" onchange="saveProfileInfo()">
+      </div>
+    </div>
+    
+    <!-- 通用信息 -->
+    <div class="profile-section">
+      <h3>通用信息</h3>
+      <div class="profile-field">
+        <span>性别</span>
+        <div class="pf-toggle">
+          <button id="phGenderM" onclick="setProfileGender('male')">♂ 男</button>
+          <button id="phGenderF" onclick="setProfileGender('female')">♀ 女</button>
+        </div>
+      </div>
+      <div class="profile-field">
+        <span>出生年份</span>
+        <input type="number" id="phBirthYear" placeholder="1995" onchange="saveProfileInfo()">
+      </div>
+    </div>
+    
+    <!-- 三模块摘要 -->
+    <div class="profile-section">
+      <h3>模块摘要</h3>
+      <div class="summary-card" id="summaryFire" onclick="navigateTo('dashboard')">
+        <span class="sc-icon">💰</span>
+        <div class="sc-body">
+          <div class="sc-title">FIRE 自由指数</div>
+          <div class="sc-detail" id="smFireDetail">--</div>
+        </div>
+        <span class="sc-arrow">›</span>
+      </div>
+      <div class="summary-card" id="summaryBody" onclick="navigateTo('body')">
+        <span class="sc-icon">⚖️</span>
+        <div class="sc-body">
+          <div class="sc-title">体重管理</div>
+          <div class="sc-detail" id="smBodyDetail">--</div>
+        </div>
+        <span class="sc-arrow">›</span>
+      </div>
+      <div class="summary-card" id="summaryBk" onclick="navigateTo('bookkeeping')">
+        <span class="sc-icon">🧾</span>
+        <div class="sc-body">
+          <div class="sc-title">记账</div>
+          <div class="sc-detail" id="smBkDetail">--</div>
+        </div>
+        <span class="sc-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== USER MANAGE PAGE ===== -->
+  <div class="scroll-section" id="sec-user-manage" style="display:none;">
+    <div class="page-header">
+      <button class="page-back" onclick="navigateTo('dashboard')">← 返回</button>
+      <span class="page-title">用户管理</span>
+    </div>
+    <div class="user-list" id="userManageList"></div>
+    <button class="um-add-btn" onclick="startNewUserWizard()">＋ 添加新用户</button>
+  </div>
 
 <script>
 // ===== CloudBase 数据层 =====
@@ -1749,9 +1960,9 @@ function renderUserSwitcher(){
       <div class="user-avatar-name">${p.name||'未命名'}</div>
     </button>`;
   }
-  html += `<button class="user-avatar-btn user-add-btn" onclick="startNewUserWizard()">
-    <div class="user-avatar-circle">＋</div>
-    <div class="user-avatar-name">新增</div>
+  html += `<button class="user-avatar-btn user-more-btn" onclick="navigateTo('user-manage')" title="管理用户">
+    <div class="user-avatar-circle">⋯</div>
+    <div class="user-avatar-name">更多</div>
   </button>`;
   container.innerHTML = html;
 }
@@ -1938,7 +2149,7 @@ function wizFinishNew(){
   // Hide wizard, switch to dashboard
   document.getElementById('sec-inputs').style.display = 'none';
   document.getElementById('sec-inputs').classList.remove('active');
-  switchTab('dashboard', document.querySelectorAll('.tab-item')[0]);
+  navigateTo('dashboard');
   switchUser(profile.uid);
   showToast('🌸 欢迎「'+name+'」加入 ShoreOS！');
 }
@@ -2514,18 +2725,124 @@ function setChild(p, btn){
   recalc();
 }
 
-function switchTab(tab, btn){
-  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
-  const sec = document.getElementById('sec-'+tab);
+function navigateTo(module){
+  document.querySelectorAll('.scroll-section').forEach(s=>{ s.classList.remove('active'); s.style.display = ''; });
+  // Map module names to section IDs
+  const secMap = {
+    'dashboard': 'sec-dashboard',
+    'body': 'sec-body',
+    'bookkeeping': 'sec-bookkeeping',
+    'profile': 'sec-profile',
+    'user-manage': 'sec-user-manage',
+    'inputs': 'sec-inputs'
+  };
+  const secId = secMap[module] || 'sec-dashboard';
+  const sec = document.getElementById(secId);
   if(sec){
     sec.classList.add('active');
-    // 如果 sec-inputs 有 inline display:none，需要移除
-    if(tab === 'inputs') sec.style.display = 'block';
+    if(module === 'inputs') sec.style.display = 'block';
   }
-  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  // Close hamburger menu
+  const hm = document.getElementById('hamburgerMenu');
+  const ho = document.getElementById('hamburgerOverlay');
+  if(hm) hm.classList.remove('active');
+  if(ho) ho.classList.remove('active');
+  // Close settings panel
+  const sp = document.getElementById('settingsPanel');
+  const so = document.getElementById('settingsOverlay');
+  if(sp) sp.classList.remove('active');
+  if(so) so.classList.remove('active');
+  // Close param panel when leaving dashboard
+  if(module !== 'dashboard'){
+    const po = document.getElementById('paramOverlay');
+    const ps = document.getElementById('paramSheet');
+    if(po) po.classList.remove('active');
+    if(ps) ps.classList.remove('active');
+  }
+  // Scroll to top
   document.getElementById('phone').scrollTop = 0;
-  if(tab !== 'inputs') recalc();
+  // Render page-specific content
+  if(module === 'profile') renderProfilePage();
+  if(module === 'user-manage') renderUserManagePage();
+  // Recalculate if not on inputs
+  if(module !== 'inputs') recalc();
+  // Show/hide settings FAB based on module
+  const fab = document.getElementById('settingsFab');
+  if(fab) fab.style.display = (module === 'dashboard' || module === 'profile' || module === 'user-manage') ? 'flex' : 'none';
+}
+
+// Keep old switchTab as wrapper for backward compatibility
+function switchTab(tab, btn){
+  navigateTo(tab);
+}
+
+// ===== HAMBURGER MENU =====
+function toggleHamburger(){
+  const menu = document.getElementById('hamburgerMenu');
+  const overlay = document.getElementById('hamburgerOverlay');
+  if(!menu || !overlay) return;
+  const isActive = menu.classList.contains('active');
+  if(isActive){
+    menu.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    menu.classList.add('active');
+    overlay.classList.add('active');
+  }
+}
+
+// ===== SETTINGS PANEL =====
+function toggleSettings(){
+  const panel = document.getElementById('settingsPanel');
+  const overlay = document.getElementById('settingsOverlay');
+  if(!panel || !overlay) return;
+  const isActive = panel.classList.contains('active');
+  if(isActive){
+    panel.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    panel.classList.add('active');
+    overlay.classList.add('active');
+  }
+}
+
+// ===== THEME =====
+const THEME_KEY = 'shoreos_theme';
+const THEMES = ['pink','mint','warm','purple'];
+
+function setTheme(theme){
+  if(!THEMES.includes(theme)) theme = 'pink';
+  // 设置 DOM 属性
+  document.documentElement.setAttribute('data-theme', theme);
+  // 保存到 localStorage
+  localStorage.setItem(THEME_KEY, theme);
+  // 保存到当前用户 profile
+  const p = getActiveProfile();
+  if(p){ p.theme = theme; saveProfiles(); }
+  // 更新主题圆点选中状态
+  THEMES.forEach(t => {
+    const dot = document.getElementById('themeDot'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(dot) dot.classList.toggle('active', t === theme);
+  });
+  // 关闭设置面板
+  toggleSettings();
+}
+
+function loadTheme(){
+  let theme = localStorage.getItem(THEME_KEY);
+  // 也尝试从当前用户 profile 读取
+  if(!theme){
+    const p = getActiveProfile();
+    if(p && p.theme) theme = p.theme;
+  }
+  if(!theme || !THEMES.includes(theme)) theme = 'pink';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  // 更新主题圆点选中状态
+  THEMES.forEach(t => {
+    const dot = document.getElementById('themeDot'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(dot) dot.classList.toggle('active', t === theme);
+  });
 }
 
 // ===== WIZARD NAVIGATION =====
@@ -2561,7 +2878,6 @@ function wizFinish(){
   try {
     document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
     document.getElementById('sec-dashboard').classList.add('active');
-    document.querySelectorAll('.tab-item').forEach((t,i)=>t.classList.toggle('active', i===0));
     document.getElementById('phone').scrollTop = 0;
     document.getElementById('welcomeCard').style.display = 'none';
     document.getElementById('dashboardContent').style.display = 'block';
@@ -2971,6 +3287,7 @@ function parseVoiceText(text){
 // ===== INIT =====
 loadProfiles();
 activeUid = localStorage.getItem(ACTIVE_KEY) || '';
+loadTheme();
 
 // 异步初始化：先尝试从云端合并 profiles，再渲染
 (async function asyncInit(){
@@ -3019,18 +3336,6 @@ activeUid = localStorage.getItem(ACTIVE_KEY) || '';
   if(cbReady) ProfileCloud._pushCloud([...userProfiles]);
 })();
 
-updateStatusTime();
-setInterval(updateStatusTime, 60000);
-
-function updateStatusTime(){
-  const el = document.getElementById('statusTime');
-  if(!el) return;
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  el.textContent = h + ':' + m;
-}
-
 
 // ===== DASHBOARD TAB SWITCHING =====
 function switchDashTab(idx, btn){
@@ -3068,8 +3373,162 @@ function updateUserInfoBar(d){
   }
 }
 
+// ===== PROFILE PAGE =====
+function renderProfilePage(){
+  const p = getActiveProfile();
+  if(!p) return;
+  const phAvatar = document.getElementById('phAvatar');
+  const phName = document.getElementById('phName');
+  const phAvatarInput = document.getElementById('phAvatarInput');
+  const phBirthYear = document.getElementById('phBirthYear');
+  if(phAvatar) phAvatar.textContent = p.avatar || '🐱';
+  if(phName) phName.value = p.name || '';
+  if(phAvatarInput) phAvatarInput.value = p.avatar || '';
+  if(phBirthYear) phBirthYear.value = p.birthYear || '';
+  setProfileGenderUI(p.gender);
+  // Summaries
+  const d = calcAll();
+  const smFireDetail = document.getElementById('smFireDetail');
+  if(smFireDetail && d){
+    smFireDetail.textContent = 
+      '自由指数 ' + (d.fi||0).toFixed(1) + '%  ·  目标 ' + fmtW(d.fire) + '  ·  预计 ' + (d.fireYearExact||'--') + '年';
+  } else if(smFireDetail){
+    smFireDetail.textContent = '请先完善参数信息';
+  }
+  // Body summary
+  const smBodyDetail = document.getElementById('smBodyDetail');
+  if(smBodyDetail){
+    const latestBody = bodyRecords.length > 0 ? bodyRecords[bodyRecords.length-1] : null;
+    smBodyDetail.textContent = latestBody
+      ? '最新 ' + latestBody.weight + 'kg  ·  目标 ' + (bodyTarget||'--') + 'kg  ·  ' + bodyRecords.length + '条记录'
+      : '暂无数据';
+  }
+  // Bookkeeping summary
+  const smBkDetail = document.getElementById('smBkDetail');
+  if(smBkDetail){
+    const now = new Date();
+    const thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const monthBills = bkBills.filter(b => b.date && b.date.startsWith(thisMonth));
+    const monthExp = monthBills.filter(b => b.type === 'expense').reduce((s,b) => s + (b.amount||0), 0);
+    const monthInc = monthBills.filter(b => b.type === 'income').reduce((s,b) => s + (b.amount||0), 0);
+    smBkDetail.textContent = monthBills.length > 0
+      ? '本月支出 ¥' + monthExp.toLocaleString() + '  ·  收入 ¥' + monthInc.toLocaleString() + '  ·  ' + monthBills.length + '笔'
+      : '本月暂无记录';
+  }
+}
+
+function saveProfileInfo(){
+  const p = getActiveProfile();
+  if(!p) return;
+  const phName = document.getElementById('phName');
+  const phAvatarInput = document.getElementById('phAvatarInput');
+  const phBirthYear = document.getElementById('phBirthYear');
+  if(phName) p.name = phName.value.trim() || p.name;
+  if(phAvatarInput){
+    const av = phAvatarInput.value.trim();
+    if(av) p.avatar = av;
+  }
+  if(phBirthYear) p.birthYear = phBirthYear.value || p.birthYear;
+  saveProfiles();
+  const phAvatar = document.getElementById('phAvatar');
+  if(phAvatar) phAvatar.textContent = p.avatar;
+  // Sync to user info bar
+  updateUserInfoBar(calcAll());
+  renderUserSwitcher();
+  // Also sync param panel fields
+  loadProfileToFields(p);
+  recalc();
+  refreshDashboard();
+}
+
+function setProfileGender(g){
+  const p = getActiveProfile();
+  if(!p) return;
+  p.gender = g;
+  setProfileGenderUI(g);
+  saveProfiles();
+  loadProfileToFields(p);
+  recalc();
+  refreshDashboard();
+}
+function setProfileGenderUI(g){
+  const m = document.getElementById('phGenderM'), f = document.getElementById('phGenderF');
+  if(m) m.classList.toggle('active', g==='male');
+  if(f) f.classList.toggle('active', g==='female');
+}
+
+// ===== USER MANAGE PAGE =====
+function renderUserManagePage(){
+  const container = document.getElementById('userManageList');
+  if(!container) return;
+  let html = '';
+  for(const p of userProfiles){
+    const isActive = p.uid === activeUid;
+    const d = calcAllForProfile(p);
+    const fi = d ? (d.fi||0).toFixed(1) + '%' : '--';
+    const body = bodyRecords.length > 0 ? bodyRecords[bodyRecords.length-1].weight + 'kg' : '--';
+    html += '<div class="um-user-row" onclick="switchUserAndGo(\'' + p.uid + '\')">'
+      + '<div class="um-avatar">' + (p.avatar||'🐱') + '</div>'
+      + '<div class="um-info">'
+      + '<div class="um-name">' + (p.name||'未命名') + (isActive?'<span class="current-tag">当前</span>':'') + '</div>'
+      + '<div class="um-summary">FI ' + fi + ' · ' + body + '</div>'
+      + '</div>'
+      + '<div class="um-more" onclick="event.stopPropagation();showUserManageMenu(\'' + p.uid + '\')">⋯</div>'
+      + '</div>';
+  }
+  container.innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--sub);">还没有用户，点击下方按钮添加</div>';
+}
+
+function switchUserAndGo(uid){
+  switchUser(uid);
+  navigateTo('dashboard');
+  const p = getActiveProfile();
+  showToast('已切换到 ' + (p ? p.name : '用户'));
+}
+
+function showUserManageMenu(uid){
+  const p = userProfiles.find(x => x.uid === uid);
+  if(!p) return;
+  const act = prompt('管理「' + p.name + '」：\n输入新昵称（留空则取消）\n输入 :delete 删除此用户');
+  if(act === ':delete'){
+    deleteProfile(uid);
+  } else if(act && act.trim()){
+    p.name = act.trim();
+    saveProfiles();
+  }
+  renderUserManagePage();
+}
+
+// calcAllForProfile: 基于 profile 对象计算 FI，不依赖当前页面字段
+function calcAllForProfile(p){
+  if(!p || !p.birthYear) return null;
+  // Save current state
+  const prevUid = activeUid;
+  const prevBills = bkBills.map(function(b){ return Object.assign({}, b); });
+  const prevBody = bodyRecords.map(function(b){ return Object.assign({}, b); });
+  const prevBodyTarget = bodyTarget;
+  // Switch to target profile temporarily
+  activeUid = p.uid;
+  loadProfileToFields(p);
+  reloadUserData();
+  const d = calcAll();
+  // Restore
+  activeUid = prevUid;
+  bkBills = prevBills;
+  bodyRecords = prevBody;
+  bodyTarget = prevBodyTarget;
+  if(prevUid){
+    const prevP = userProfiles.find(function(x){ return x.uid === prevUid; });
+    if(prevP) loadProfileToFields(prevP);
+  }
+  return d;
+}
+
 // ===== PARAM OVERLAY (bottom sheet) =====
 function toggleParamOverlay(){
+  // Only allow param panel in dashboard context
+  const dashSec = document.getElementById('sec-dashboard');
+  if(!dashSec || !dashSec.classList.contains('active')) return;
   const overlay = document.getElementById('paramOverlay');
   const sheet = document.getElementById('paramSheet');
   if(!overlay || !sheet) return;
@@ -3326,16 +3785,16 @@ function renderBodyPage(){
   ).join('');
 }
 
-// Ensure switchTab also renders body page
-const origSwitchTab = switchTab;
-switchTab = function(tab, btn){
-  origSwitchTab(tab, btn);
-  if(tab === 'body') renderBodyPage();
-  if(tab === 'bookkeeping'){
+// Ensure navigateTo also renders body page
+const origNavigateTo = navigateTo;
+navigateTo = function(module){
+  origNavigateTo(module);
+  if(module === 'body') renderBodyPage();
+  if(module === 'bookkeeping'){
     renderBkCalendar();
     renderBkAnalysis();
   }
-  if(tab === 'dashboard'){
+  if(module === 'dashboard' || module === 'profile' || module === 'user-manage'){
     syncParamPanelFromProfile();
   }
 };
@@ -3679,6 +4138,13 @@ function renderBkAnalysis(){
 }
 </script>
 
+<!-- Initialize settings FAB visibility -->
+<script>
+(function(){
+  const fab = document.getElementById('settingsFab');
+  if(fab) fab.style.display = 'flex';
+})();
+</script>
 
 </body>
 </html>
