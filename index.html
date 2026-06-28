@@ -36,7 +36,7 @@ body {
 }
 .phone {
   width: 100%; max-width: 430px; min-height: 100vh; background: var(--bg);
-  position: relative; padding-bottom: 90px;
+  position: relative; padding-bottom: 20px;
 }
 .status-bar {
   padding: 12px 20px 6px; display: flex; justify-content: space-between;
@@ -150,24 +150,6 @@ td.wn { color: var(--orange); font-weight: 600; }
 .welcome-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
 .welcome-card p { font-size: 13px; color: var(--sub); line-height: 1.7; }
 
-.tab-bar {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 430px; background: rgba(255,247,237,0.88);
-  backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border-top: 1px solid rgba(251,113,133,0.12); display: flex;
-  padding: 6px 0 env(safe-area-inset-bottom, 8px); z-index: 20;
-  border-radius: 20px 20px 0 0;
-}
-.tab-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  padding: 4px 0; cursor: pointer; border: none; background: transparent; font-family: inherit;
-  transition: transform 0.2s var(--ease-spring);
-}
-.tab-item:active { transform: scale(0.92); }
-.tab-item .tab-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s var(--ease-spring); }
-.tab-item .tab-text { font-size: 10px; font-weight: 600; color: var(--sub); transition: color 0.15s; }
-.tab-item.active .tab-text { color: var(--pink-deep); }
-.tab-item.active .tab-icon { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 2px 4px rgba(251,113,133,0.4)); }
 
 /* User Info Bar ( dashboard top) */
 .user-info-bar {
@@ -265,7 +247,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   }
   body { align-items: flex-start; padding: 0; }
   .phone::-webkit-scrollbar { width: 0; }
-  .tab-bar { border-radius: 0 0 20px 20px; }
+  .phone { border-radius: 0 0 20px 20px; }
 }
 
 .fade-in { animation: fadeIn 0.4s ease-out; }
@@ -297,7 +279,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 /* Voice button */
 .voice-fab {
-  position: fixed; bottom: 110px; right: calc(50% - 215px + 16px); z-index: 30;
+  position: fixed; bottom: 20px; right: calc(50% - 215px + 16px); z-index: 30;
   width: 44px; height: 44px; border-radius: 50%; background: var(--pink-deep);
   color: #fff; border: none; font-size: 20px; cursor: pointer;
   box-shadow: 0 4px 16px rgba(251,113,133,0.3); display: flex;
@@ -307,7 +289,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 .voice-fab.listening { background: var(--red); animation: pulse 1s infinite; }
 @keyframes pulse { 0%,100% { box-shadow: 0 4px 16px rgba(255,59,48,0.3); } 50% { box-shadow: 0 4px 28px rgba(255,59,48,0.6); } }
 .voice-toast {
-  position: fixed; bottom: 170px; left: 50%; transform: translateX(-50%); z-index: 31;
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 31;
   background: rgba(0,0,0,0.82); color: #fff; padding: 12px 22px; border-radius: 20px;
   font-size: 13px; max-width: 320px; text-align: center; display: none;
   backdrop-filter: blur(10px);
@@ -599,7 +581,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 /* Bookkeeping FAB */
 .bk-fab {
-  position: fixed; bottom: 110px; right: calc(50% - 215px + 16px); z-index: 30;
+  position: fixed; bottom: 20px; right: calc(50% - 215px + 16px); z-index: 30;
   width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35, #f7931e);
   color: #fff; border: none; font-size: 24px; cursor: pointer;
   box-shadow: 0 4px 16px rgba(255,107,53,0.35); display: none;
@@ -660,12 +642,94 @@ td.wn { color: var(--orange); font-weight: 600; }
 /* Summary table */
 .bk-summary-table { margin: 0 12px; background: var(--card); border-radius: var(--radius); padding: 14px; }
 .bk-summary-table table { width: 100%; }
+/* ===== HAMBURGER MENU ===== */
+.hamburger-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35); z-index: 60;
+}
+.hamburger-overlay.active { display: block; }
+.hamburger-menu {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: 75%; max-width: 320px; background: #fff;
+  z-index: 61; transform: translateX(-100%);
+  transition: transform 0.3s var(--ease-spring);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  box-shadow: var(--shadow-md); display: flex; flex-direction: column;
+  padding: 20px 0;
+}
+.hamburger-menu.active { transform: translateX(0); }
+.hamburger-menu .hm-header {
+  padding: 16px 24px 12px; font-size: 20px; font-weight: 800;
+  border-bottom: 1px solid var(--sep); margin-bottom: 8px;
+}
+.hamburger-menu .hm-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 24px; font-size: 16px; font-weight: 600;
+  color: var(--text); cursor: pointer; border: none;
+  background: transparent; font-family: inherit;
+  transition: background 0.15s; text-align: left;
+}
+.hamburger-menu .hm-item:active { background: var(--bg2); }
+.hamburger-menu .hm-item .hm-icon { font-size: 22px; width: 32px; text-align: center; }
+.hamburger-menu .hm-footer {
+  margin-top: auto; padding: 16px 24px;
+  border-top: 1px solid var(--sep);
+  font-size: 12px; color: var(--sub); text-align: center;
+}
+
+/* ===== SETTINGS FAB ===== */
+.settings-fab {
+  position: fixed; bottom: 20px; left: 20px; z-index: 100;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--grad-pink); color: #fff; border: none;
+  font-size: 22px; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(251,113,133,0.35);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s var(--ease-spring);
+}
+.settings-fab:active { transform: scale(0.9); }
+
+/* ===== SETTINGS PANEL ===== */
+.settings-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35); z-index: 150;
+}
+.settings-overlay.active { display: block; }
+.settings-panel {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  max-width: 430px; margin: 0 auto; background: #fff;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 40vh; overflow-y: auto; z-index: 151;
+  transform: translateY(100%);
+  transition: transform 0.3s var(--ease-spring);
+  padding: 0 16px 24px;
+}
+.settings-panel.active { transform: translateY(0); }
+.settings-panel .sp-handle {
+  width: 36px; height: 4px; background: #ddd; border-radius: 2px;
+  margin: 10px auto 6px; cursor: grab;
+}
+.settings-panel .sp-title {
+  font-size: 18px; font-weight: 800; margin: 8px 0 12px; text-align: center;
+}
+.settings-panel .sp-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 8px; font-size: 15px; font-weight: 600;
+  color: var(--text); cursor: pointer; border: none;
+  background: transparent; font-family: inherit;
+  border-bottom: 0.5px solid var(--sep); width: 100%; text-align: left;
+  transition: background 0.15s;
+}
+.settings-panel .sp-item:last-child { border-bottom: none; }
+.settings-panel .sp-item:active { background: var(--bg2); }
+.settings-panel .sp-item .sp-icon { font-size: 22px; width: 32px; text-align: center; }
+
 </style>
 </head>
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span id="statusTime">9:41</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v3.1</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
+  <div class="status-bar"><span id="hamburgerBtn" onclick="toggleHamburger()" style="cursor:pointer;">☰</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v4.0</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
 
     <!-- ===== DASHBOARD ===== -->
     <div class="scroll-section active" id="sec-dashboard">
@@ -1104,22 +1168,6 @@ td.wn { color: var(--orange); font-weight: 600; }
     <input type="hidden" id="childCost">
   </div>
 
-  <!-- Tab Bar -->
-  <div class="tab-bar">
-    <button class="tab-item active" onclick="switchTab('dashboard', this)"><span class="tab-icon">🏠</span><span class="tab-text">仪表盘</span></button>
-    <button class="tab-item" onclick="switchTab('body', this)">
-      <span class="tab-icon">⚖️</span>
-      <span class="tab-text">体重</span>
-    </button>
-    <button class="tab-item" onclick="switchTab('bookkeeping', this)">
-      <span class="tab-icon">🧾</span>
-      <span class="tab-text">记账</span>
-    </button>
-    <button class="tab-item" onclick="switchTab('inputs', this)">
-      <span class="tab-icon">⚙️</span>
-      <span class="tab-text">设置</span>
-    </button>
-  </div>
 
   <!-- Body Record Modal -->
   <div id="bodyModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:200;align-items:flex-end;justify-content:center;">
@@ -1301,6 +1349,29 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
       </div>
     </div>
+
+  <!-- ===== HAMBURGER MENU ===== -->
+  <div class="hamburger-overlay" id="hamburgerOverlay" onclick="toggleHamburger()"></div>
+  <div class="hamburger-menu" id="hamburgerMenu">
+    <div class="hm-header">🌸 ShoreOS</div>
+    <button class="hm-item" onclick="navigateTo('dashboard')"><span class="hm-icon">🏠</span>FIRE仪表盘</button>
+    <button class="hm-item" onclick="navigateTo('body')"><span class="hm-icon">⚖️</span>体重管理</button>
+    <button class="hm-item" onclick="navigateTo('bookkeeping')"><span class="hm-icon">🧾</span>记账</button>
+    <button class="hm-item" onclick="navigateTo('profile')"><span class="hm-icon">👤</span>个人管理</button>
+    <div class="hm-footer">ShoreOS v4.0 · 人生自由度仪表盘</div>
+  </div>
+
+  <!-- ===== SETTINGS FAB + PANEL ===== -->
+  <button class="settings-fab" id="settingsFab" onclick="toggleSettings()">⚙️</button>
+
+  <div class="settings-overlay" id="settingsOverlay" onclick="toggleSettings()"></div>
+  <div class="settings-panel" id="settingsPanel">
+    <div class="sp-handle" onclick="toggleSettings()"></div>
+    <div class="sp-title">⚙️ 设置</div>
+    <button class="sp-item" onclick="toggleSettings();navigateTo('dashboard');setTimeout(function(){toggleParamOverlay()},350);"><span class="sp-icon">🎨</span>主题颜色</button>
+    <button class="sp-item" onclick="toggleSettings();navigateTo('user-manage');"><span class="sp-icon">👥</span>用户管理</button>
+    <button class="sp-item" onclick="toggleSettings();showToast('🌸 ShoreOS v4.0 · 人生自由度仪表盘 · 算清楚你离财务自由还差多远')"><span class="sp-icon">ℹ️</span>关于</button>
+  </div>
 
 <script>
 // ===== CloudBase 数据层 =====
@@ -1938,7 +2009,7 @@ function wizFinishNew(){
   // Hide wizard, switch to dashboard
   document.getElementById('sec-inputs').style.display = 'none';
   document.getElementById('sec-inputs').classList.remove('active');
-  switchTab('dashboard', document.querySelectorAll('.tab-item')[0]);
+  navigateTo('dashboard');
   switchUser(profile.uid);
   showToast('🌸 欢迎「'+name+'」加入 ShoreOS！');
 }
@@ -2514,18 +2585,70 @@ function setChild(p, btn){
   recalc();
 }
 
-function switchTab(tab, btn){
+function navigateTo(module){
   document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
-  const sec = document.getElementById('sec-'+tab);
+  // Map module names to section IDs
+  const secMap = {
+    'dashboard': 'sec-dashboard',
+    'body': 'sec-body',
+    'bookkeeping': 'sec-bookkeeping',
+    'profile': 'sec-dashboard',  // profile shows dashboard with param overlay
+    'user-manage': 'sec-dashboard', // user-manage shows dashboard + user switcher
+    'inputs': 'sec-inputs'
+  };
+  const secId = secMap[module] || 'sec-dashboard';
+  const sec = document.getElementById(secId);
   if(sec){
     sec.classList.add('active');
-    // 如果 sec-inputs 有 inline display:none，需要移除
-    if(tab === 'inputs') sec.style.display = 'block';
+    if(module === 'inputs') sec.style.display = 'block';
   }
-  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  // Close hamburger menu
+  const hm = document.getElementById('hamburgerMenu');
+  const ho = document.getElementById('hamburgerOverlay');
+  if(hm) hm.classList.remove('active');
+  if(ho) ho.classList.remove('active');
+  // Scroll to top
   document.getElementById('phone').scrollTop = 0;
-  if(tab !== 'inputs') recalc();
+  // Recalculate if not on inputs
+  if(module !== 'inputs') recalc();
+  // Show/hide settings FAB based on module
+  const fab = document.getElementById('settingsFab');
+  if(fab) fab.style.display = (module === 'dashboard' || module === 'profile' || module === 'user-manage') ? 'flex' : 'none';
+}
+
+// Keep old switchTab as wrapper for backward compatibility
+function switchTab(tab, btn){
+  navigateTo(tab);
+}
+
+// ===== HAMBURGER MENU =====
+function toggleHamburger(){
+  const menu = document.getElementById('hamburgerMenu');
+  const overlay = document.getElementById('hamburgerOverlay');
+  if(!menu || !overlay) return;
+  const isActive = menu.classList.contains('active');
+  if(isActive){
+    menu.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    menu.classList.add('active');
+    overlay.classList.add('active');
+  }
+}
+
+// ===== SETTINGS PANEL =====
+function toggleSettings(){
+  const panel = document.getElementById('settingsPanel');
+  const overlay = document.getElementById('settingsOverlay');
+  if(!panel || !overlay) return;
+  const isActive = panel.classList.contains('active');
+  if(isActive){
+    panel.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    panel.classList.add('active');
+    overlay.classList.add('active');
+  }
 }
 
 // ===== WIZARD NAVIGATION =====
@@ -2561,7 +2684,6 @@ function wizFinish(){
   try {
     document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
     document.getElementById('sec-dashboard').classList.add('active');
-    document.querySelectorAll('.tab-item').forEach((t,i)=>t.classList.toggle('active', i===0));
     document.getElementById('phone').scrollTop = 0;
     document.getElementById('welcomeCard').style.display = 'none';
     document.getElementById('dashboardContent').style.display = 'block';
@@ -3019,18 +3141,6 @@ activeUid = localStorage.getItem(ACTIVE_KEY) || '';
   if(cbReady) ProfileCloud._pushCloud([...userProfiles]);
 })();
 
-updateStatusTime();
-setInterval(updateStatusTime, 60000);
-
-function updateStatusTime(){
-  const el = document.getElementById('statusTime');
-  if(!el) return;
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  el.textContent = h + ':' + m;
-}
-
 
 // ===== DASHBOARD TAB SWITCHING =====
 function switchDashTab(idx, btn){
@@ -3326,16 +3436,16 @@ function renderBodyPage(){
   ).join('');
 }
 
-// Ensure switchTab also renders body page
-const origSwitchTab = switchTab;
-switchTab = function(tab, btn){
-  origSwitchTab(tab, btn);
-  if(tab === 'body') renderBodyPage();
-  if(tab === 'bookkeeping'){
+// Ensure navigateTo also renders body page
+const origNavigateTo = navigateTo;
+navigateTo = function(module){
+  origNavigateTo(module);
+  if(module === 'body') renderBodyPage();
+  if(module === 'bookkeeping'){
     renderBkCalendar();
     renderBkAnalysis();
   }
-  if(tab === 'dashboard'){
+  if(module === 'dashboard' || module === 'profile' || module === 'user-manage'){
     syncParamPanelFromProfile();
   }
 };
@@ -3679,6 +3789,13 @@ function renderBkAnalysis(){
 }
 </script>
 
+<!-- Initialize settings FAB visibility -->
+<script>
+(function(){
+  const fab = document.getElementById('settingsFab');
+  if(fab) fab.style.display = 'flex';
+})();
+</script>
 
 </body>
 </html>
