@@ -27,6 +27,33 @@ window._cloudbase = cloudbase;
   --grad-peach: linear-gradient(135deg, #fdba74, #fb7185);
   --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
 }
+/* ===== 主题：薄荷绿 ===== */
+:root[data-theme="mint"] {
+  --bg: #f0fdf4; --bg2: #dcfce7; --card: #fff; --sep: #bbf7d0;
+  --pink: #86efac; --pink-deep: #34d399; --pink-soft: #d1fae5;
+  --grad-hero: linear-gradient(135deg, #d1fae5 0%, #fef3c7 50%, #e0f2fe 100%);
+  --grad-pink: linear-gradient(135deg, #6ee7b7, #34d399);
+  --shadow-sm: 0 2px 8px rgba(52,211,153,0.10);
+  --shadow-md: 0 6px 20px rgba(52,211,153,0.14);
+}
+/* ===== 主题：暖橘 ===== */
+:root[data-theme="warm"] {
+  --bg: #fffbeb; --bg2: #fef3c7; --card: #fff; --sep: #fde68a;
+  --pink: #fdba74; --pink-deep: #f97316; --pink-soft: #ffedd5;
+  --grad-hero: linear-gradient(135deg, #ffedd5 0%, #fef3c7 50%, #ffe4e6 100%);
+  --grad-pink: linear-gradient(135deg, #fb923c, #f97316);
+  --shadow-sm: 0 2px 8px rgba(249,115,22,0.10);
+  --shadow-md: 0 6px 20px rgba(249,115,22,0.14);
+}
+/* ===== 主题：紫色 ===== */
+:root[data-theme="purple"] {
+  --bg: #faf5ff; --bg2: #f3e8ff; --card: #fff; --sep: #e9d5ff;
+  --pink: #c4b5fd; --pink-deep: #a78bfa; --pink-soft: #ede9fe;
+  --grad-hero: linear-gradient(135deg, #ede9fe 0%, #fce7f3 50%, #e0f2fe 100%);
+  --grad-pink: linear-gradient(135deg, #c4b5fd, #a78bfa);
+  --shadow-sm: 0 2px 8px rgba(167,139,250,0.10);
+  --shadow-md: 0 6px 20px rgba(167,139,250,0.14);
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; }
 body {
@@ -723,6 +750,9 @@ td.wn { color: var(--orange); font-weight: 600; }
 .settings-panel .sp-item:last-child { border-bottom: none; }
 .settings-panel .sp-item:active { background: var(--bg2); }
 .settings-panel .sp-item .sp-icon { font-size: 22px; width: 32px; text-align: center; }
+.theme-dot { display: inline-block; width: 24px; height: 24px; border-radius: 50%; margin-left: auto; flex-shrink: 0; border: 2px solid transparent; transition: border-color 0.2s; }
+.theme-dot.active { border-color: var(--text); box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--pink-deep); }
+.sp-theme-label { font-size: 14px; }
 
 </style>
 </head>
@@ -1368,7 +1398,10 @@ td.wn { color: var(--orange); font-weight: 600; }
   <div class="settings-panel" id="settingsPanel">
     <div class="sp-handle" onclick="toggleSettings()"></div>
     <div class="sp-title">⚙️ 设置</div>
-    <button class="sp-item" onclick="toggleSettings();navigateTo('dashboard');setTimeout(function(){toggleParamOverlay()},350);"><span class="sp-icon">🎨</span>主题颜色</button>
+    <div class="sp-item" onclick="setTheme('pink')"><span class="sp-icon">🌸</span><span class="sp-theme-label">粉色</span><span class="theme-dot" id="themeDotPink" style="background:#fb7185;"></span></div>
+    <div class="sp-item" onclick="setTheme('mint')"><span class="sp-icon">🌿</span><span class="sp-theme-label">薄荷</span><span class="theme-dot" id="themeDotMint" style="background:#34d399;"></span></div>
+    <div class="sp-item" onclick="setTheme('warm')"><span class="sp-icon">🍊</span><span class="sp-theme-label">暖橘</span><span class="theme-dot" id="themeDotWarm" style="background:#f97316;"></span></div>
+    <div class="sp-item" onclick="setTheme('purple')"><span class="sp-icon">🍇</span><span class="sp-theme-label">紫色</span><span class="theme-dot" id="themeDotPurple" style="background:#a78bfa;"></span></div>
     <button class="sp-item" onclick="toggleSettings();navigateTo('user-manage');"><span class="sp-icon">👥</span>用户管理</button>
     <button class="sp-item" onclick="toggleSettings();showToast('🌸 ShoreOS v4.0 · 人生自由度仪表盘 · 算清楚你离财务自由还差多远')"><span class="sp-icon">ℹ️</span>关于</button>
   </div>
@@ -2651,6 +2684,45 @@ function toggleSettings(){
   }
 }
 
+// ===== THEME =====
+const THEME_KEY = 'shoreos_theme';
+const THEMES = ['pink','mint','warm','purple'];
+
+function setTheme(theme){
+  if(!THEMES.includes(theme)) theme = 'pink';
+  // 设置 DOM 属性
+  document.documentElement.setAttribute('data-theme', theme);
+  // 保存到 localStorage
+  localStorage.setItem(THEME_KEY, theme);
+  // 保存到当前用户 profile
+  const p = getActiveProfile();
+  if(p){ p.theme = theme; saveProfiles(); }
+  // 更新主题圆点选中状态
+  THEMES.forEach(t => {
+    const dot = document.getElementById('themeDot'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(dot) dot.classList.toggle('active', t === theme);
+  });
+  // 关闭设置面板
+  toggleSettings();
+}
+
+function loadTheme(){
+  let theme = localStorage.getItem(THEME_KEY);
+  // 也尝试从当前用户 profile 读取
+  if(!theme){
+    const p = getActiveProfile();
+    if(p && p.theme) theme = p.theme;
+  }
+  if(!theme || !THEMES.includes(theme)) theme = 'pink';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+  // 更新主题圆点选中状态
+  THEMES.forEach(t => {
+    const dot = document.getElementById('themeDot'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(dot) dot.classList.toggle('active', t === theme);
+  });
+}
+
 // ===== WIZARD NAVIGATION =====
 function wizGoTo(step){
   const old = document.querySelector('.wiz-step.active');
@@ -3093,6 +3165,7 @@ function parseVoiceText(text){
 // ===== INIT =====
 loadProfiles();
 activeUid = localStorage.getItem(ACTIVE_KEY) || '';
+loadTheme();
 
 // 异步初始化：先尝试从云端合并 profiles，再渲染
 (async function asyncInit(){
