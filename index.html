@@ -227,8 +227,9 @@ td.wn { color: var(--orange); font-weight: 600; }
   background: #fff; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   max-height: 80vh; overflow-y: auto; z-index: 51;
   transform: translateY(100%); transition: transform 0.3s var(--ease-spring);
+  pointer-events: none;
 }
-.param-sheet.active { transform: translateY(0); }
+.param-sheet.active { transform: translateY(0); pointer-events: auto; }
 .param-sheet-handle {
   width: 36px; height: 4px; background: #ddd; border-radius: 2px;
   margin: 10px auto 6px; cursor: grab;
@@ -368,7 +369,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .user-avatar-btn.active .user-avatar-name { color: var(--pink-deep); font-weight: 700; }
-.user-add-btn .user-avatar-circle {
+.user-add-btn .user-avatar-circle, .user-more-btn .user-avatar-circle {
   border: 2px dashed var(--sep); box-shadow: none; font-size: 22px; color: var(--sub);
 }
 
@@ -826,7 +827,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     <div class="welcome-card" id="welcomeCard">
       <div class="wc-emoji">🌸</div>
       <h2>还没有小伙伴呢</h2>
-      <p>点上方「＋」添加第一位用户<br>一起开启可爱的财务自由之旅 ✨</p>
+      <p>点击上方「⋯更多」进入用户管理<br>一起开启可爱的财务自由之旅 ✨</p>
     </div>
 
     <!-- Dashboard (has data) -->
@@ -1356,8 +1357,8 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 
     <!-- Param Panel Overlay (bottom sheet) -->
-    <div class="param-overlay" id="paramOverlay" onclick="toggleParamOverlay()"></div>
-    <div class="param-sheet" id="paramSheet">
+    <div class="param-overlay" id="paramOverlay" onclick="if(event.target===event.currentTarget)toggleParamOverlay()"></div>
+    <div class="param-sheet" id="paramSheet" onclick="event.stopPropagation()">
       <div class="param-sheet-handle" onclick="toggleParamOverlay()"></div>
       <div style="padding: 0 16px 16px;">
         <div style="font-size:18px;font-weight:800;margin:8px 0 12px;">⚙️ 我的参数</div>
@@ -1959,9 +1960,9 @@ function renderUserSwitcher(){
       <div class="user-avatar-name">${p.name||'未命名'}</div>
     </button>`;
   }
-  html += `<button class="user-avatar-btn user-add-btn" onclick="startNewUserWizard()">
-    <div class="user-avatar-circle">＋</div>
-    <div class="user-avatar-name">新增</div>
+  html += `<button class="user-avatar-btn user-more-btn" onclick="navigateTo('user-manage')" title="管理用户">
+    <div class="user-avatar-circle">⋯</div>
+    <div class="user-avatar-name">更多</div>
   </button>`;
   container.innerHTML = html;
 }
@@ -2751,6 +2752,13 @@ function navigateTo(module){
   const so = document.getElementById('settingsOverlay');
   if(sp) sp.classList.remove('active');
   if(so) so.classList.remove('active');
+  // Close param panel when leaving dashboard
+  if(module !== 'dashboard'){
+    const po = document.getElementById('paramOverlay');
+    const ps = document.getElementById('paramSheet');
+    if(po) po.classList.remove('active');
+    if(ps) ps.classList.remove('active');
+  }
   // Scroll to top
   document.getElementById('phone').scrollTop = 0;
   // Render page-specific content
@@ -3518,6 +3526,9 @@ function calcAllForProfile(p){
 
 // ===== PARAM OVERLAY (bottom sheet) =====
 function toggleParamOverlay(){
+  // Only allow param panel in dashboard context
+  const dashSec = document.getElementById('sec-dashboard');
+  if(!dashSec || !dashSec.classList.contains('active')) return;
   const overlay = document.getElementById('paramOverlay');
   const sheet = document.getElementById('paramSheet');
   if(!overlay || !sheet) return;
