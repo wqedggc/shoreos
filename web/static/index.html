@@ -7,11 +7,6 @@
 <meta name="description" content="算清楚你离财务自由还差多远。每多坚持一年，安全垫就厚一层。">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module">
-// CloudBase Web SDK - ESM module loading
-import cloudbase from 'https://cdn.jsdelivr.net/npm/@cloudbase/js-sdk@2.22.0/+esm';
-window._cloudbase = cloudbase;
-</script>
 <style>
 :root {
   --bg: #fff7ed; --bg2: #fef3e2; --card: #fff; --sep: #fde8d5; --text: #1f2937; --sub: #9ca3af;
@@ -1514,60 +1509,64 @@ td.wn { color: var(--orange); font-weight: 600; }
   </div>
 
 <script>
-// ===== CloudBase 数据层 =====
-const CB_CONFIG = {
-  env: 'shoreos-d5g5fcp0mce497e3c',
-  region: 'ap-shanghai'
+// ===== ShoreOS API 数据层 =====
+const TOKEN_KEY = 'shoreos:v1:token';
+let apiToken = localStorage.getItem(TOKEN_KEY) || '';
+let cbReady = false;
+let cbUid = 'local';
+
+const ShoreAPI = {
+  async request(path, options){
+    options = options || {};
+    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+    if(apiToken) headers.Authorization = 'Bearer ' + apiToken;
+    const res = await fetch(path, Object.assign({}, options, { headers }));
+    let body = null;
+    try { body = await res.json(); } catch(e) { body = null; }
+    if(res.status === 401 && path !== '/api/v1/auth/bootstrap'){
+      localStorage.removeItem(TOKEN_KEY);
+      apiToken = '';
+    }
+    if(!res.ok){
+      const msg = body && body.error && body.error.message ? body.error.message : '请求失败';
+      throw new Error(msg);
+    }
+    return body ? body.data : null;
+  },
+  async ensureSession(){
+    try {
+      if(apiToken){
+        const me = await this.request('/api/v1/me');
+        cbUid = me && me.userId ? String(me.userId) : 'default';
+        cbReady = true;
+        return true;
+      }
+      const data = await this.request('/api/v1/auth/bootstrap', { method: 'POST', body: '{}' });
+      if(data && data.token){
+        apiToken = data.token;
+        localStorage.setItem(TOKEN_KEY, apiToken);
+        cbUid = data.user && data.user.userId ? String(data.user.userId) : 'default';
+        cbReady = true;
+        return true;
+      }
+    } catch(e){
+      console.warn('[API] 初始化失败，临时使用本地缓存:', e.message);
+    }
+    cbReady = false;
+    return false;
+  }
 };
 
-let cbApp = null, cbDb = null, cbReady = false, cbUid = null;
-
-// 初始化 CloudBase - 异步执行，不阻塞页面
-(async function initCloudBase(){
-  try {
-    // 等待 ESM 模块加载
-    let retries = 0;
-    while(!window._cloudbase && retries < 50){
-      await new Promise(r => setTimeout(r, 100));
-      retries++;
-    }
-    if(!window._cloudbase){ console.warn('[CB] SDK 加载超时，使用本地存储'); return; }
-
-    cbApp = window._cloudbase.init(CB_CONFIG);
-    const auth = cbApp.auth;
-
-    // 尝试恢复登录状态
-    let loginState = await auth.getLoginState();
-    if(!loginState){
-      // 匿名登录
-      const { data, error } = await auth.signInAnonymously();
-      if(error){ console.warn('[CB] 匿名登录失败:', error.message); return; }
-      loginState = data;
-    }
-    cbUid = loginState?.user?.uid || loginState?.user?.id || 'anon';
-    cbDb = cbApp.database();
-    cbReady = true;
-    console.log('[CB] CloudBase 已连接, uid:', cbUid);
-  } catch(e){
-    console.warn('[CB] CloudBase 初始化失败，降级到本地存储:', e.message);
-  }
+(async function initShoreAPI(){
+  await ShoreAPI.ensureSession();
 })();
 
-// 数据层抽象：云端优先 + 本地 fallback
+// 数据层抽象：FIRE profiles 走后端；记账和体重 v1 继续本地缓存。
 const CloudStore = {
   // 记账数据
   async loadBills(){
     const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
-    if(!cbReady || !cbDb){
-      return JSON.parse(localStorage.getItem(key) || '[]');
-    }
-    try {
-      const res = await cbDb.collection('bills').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
-      return res.data || [];
-    } catch(e){
-      console.warn('[CB] 读取账单失败，使用本地:', e.message);
-      return JSON.parse(localStorage.getItem(key) || '[]');
-    }
+    return JSON.parse(localStorage.getItem(key) || '[]');
   },
   async saveBill(bill){
     const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
@@ -1575,55 +1574,20 @@ const CloudStore = {
     const idx = local.findIndex(b=>b.id===bill.id);
     if(idx>=0) local[idx] = bill; else local.push(bill);
     localStorage.setItem(key, JSON.stringify(local));
-
-    if(!cbReady || !cbDb) return;
-    try {
-      bill._uid = cbUid;
-      await cbDb.collection('bills').add(bill);
-    } catch(e){ console.warn('[CB] 保存账单失败:', e.message); }
   },
   async deleteBill(id){
     const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
     const local = JSON.parse(localStorage.getItem(key) || '[]').filter(b=>b.id!==id);
     localStorage.setItem(key, JSON.stringify(local));
-
-    if(!cbReady || !cbDb) return;
-    try {
-      const res = await cbDb.collection('bills').where({ id, _uid: cbUid }).get();
-      if(res.data?.length > 0){
-        await cbDb.collection('bills').doc(res.data[0]._id).remove();
-      }
-    } catch(e){ console.warn('[CB] 删除账单失败:', e.message); }
   },
   async syncBills(){
-    if(!cbReady || !cbDb) return;
-    const key = typeof billsKey === 'function' ? billsKey() : 'shoreos_bills';
-    try {
-      const res = await cbDb.collection('bills').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
-      const cloud = (res.data || []).map(b => { delete b._id; delete b._uid; return b; });
-      const local = JSON.parse(localStorage.getItem(key) || '[]');
-      const merged = new Map();
-      local.forEach(b => merged.set(b.id, b));
-      cloud.forEach(b => merged.set(b.id, b));
-      const result = Array.from(merged.values()).sort((a,b)=>a.date.localeCompare(b.date));
-      localStorage.setItem(key, JSON.stringify(result));
-      bkBills = result;
-      return true;
-    } catch(e){ console.warn('[CB] 同步账单失败:', e.message); return false; }
+    return false;
   },
 
   // 体重数据
   async loadBodyRecords(){
     const key = typeof bodyKey === 'function' ? bodyKey() : 'shoreos_body';
-    if(!cbReady || !cbDb){
-      return JSON.parse(localStorage.getItem(key) || '[]');
-    }
-    try {
-      const res = await cbDb.collection('body_records').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
-      return (res.data || []).map(r => ({ date: r.date, weight: r.weight, fat: r.fat }));
-    } catch(e){
-      return JSON.parse(localStorage.getItem(key) || '[]');
-    }
+    return JSON.parse(localStorage.getItem(key) || '[]');
   },
   async saveBodyRecord(record){
     const key = typeof bodyKey === 'function' ? bodyKey() : 'shoreos_body';
@@ -1631,39 +1595,14 @@ const CloudStore = {
     const idx = local.findIndex(r=>r.date===record.date);
     if(idx>=0) local[idx] = record; else local.push(record);
     localStorage.setItem(key, JSON.stringify(local));
-
-    if(!cbReady || !cbDb) return;
-    try {
-      record._uid = cbUid;
-      const exist = await cbDb.collection('body_records').where({ date: record.date, _uid: cbUid }).get();
-      if(exist.data?.length > 0){
-        await cbDb.collection('body_records').doc(exist.data[0]._id).update(record);
-      } else {
-        await cbDb.collection('body_records').add(record);
-      }
-    } catch(e){ console.warn('[CB] 保存体重记录失败:', e.message); }
   },
   async syncBodyRecords(){
-    if(!cbReady || !cbDb) return;
-    const key = typeof bodyKey === 'function' ? bodyKey() : 'shoreos_body';
-    try {
-      const res = await cbDb.collection('body_records').where({ _uid: cbUid }).orderBy('date','asc').limit(1000).get();
-      const cloud = (res.data || []).map(r => ({ date: r.date, weight: r.weight, fat: r.fat }));
-      const local = JSON.parse(localStorage.getItem(key) || '[]');
-      const merged = new Map();
-      local.forEach(r => merged.set(r.date, r));
-      cloud.forEach(r => merged.set(r.date, r));
-      const result = Array.from(merged.values()).sort((a,b)=>a.date.localeCompare(b.date));
-      localStorage.setItem(key, JSON.stringify(result));
-      bodyRecords = result;
-      return true;
-    } catch(e){ return false; }
+    return false;
   }
 };
 
-// 等待 CloudBase 就绪后自动同步数据
+// 等待 API 就绪后自动同步本地缓存状态。
 (async function autoSync(){
-  // 等待最多 5 秒
   for(let i=0; i<50; i++){
     if(cbReady){ break; }
     await new Promise(r => setTimeout(r, 100));
@@ -1672,7 +1611,7 @@ const CloudStore = {
     const syncedBills = await CloudStore.syncBills();
     const syncedBody = await CloudStore.syncBodyRecords();
     if(syncedBills || syncedBody){
-      console.log('[CB] 数据同步完成');
+      console.log('[API] 数据同步完成');
       // 重新渲染
       if(typeof renderBkCalendar === 'function') renderBkCalendar();
       if(typeof renderBodyPage === 'function') renderBodyPage();
@@ -1716,7 +1655,7 @@ function loadProfiles(){
 
 // 云端 profiles 同步：本地优先，云端备份 + 合并
 const ProfileCloud = {
-  // 等待 CloudBase 就绪
+  // 等待 ShoreOS API 就绪
   async _waitReady(timeoutMs = 3000){
     const start = Date.now();
     while(!cbReady && Date.now() - start < timeoutMs){
@@ -1729,11 +1668,9 @@ const ProfileCloud = {
   async _fetchCloud(){
     if(!await this._waitReady()) return null;
     try {
-      const res = await cbDb.collection('profiles').where({ _uid: cbUid }).limit(1).get();
-      if(res.data?.length > 0){
-        return res.data[0].profiles || [];
-      }
-    } catch(e){ console.warn('[CB] 拉取 profiles 失败:', e.message); }
+      const data = await ShoreAPI.request('/api/v1/fire/scenarios');
+      return data && Array.isArray(data.profiles) ? data.profiles : [];
+    } catch(e){ console.warn('[API] 拉取 profiles 失败:', e.message); }
     return null;
   },
 
@@ -1741,15 +1678,12 @@ const ProfileCloud = {
   async _pushCloud(profiles){
     if(!await this._waitReady()) return;
     try {
-      const exist = await cbDb.collection('profiles').where({ _uid: cbUid }).get();
-      const doc = { _uid: cbUid, profiles, updatedAt: Date.now() };
-      if(exist.data?.length > 0){
-        await cbDb.collection('profiles').doc(exist.data[0]._id).update(doc);
-      } else {
-        await cbDb.collection('profiles').add(doc);
-      }
-      console.log('[CB] profiles 已同步云端, 共', profiles.length, '个用户');
-    } catch(e){ console.warn('[CB] 推送 profiles 失败:', e.message); }
+      await ShoreAPI.request('/api/v1/fire/scenarios/sync', {
+        method: 'PUT',
+        body: JSON.stringify({ profiles })
+      });
+      console.log('[API] profiles 已同步后端, 共', profiles.length, '个用户');
+    } catch(e){ console.warn('[API] 推送 profiles 失败:', e.message); }
   },
 
   // 初始化时从云端合并数据（云端优先）
@@ -1770,7 +1704,7 @@ const ProfileCloud = {
       activeUid = userProfiles[0].uid;
       localStorage.setItem(ACTIVE_KEY, activeUid);
     }
-    console.log('[CB] profiles 云端合并完成, 共', userProfiles.length, '个用户');
+    console.log('[API] profiles 后端合并完成, 共', userProfiles.length, '个用户');
   }
 };
 
@@ -2073,7 +2007,8 @@ function saveParamPanel(){
   pDirty = false;
   recalc();
   renderUserSwitcher();
-  document.getElementById('paramPanel').classList.remove('open');
+  document.getElementById('paramOverlay')?.classList.remove('active');
+  document.getElementById('paramSheet')?.classList.remove('active');
   showToast('✅ 已保存并重算');
 }
 
@@ -2101,7 +2036,7 @@ function startNewUserWizard(){
   document.getElementById('medicalYears').value = '7';
   document.getElementById('pensionMin').value = '15';
   document.getElementById('medicalMin').value = '25';
-  document.getElementById('currentYear').value = '2026';
+  document.getElementById('currentYear').value = String(new Date().getFullYear());
   gender = ''; ssStrategy = 'min'; houseTypeCur = 'rent'; childPlan = 'none';
   birthYearSel = null; currentWorkYears = null;
   document.getElementById('yearDisplay').textContent = '--';
@@ -3291,7 +3226,10 @@ loadTheme();
 
 // 异步初始化：先尝试从云端合并 profiles，再渲染
 (async function asyncInit(){
-  // 尝试云端合并（如果 CloudBase 就绪）
+  const yearEl = document.getElementById('currentYear');
+  if(yearEl) yearEl.value = String(new Date().getFullYear());
+
+  // 尝试从 ShoreOS API 合并后端 profiles
   await ProfileCloud.mergeFromCloud();
 
   // Migrate v1 data if exists
@@ -3332,7 +3270,7 @@ loadTheme();
   try { recalc(); } catch(e){ console.error('init recalc error:', e); }
   try { refreshDashboard(); } catch(e){ console.error('init refreshDashboard error:', e); }
 
-  // 云端同步后推送本地 profiles（确保双向一致）
+  // 后端同步后推送本地 profiles（确保双向一致）
   if(cbReady) ProfileCloud._pushCloud([...userProfiles]);
 })();
 
