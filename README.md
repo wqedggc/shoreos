@@ -32,4 +32,7 @@ http://127.0.0.1:8090/
 
 ## Deploy
 
-See `docs/deploy_guide.md`.
+See:
+
+- `docs/deploy_guide.md`
+- `docs/cnb_mirror.md`

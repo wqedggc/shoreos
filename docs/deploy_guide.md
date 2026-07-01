@@ -11,7 +11,13 @@
 ## 仓库
 
 - GitHub：`https://github.com/wqedggc/shoreos.git`
-- 腾讯侧镜像推荐：`https://cnb.cool/wqedggc/shoreos`
+- 腾讯侧镜像：`https://cnb.cool/wqedggc/shoreos.git`
+
+GitHub 是唯一主仓，CNB 只做国内部署镜像。mirror 配置见：
+
+```text
+docs/cnb_mirror.md
+```
 
 本地路径：
 
@@ -43,19 +49,20 @@ chmod +x deploy.sh
 cd /Users/shore/Desktop/ShoreOS/services/shoreos-fire-server
 git add -A
 git commit -m "feat: update shoreos fire"
-git push cnb main
 /Users/shore/Desktop/Knowledge/tools/github_device_push.sh \
   --repo /Users/shore/Desktop/ShoreOS/services/shoreos-fire-server \
   --remote origin \
   --ref main
 ```
 
+GitHub Actions 会把 `main` 自动同步到 CNB。
+
 服务器：
 
 ```bash
 ssh -i ~/shore.pem root@43.143.208.153
 cd /home/work/shoreos-fire-server
-git pull cnb main
+git pull --ff-only origin main
 ./deploy.sh
 ```
 

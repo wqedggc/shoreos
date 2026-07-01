@@ -1,0 +1,32 @@
+name: Mirror to CNB
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    name: Push GitHub main to CNB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to CNB mirror
+        env:
+          CNB_PUSH_URL: ${{ secrets.CNB_PUSH_URL }}
+        run: |
+          if [ -z "$CNB_PUSH_URL" ]; then
+            echo "::notice::Missing repository secret CNB_PUSH_URL; skip CNB mirror."
+            exit 0
+          fi
+
+          git remote add cnb "$CNB_PUSH_URL"
+          git push cnb HEAD:main
