@@ -61,10 +61,23 @@ body {
   position: relative; padding-bottom: 20px;
 }
 .status-bar {
-  padding: 12px 20px 6px; display: flex; justify-content: space-between;
-  font-size: 13px; font-weight: 600; background: var(--bg);
+  padding: 10px 14px 8px; display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; font-size: 13px; font-weight: 600; background: var(--bg);
   position: sticky; top: 0; z-index: 10;
 }
+.icon-btn {
+  width: 34px; height: 34px; border: 0; border-radius: 50%;
+  background: var(--card); color: var(--text); font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm); cursor: pointer; font-family: inherit;
+}
+.icon-btn:active { transform: scale(0.94); }
+.topbar-title {
+  min-width: 0; flex: 1; text-align: center; display: flex;
+  flex-direction: column; align-items: center; line-height: 1.15;
+}
+.topbar-title strong { font-size: 14px; font-weight: 800; }
+.topbar-title small { font-size: 10px; color: var(--sub); font-weight: 600; }
 .app-header { padding: 8px 20px 12px; }
 .app-header .greeting { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
 .app-header .subtitle { font-size: 13px; color: var(--sub); margin-top: 2px; }
@@ -171,28 +184,52 @@ td.wn { color: var(--orange); font-weight: 600; }
 .welcome-card .wc-emoji { font-size: 48px; margin-bottom: 12px; }
 .welcome-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
 .welcome-card p { font-size: 13px; color: var(--sub); line-height: 1.7; }
+.welcome-actions { margin-top: 16px; display: flex; justify-content: center; }
+.inline-action {
+  padding: 10px 16px; border: 0; border-radius: var(--radius-sm);
+  background: var(--grad-pink); color: #fff; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit; box-shadow: var(--shadow-sm);
+}
+.inline-action:active { transform: scale(0.96); }
 
 
-/* User Info Bar ( dashboard top) */
+/* FIRE profile summary */
 .user-info-bar {
-  margin: 12px; padding: 14px 16px; border-radius: var(--radius-lg);
+  margin: 12px; padding: 16px; border-radius: var(--radius-lg);
   background: var(--grad-hero);
   color: var(--text); position: relative; overflow: hidden;
-  display: flex; align-items: center; gap: 12px;
+  display: flex; flex-direction: column; gap: 14px;
   cursor: pointer; transition: transform 0.15s var(--ease-spring);
 }
 .user-info-bar:active { transform: scale(0.98); }
-.uibar-avatar {
-  font-size: 36px; width: 48px; height: 48px;
+.fire-card-top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.fire-avatar-btn {
+  width: 54px; height: 54px; border: 0; border-radius: var(--radius);
+  background: rgba(255,255,255,0.72); font-size: 34px;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.7); border-radius: var(--radius);
-  flex-shrink: 0;
+  flex-shrink: 0; cursor: pointer; font-family: inherit;
 }
+.fire-avatar-btn:active { transform: scale(0.96); }
 .uibar-text { flex: 1; min-width: 0; }
-.uibar-name { font-size: 16px; font-weight: 700; display: block; }
-.uibar-freedom { font-size: 12px; color: var(--sub); display: block; margin-top: 2px; }
-.uibar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 12px; }
-.uibar-right span { white-space: nowrap; }
+.uibar-name { font-size: 17px; font-weight: 800; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.uibar-mood { font-size: 12px; color: var(--sub); display: block; margin-top: 3px; }
+.fire-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.fire-card-action {
+  border: 0; border-radius: 999px; padding: 7px 10px;
+  background: rgba(255,255,255,0.58); color: var(--text);
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+.fire-card-action.primary { background: rgba(255,255,255,0.86); color: var(--pink-deep); }
+.fire-card-action:active { transform: scale(0.96); }
+.fire-progress-row { display: grid; grid-template-columns: minmax(104px, 1fr) minmax(150px, 1.45fr); gap: 14px; align-items: end; }
+.uibar-freedom { font-size: 42px; line-height: 0.95; font-weight: 900; letter-spacing: 0; display: block; }
+.fire-progress-label { font-size: 12px; color: var(--sub); margin-top: 6px; }
+.uibar-right {
+  display: grid; gap: 6px; font-size: 12px;
+  background: rgba(255,255,255,0.34); border-radius: var(--radius-sm); padding: 10px;
+}
+.uibar-right span { display: flex; justify-content: space-between; gap: 10px; white-space: nowrap; }
+.uibar-right b { font-weight: 800; color: var(--text); }
 
 /* Dashboard Tab Bar */
 .dash-tab-bar {
@@ -220,7 +257,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 .param-sheet {
   position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto;
   background: #fff; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  max-height: 80vh; overflow-y: auto; z-index: 51;
+  max-height: 82vh; overflow-y: auto; z-index: 51;
   transform: translateY(100%); transition: transform 0.3s var(--ease-spring);
   pointer-events: none;
 }
@@ -260,6 +297,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   background: var(--bg2); border-radius: 8px;
   padding: 8px 12px; line-height: 1.5; margin-top: 4px;
 }
+.scroll-section { display: none; }
 .scroll-section.active { display: block; }
 
 @media (min-width: 431px) {
@@ -335,39 +373,6 @@ td.wn { color: var(--orange); font-weight: 600; }
   .voice-fab { right: 16px; }
 }
 
-/* ===== USER SWITCHER ===== */
-.user-switcher {
-  display: flex; gap: 12px; padding: 8px 16px 10px; overflow-x: auto;
-  scrollbar-width: none; -webkit-overflow-scrolling: touch;
-  background: transparent;
-}
-.user-switcher::-webkit-scrollbar { display: none; }
-.user-avatar-btn {
-  flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 3px;
-  background: none; border: 0; padding: 4px 4px; cursor: pointer;
-  transition: transform 0.25s var(--ease-spring);
-}
-.user-avatar-btn:active { transform: scale(0.92); }
-.user-avatar-circle {
-  width: 48px; height: 48px; border-radius: 50%; background: var(--card);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px; box-shadow: var(--shadow-sm); position: relative;
-  transition: all 0.3s ease;
-}
-.user-avatar-btn.active .user-avatar-circle {
-  background: var(--grad-pink); color: #fff;
-  box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--pink-deep), 0 8px 16px rgba(251,113,133,0.3);
-  transform: scale(1.05);
-}
-.user-avatar-name {
-  font-size: 10px; color: var(--sub); font-weight: 500; max-width: 52px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.user-avatar-btn.active .user-avatar-name { color: var(--pink-deep); font-weight: 700; }
-.user-add-btn .user-avatar-circle, .user-more-btn .user-avatar-circle {
-  border: 2px dashed var(--sep); box-shadow: none; font-size: 22px; color: var(--sub);
-}
-
 /* ===== PARAM PANEL ===== */
 .param-panel {
   margin: 0 12px 12px; background: var(--card); border-radius: var(--radius-lg);
@@ -386,6 +391,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease-spring), padding 0.3s ease;
 }
 .param-panel.open .param-body { max-height: 800px; padding: 0 16px 16px; }
+.param-sheet .param-body { max-height: none; overflow: visible; transition: none; }
 .param-seg {
   display: flex; gap: 3px; background: var(--bg2); padding: 3px; border-radius: 999px; margin-bottom: 14px;
 }
@@ -412,6 +418,38 @@ td.wn { color: var(--orange); font-weight: 600; }
   margin-top: 8px;
 }
 .param-save-btn:active { transform: scale(0.96); }
+
+/* FIRE profile switch sheet */
+.profile-switch-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 54;
+}
+.profile-switch-overlay.active { display: block; }
+.profile-switch-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; max-width: 430px; margin: 0 auto;
+  background: #fff; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 0 16px 18px; z-index: 55;
+  transform: translateY(100%); transition: transform 0.3s var(--ease-spring);
+  pointer-events: none;
+}
+.profile-switch-sheet.active { transform: translateY(0); pointer-events: auto; }
+.switch-sheet-title { font-size: 18px; font-weight: 800; margin: 8px 0 12px; }
+.switch-user-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.switch-user-row {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  padding: 12px; border: 0; border-radius: var(--radius-sm);
+  background: var(--bg2); color: var(--text); text-align: left;
+  font-family: inherit; cursor: pointer;
+}
+.switch-user-row.active { background: var(--pink-soft); color: var(--pink-deep); }
+.switch-user-avatar { font-size: 24px; width: 36px; height: 36px; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.switch-user-main { flex: 1; min-width: 0; }
+.switch-user-name { font-size: 14px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.switch-user-meta { font-size: 12px; color: var(--sub); margin-top: 2px; }
+.switch-manage-btn {
+  width: 100%; border: 0; border-radius: var(--radius-sm); padding: 12px;
+  background: var(--grad-pink); color: #fff; font-size: 14px; font-weight: 800;
+  cursor: pointer; font-family: inherit;
+}
 
 /* ===== WIZARD STYLES ===== */
 .wizard-progress {
@@ -693,24 +731,13 @@ td.wn { color: var(--orange); font-weight: 600; }
   transition: background 0.15s; text-align: left;
 }
 .hamburger-menu .hm-item:active { background: var(--bg2); }
+.hamburger-menu .hm-item.active { background: var(--pink-soft); color: var(--pink-deep); }
 .hamburger-menu .hm-item .hm-icon { font-size: 22px; width: 32px; text-align: center; }
 .hamburger-menu .hm-footer {
   margin-top: auto; padding: 16px 24px;
   border-top: 1px solid var(--sep);
   font-size: 12px; color: var(--sub); text-align: center;
 }
-
-/* ===== SETTINGS FAB ===== */
-.settings-fab {
-  position: fixed; bottom: 20px; left: 20px; z-index: 100;
-  width: 48px; height: 48px; border-radius: 50%;
-  background: var(--grad-pink); color: #fff; border: none;
-  font-size: 22px; cursor: pointer;
-  box-shadow: 0 4px 16px rgba(251,113,133,0.35);
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s var(--ease-spring);
-}
-.settings-fab:active { transform: scale(0.9); }
 
 /* ===== SETTINGS PANEL ===== */
 .settings-overlay {
@@ -749,6 +776,17 @@ td.wn { color: var(--orange); font-weight: 600; }
 .theme-dot { display: inline-block; width: 24px; height: 24px; border-radius: 50%; margin-left: auto; flex-shrink: 0; border: 2px solid transparent; transition: border-color 0.2s; }
 .theme-dot.active { border-color: var(--text); box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--pink-deep); }
 .sp-theme-label { font-size: 14px; }
+.settings-page-list { margin: 0 12px 16px; background: var(--card); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+.settings-page-list .sp-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; font-size: 15px; font-weight: 600;
+  color: var(--text); cursor: pointer; border: none;
+  background: transparent; font-family: inherit;
+  border-bottom: 0.5px solid var(--sep); width: 100%; text-align: left;
+}
+.settings-page-list .sp-item:last-child { border-bottom: none; }
+.settings-page-list .sp-item.active { background: var(--pink-soft); color: var(--pink-deep); }
+.settings-page-list .sp-icon { font-size: 22px; width: 32px; text-align: center; }
 
 /* Profile & User Manage Pages */
 .page-header { display: flex; align-items: center; padding: 12px 16px; gap: 12px; }
@@ -789,22 +827,43 @@ td.wn { color: var(--orange); font-weight: 600; }
 <body>
 <div class="phone" id="phone">
 
-  <div class="status-bar"><span id="hamburgerBtn" onclick="toggleHamburger()" style="cursor:pointer;">☰</span><span>🌸 ShoreOS <span style="font-size:10px;color:var(--sub);">v4.0</span></span><span id="assetHideBtn" style="cursor:pointer;font-size:18px;margin-left:8px;" onclick="toggleAssetHide()">👁️</span></div>
+  <div class="status-bar app-topbar">
+    <button class="icon-btn" id="hamburgerBtn" onclick="toggleHamburger()" aria-label="打开侧边菜单">☰</button>
+    <div class="topbar-title">
+      <strong id="appPageTitle">FIRE 目标</strong>
+      <small>ShoreOS v4.1</small>
+    </div>
+    <button class="icon-btn" id="assetHideBtn" onclick="toggleAssetHide()" aria-label="隐藏或显示资产">👁️</button>
+  </div>
 
     <!-- ===== DASHBOARD ===== -->
     <div class="scroll-section active" id="sec-dashboard">
 
-      <!-- User Info Bar (high-density top bar) -->
+      <!-- FIRE profile summary -->
       <div class="user-info-bar" id="userInfoBar" onclick="toggleParamOverlay()">
-        <div class="uibar-avatar" id="uibarAvatar">🐱</div>
-        <div class="uibar-text">
-          <span class="uibar-name" id="uibarName">--</span>
-          <span class="uibar-freedom" id="uibarFreedom">FI  --%</span>
+        <div class="fire-card-top">
+          <button type="button" class="fire-avatar-btn" onclick="event.stopPropagation();toggleProfileSwitch(true)" aria-label="切换 FIRE 档案">
+            <span id="uibarAvatar">🐱</span>
+          </button>
+          <div class="uibar-text">
+            <span class="uibar-name" id="uibarName">--</span>
+            <span class="uibar-mood" id="uibarMood">--</span>
+          </div>
+          <div class="fire-actions">
+            <button type="button" class="fire-card-action" onclick="event.stopPropagation();toggleProfileSwitch(true)">切换</button>
+            <button type="button" class="fire-card-action primary" onclick="event.stopPropagation();toggleParamOverlay()">参数</button>
+          </div>
         </div>
-        <div class="uibar-right">
-          <span id="uibarTarget">目标 --</span>
-          <span id="uibarGap">Gap --</span>
-          <span id="uibarETA">ETA --</span>
+        <div class="fire-progress-row">
+          <div>
+            <span class="uibar-freedom" id="uibarFreedom">--%</span>
+            <div class="fire-progress-label">自由指数</div>
+          </div>
+          <div class="uibar-right">
+            <span>FIRE目标 <b id="uibarTarget">--</b></span>
+            <span>还差 <b id="uibarGap">--</b></span>
+            <span>预计 <b id="uibarETA">--</b></span>
+          </div>
         </div>
       </div>
 
@@ -815,14 +874,14 @@ td.wn { color: var(--orange); font-weight: 600; }
         <button class="dash-tab-btn" onclick="switchDashTab(2,this)">📊 资产图表</button>
       </div>
 
-      <!-- User Switcher -->
-      <div class="user-switcher" id="userSwitcher"></div>
-
     <!-- Welcome (no data) -->
     <div class="welcome-card" id="welcomeCard">
       <div class="wc-emoji">🌸</div>
-      <h2>还没有小伙伴呢</h2>
-      <p>点击上方「⋯更多」进入用户管理<br>一起开启可爱的财务自由之旅 ✨</p>
+      <h2>还没有用户档案</h2>
+      <p>先创建一个 FIRE 档案，再查看自由目标、参数和图表。</p>
+      <div class="welcome-actions">
+        <button class="inline-action" onclick="navigateTo('user-manage')">创建 FIRE 档案</button>
+      </div>
     </div>
 
     <!-- Dashboard (has data) -->
@@ -830,18 +889,6 @@ td.wn { color: var(--orange); font-weight: 600; }
 
       <!-- Tab Content: Core Metrics -->
       <div class="dash-tab-content active" id="dashTab0">
-      <div class="highlight-card hl-g1 fade-in">
-        <div class="hl-bg-blob"></div>
-        <div class="hl-emoji">🌸</div>
-        <div class="hl-value" id="hlFreedom">--</div>
-        <div class="hl-label" id="hlFreedomLabel">自由指数</div>
-        <div class="hl-meta">
-          <span>FIRE目标 <b id="hlTarget">--</b></span>
-          <span>还差 <b id="hlGap">--</b></span>
-          <span>预计 <b id="hlETA">--</b></span>
-        </div>
-      </div>
-
       <div class="mini-grid fade-in">
         <div class="mini-card mc-green">
           <div class="mc-emoji">💰</div><div class="mc-value" id="mcSave">--</div>
@@ -888,6 +935,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
       <div style="height:20px;"></div>
     </div>
+  </div>
 
   <!-- ===== BODY WEIGHT ===== -->
   <div class="scroll-section" id="sec-body">
@@ -944,7 +992,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   </div>
 
   <!-- ===== INPUTS ===== -->
-  <div class="scroll-section" id="sec-inputs" style="display:none;">
+  <div class="scroll-section" id="sec-inputs">
     <!-- Voice button (floating) -->
     <button class="voice-fab" id="voiceBtn" onclick="toggleVoice()" title="语音输入填表">🎤</button>
     <div class="voice-toast" id="voiceToast"></div>
@@ -1008,6 +1056,7 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="applyCityPreset('guangzhou');flashChip(this)">📍 广州</button>
               <button class="wiz-chip" onclick="applyCityPreset('shenzhen');flashChip(this)">📍 深圳</button>
               <button class="wiz-chip" onclick="applyCityPreset('other');flashChip(this)">📍 其他</button>
+            </div>
             <div class="wiz-tip" id="wizCityTip"></div>
             <label class="wiz-label">社保缴纳策略</label>
             <div class="wiz-chips" id="wizSSStrategy">
@@ -1346,11 +1395,6 @@ td.wn { color: var(--orange); font-weight: 600; }
       </div>
     </div>
   </div>
-</div>
-
-
-
-
     <!-- Param Panel Overlay (bottom sheet) -->
     <div class="param-overlay" id="paramOverlay" onclick="if(event.target===event.currentTarget)toggleParamOverlay()"></div>
     <div class="param-sheet" id="paramSheet" onclick="event.stopPropagation()">
@@ -1358,18 +1402,12 @@ td.wn { color: var(--orange); font-weight: 600; }
       <div style="padding: 0 16px 16px;">
         <div style="font-size:18px;font-weight:800;margin:8px 0 12px;">⚙️ 我的参数</div>
         <div class="param-seg">
-          <button class="param-seg-btn active" onclick="switchParamTab(0,this)">👤 基本</button>
-          <button class="param-seg-btn" onclick="switchParamTab(1,this)">💰 收支</button>
-          <button class="param-seg-btn" onclick="switchParamTab(2,this)">🏠 住房</button>
-          <button class="param-seg-btn" onclick="switchParamTab(3,this)">📦 资产</button>
+          <button class="param-seg-btn param-tab-btn active" onclick="switchParamTab(0,this)">👤 基本</button>
+          <button class="param-seg-btn param-tab-btn" onclick="switchParamTab(1,this)">💰 收支</button>
+          <button class="param-seg-btn param-tab-btn" onclick="switchParamTab(2,this)">🏠 住房</button>
+          <button class="param-seg-btn param-tab-btn" onclick="switchParamTab(3,this)">📦 资产</button>
         </div>
         <div class="param-body">
-          <div class="param-seg">
-            <button class="param-seg-btn active" onclick="switchParamTab(0,this)">👤 基本</button>
-            <button class="param-seg-btn" onclick="switchParamTab(1,this)">💰 收支</button>
-            <button class="param-seg-btn" onclick="switchParamTab(2,this)">🏠 住房</button>
-            <button class="param-seg-btn" onclick="switchParamTab(3,this)">📦 资产</button>
-          </div>
           <div class="param-page active" id="paramPage0">
             <div class="param-field"><label>昵称</label><input class="param-input" id="pName" placeholder="给自己取个名" onchange="pDirty=true"></div>
             <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
@@ -1401,7 +1439,7 @@ td.wn { color: var(--orange); font-weight: 600; }
             <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="" step="0.5" onchange="pDirty=true"></div>
             <div class="param-field"><label>年化收益率（%）</label><input type="number" class="param-input" id="pReturn" placeholder="5" step="0.5" onchange="pDirty=true"></div>
             <div class="param-field"><label>通胀率（%）</label><input type="number" class="param-input" id="pInflation" placeholder="3" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>社保档位</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pTierLow" onclick="setParamTier('low',this)" style="flex:1;">最低档</button><button class="param-seg-btn" id="pTierMid" onclick="setParamTier('mid',this)" style="flex:1;">标准档</button><button class="param-seg-btn" id="pTierHigh" onclick="setParamTier('high',this)" style="flex:1;">最高档</button></div></div>
+            <div class="param-field"><label>社保档位</label><div id="pTierGroup" style="display:flex;gap:8px;"><button class="param-seg-btn" id="pTierLow" onclick="setParamTier('low',this)" style="flex:1;">最低档</button><button class="param-seg-btn" id="pTierMid" onclick="setParamTier('mid',this)" style="flex:1;">标准档</button><button class="param-seg-btn" id="pTierHigh" onclick="setParamTier('high',this)" style="flex:1;">最高档</button></div></div>
             <div class="param-field"><label>子女计划</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pChildNone" onclick="setParamChild('none',this)" style="flex:1;">暂无计划</button><button class="param-seg-btn" id="pChildOne" onclick="setParamChild('one',this)" style="flex:1;">计划要孩子</button></div></div>
             <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="" step="0.5" onchange="pDirty=true"></div></div>
           </div>
@@ -1410,20 +1448,27 @@ td.wn { color: var(--orange); font-weight: 600; }
       </div>
     </div>
 
+    <div class="profile-switch-overlay" id="profileSwitchOverlay" onclick="toggleProfileSwitch(false)"></div>
+    <div class="profile-switch-sheet" id="profileSwitchSheet" onclick="event.stopPropagation()">
+      <div class="param-sheet-handle" onclick="toggleProfileSwitch(false)"></div>
+      <div class="switch-sheet-title">FIRE 档案</div>
+      <div class="switch-user-list" id="quickUserList"></div>
+      <button class="switch-manage-btn" onclick="toggleProfileSwitch(false);navigateTo('user-manage')">管理 FIRE 档案</button>
+    </div>
+
   <!-- ===== HAMBURGER MENU ===== -->
   <div class="hamburger-overlay" id="hamburgerOverlay" onclick="toggleHamburger()"></div>
   <div class="hamburger-menu" id="hamburgerMenu">
     <div class="hm-header">🌸 ShoreOS</div>
-    <button class="hm-item" onclick="navigateTo('dashboard')"><span class="hm-icon">🏠</span>FIRE仪表盘</button>
-    <button class="hm-item" onclick="navigateTo('body')"><span class="hm-icon">⚖️</span>体重管理</button>
-    <button class="hm-item" onclick="navigateTo('bookkeeping')"><span class="hm-icon">🧾</span>记账</button>
-    <button class="hm-item" onclick="navigateTo('profile')"><span class="hm-icon">👤</span>个人管理</button>
-    <div class="hm-footer">ShoreOS v4.0 · 人生自由度仪表盘</div>
+    <button class="hm-item active" data-nav="dashboard" onclick="navigateTo('dashboard')"><span class="hm-icon">🏠</span>FIRE 目标</button>
+    <button class="hm-item" data-nav="body" onclick="navigateTo('body')"><span class="hm-icon">⚖️</span>体重管理</button>
+    <button class="hm-item" data-nav="bookkeeping" onclick="navigateTo('bookkeeping')"><span class="hm-icon">🧾</span>记账管理</button>
+    <button class="hm-item" data-nav="profile" onclick="navigateTo('profile')"><span class="hm-icon">👤</span>当前用户资料</button>
+    <button class="hm-item" data-nav="settings" onclick="navigateTo('settings')"><span class="hm-icon">⚙️</span>设置</button>
+    <div class="hm-footer">ShoreOS v4.1 · 左侧菜单切换页面</div>
   </div>
 
-  <!-- ===== SETTINGS FAB + PANEL ===== -->
-  <button class="settings-fab" id="settingsFab" onclick="toggleSettings()">⚙️</button>
-
+  <!-- ===== LEGACY SETTINGS PANEL (kept for old calls) ===== -->
   <div class="settings-overlay" id="settingsOverlay" onclick="toggleSettings()"></div>
   <div class="settings-panel" id="settingsPanel">
     <div class="sp-handle" onclick="toggleSettings()"></div>
@@ -1436,8 +1481,25 @@ td.wn { color: var(--orange); font-weight: 600; }
     <button class="sp-item" onclick="toggleSettings();showToast('🌸 ShoreOS v4.0 · 人生自由度仪表盘 · 算清楚你离财务自由还差多远')"><span class="sp-icon">ℹ️</span>关于</button>
   </div>
 
+  <!-- ===== SETTINGS PAGE ===== -->
+  <div class="scroll-section" id="sec-settings">
+    <div class="app-header">
+      <div class="greeting">⚙️ 设置</div>
+      <div class="subtitle">主题、用户和应用信息</div>
+    </div>
+    <div class="settings-page-list">
+      <button class="sp-item" data-theme-choice="pink" onclick="setTheme('pink')"><span class="sp-icon">🌸</span><span class="sp-theme-label">粉色</span><span class="theme-dot" data-theme-dot="pink" style="background:#fb7185;"></span></button>
+      <button class="sp-item" data-theme-choice="mint" onclick="setTheme('mint')"><span class="sp-icon">🌿</span><span class="sp-theme-label">薄荷</span><span class="theme-dot" data-theme-dot="mint" style="background:#34d399;"></span></button>
+      <button class="sp-item" data-theme-choice="warm" onclick="setTheme('warm')"><span class="sp-icon">🍊</span><span class="sp-theme-label">暖橘</span><span class="theme-dot" data-theme-dot="warm" style="background:#f97316;"></span></button>
+      <button class="sp-item" data-theme-choice="purple" onclick="setTheme('purple')"><span class="sp-icon">🍇</span><span class="sp-theme-label">紫色</span><span class="theme-dot" data-theme-dot="purple" style="background:#a78bfa;"></span></button>
+    </div>
+    <div class="settings-page-list">
+      <button class="sp-item" onclick="showToast('ShoreOS v4.1 · FIRE、体重、记账分页面管理')"><span class="sp-icon">ℹ️</span>关于 ShoreOS</button>
+    </div>
+  </div>
+
   <!-- ===== PROFILE PAGE ===== -->
-  <div class="scroll-section" id="sec-profile" style="display:none;">
+  <div class="scroll-section" id="sec-profile">
     <div class="page-header">
       <button class="page-back" onclick="navigateTo('dashboard')">← 返回</button>
       <span class="page-title">个人管理</span>
@@ -1499,14 +1561,16 @@ td.wn { color: var(--orange); font-weight: 600; }
   </div>
 
   <!-- ===== USER MANAGE PAGE ===== -->
-  <div class="scroll-section" id="sec-user-manage" style="display:none;">
+  <div class="scroll-section" id="sec-user-manage">
     <div class="page-header">
       <button class="page-back" onclick="navigateTo('dashboard')">← 返回</button>
-      <span class="page-title">用户管理</span>
+      <span class="page-title">FIRE 档案管理</span>
     </div>
     <div class="user-list" id="userManageList"></div>
     <button class="um-add-btn" onclick="startNewUserWizard()">＋ 添加新用户</button>
   </div>
+
+</div>
 
 <script>
 // ===== ShoreOS API 数据层 =====
@@ -1710,7 +1774,6 @@ const ProfileCloud = {
 
 function saveProfiles(){
   localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
-  renderUserSwitcher();
   // 异步推送到云端
   ProfileCloud._pushCloud([...userProfiles]);
 }
@@ -1733,7 +1796,6 @@ function switchUser(uid){
     if(p) loadProfileToFields(p);
     // Reload per-user data (bills, body)
     reloadUserData();
-    renderUserSwitcher();
     recalc();
     refreshDashboard();
   } catch(e){ console.error('switchUser error:', e); }
@@ -1760,7 +1822,7 @@ function reloadUserData(){
 
 
 function setParamTier(tier, btn){
-  document.querySelectorAll('#paramPage3 .param-seg-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#pTierGroup .param-seg-btn').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   // 根据档位调整 penSelf/medSelf（以城市预设为基准）
   const city = getActiveProfile()?.city || 'other';
@@ -1811,7 +1873,6 @@ function deleteProfile(uid){
   if(activeUid){
     switchUser(activeUid);
   } else {
-    renderUserSwitcher();
     document.getElementById('welcomeCard').style.display = 'block';
     document.getElementById('dashboardContent').style.display = 'none';
   }
@@ -1874,31 +1935,14 @@ function syncParamPanelFromProfile(){
   document.getElementById('pDeposit').value = p.assetDeposit || '';
   document.getElementById('pFund').value = p.assetFund || '';
   document.getElementById('pStock').value = p.assetStock || '';
+  document.getElementById('pReturn').value = p.assetReturn || '';
+  document.getElementById('pInflation').value = p.inflation || '3';
   document.getElementById('pChildCost').value = p.childCost || '';
   // Restore toggle buttons
   setParamGenderUI(p.gender);
   setParamSSUI(p.ssStrategy);
   setParamHouseUI(p.houseTypeCur);
   setParamChildUI(p.childPlan);
-}
-
-// ===== USER SWITCHER RENDER =====
-function renderUserSwitcher(){
-  const container = document.getElementById('userSwitcher');
-  if(!container) return;
-  let html = '';
-  for(const p of userProfiles){
-    const active = p.uid === activeUid ? ' active' : '';
-    html += `<button class="user-avatar-btn${active}" onclick="switchUser('${p.uid}')" oncontextmenu="event.preventDefault();showUserMenu('${p.uid}')">
-      <div class="user-avatar-circle">${p.avatar||'🐱'}</div>
-      <div class="user-avatar-name">${p.name||'未命名'}</div>
-    </button>`;
-  }
-  html += `<button class="user-avatar-btn user-more-btn" onclick="navigateTo('user-manage')" title="管理用户">
-    <div class="user-avatar-circle">⋯</div>
-    <div class="user-avatar-name">更多</div>
-  </button>`;
-  container.innerHTML = html;
 }
 
 function showUserMenu(uid){
@@ -1922,10 +1966,11 @@ function toggleParamPanel(){
 
 function switchParamTab(idx, btn){
   pTabIdx = idx;
-  document.querySelectorAll('.param-seg-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.param-tab-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
   document.querySelectorAll('.param-page').forEach(p => p.classList.remove('active'));
-  document.getElementById('paramPage'+idx).classList.add('active');
+  const page = document.getElementById('paramPage'+idx);
+  if(page) page.classList.add('active');
 }
 
 function setParamGender(g, btn){
@@ -2001,12 +2046,13 @@ function saveParamPanel(){
   document.getElementById('assetDeposit').value = document.getElementById('pDeposit').value;
   document.getElementById('assetFund').value = document.getElementById('pFund').value;
   document.getElementById('assetStock').value = document.getElementById('pStock').value;
+  document.getElementById('assetReturn').value = document.getElementById('pReturn').value;
+  document.getElementById('inflation').value = document.getElementById('pInflation').value || '3';
   document.getElementById('childCost').value = document.getElementById('pChildCost').value;
 
   saveFieldsToProfile();
   pDirty = false;
   recalc();
-  renderUserSwitcher();
   document.getElementById('paramOverlay')?.classList.remove('active');
   document.getElementById('paramSheet')?.classList.remove('active');
   showToast('✅ 已保存并重算');
@@ -2058,12 +2104,9 @@ function startNewUserWizard(){
   document.querySelectorAll('#wizHouseType .wiz-chip')[0]?.classList.add('active');
   document.querySelectorAll('#wizAvatars .wiz-chip').forEach(b=>b.classList.remove('active'));
 
-  // Show wizard section
-  document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sec-inputs').style.display = 'block';
-  document.getElementById('sec-inputs').classList.add('active');
   wizStep = 0; WIZ_TOTAL_NEW = 8;
   wizGoTo(0);
+  navigateTo('inputs');
 }
 
 let WIZ_TOTAL_NEW = 8;
@@ -2081,9 +2124,6 @@ function wizFinishNew(){
   const profile = createProfile(name, wizNewAvatar);
   // Save current field values to profile
   saveFieldsToProfile();
-  // Hide wizard, switch to dashboard
-  document.getElementById('sec-inputs').style.display = 'none';
-  document.getElementById('sec-inputs').classList.remove('active');
   navigateTo('dashboard');
   switchUser(profile.uid);
   showToast('🌸 欢迎「'+name+'」加入 ShoreOS！');
@@ -2456,18 +2496,6 @@ function render(d){
   document.getElementById('dashboardContent').style.display = hasData ? 'block' : 'none';
   if(!hasData||!d) return;
 
-  // Freedom highlight
-  document.getElementById('hlFreedom').textContent = assetHide ? '**%' : fmtP(d.fi);
-  const moods = ['起步积累','路走一半','曙光在前','接近自由','可以选择不工作了'];
-  const mi = d.fi<20?0:d.fi<40?1:d.fi<60?2:d.fi<80?3:4;
-  document.getElementById('hlFreedomLabel').textContent = moods[mi];
-  document.getElementById('hlTarget').textContent = assetHide ? '****' : fmtW(d.fire);
-  document.getElementById('hlGap').textContent = fmtW(d.gap);
-  if(d.fireYearExact){
-    document.getElementById('hlETA').textContent = d.fireYearExact+'年'+(d.fireMonthExact||'')+'月';
-  } else {
-    document.getElementById('hlETA').textContent = d.fireYear?d.fireYear+'年':(d.gap<=0?'✨ 已到':'—');
-  }
   // 退休节点
   if(d.estPensionMonthly>0){
     const retireInfo = '60岁退休 · 养老金约'+d.estPensionMonthly+'元/月';
@@ -2661,22 +2689,25 @@ function setChild(p, btn){
 }
 
 function navigateTo(module){
-  document.querySelectorAll('.scroll-section').forEach(s=>{ s.classList.remove('active'); s.style.display = ''; });
-  // Map module names to section IDs
-  const secMap = {
-    'dashboard': 'sec-dashboard',
-    'body': 'sec-body',
-    'bookkeeping': 'sec-bookkeeping',
-    'profile': 'sec-profile',
-    'user-manage': 'sec-user-manage',
-    'inputs': 'sec-inputs'
+  const pages = {
+    'dashboard': { id: 'sec-dashboard', title: 'FIRE 目标' },
+    'body': { id: 'sec-body', title: '体重管理' },
+    'bookkeeping': { id: 'sec-bookkeeping', title: '记账管理' },
+    'profile': { id: 'sec-profile', title: '当前用户资料' },
+    'user-manage': { id: 'sec-user-manage', title: 'FIRE 档案管理' },
+    'settings': { id: 'sec-settings', title: '设置' },
+    'inputs': { id: 'sec-inputs', title: '创建用户档案' }
   };
-  const secId = secMap[module] || 'sec-dashboard';
+  const pageKey = pages[module] ? module : 'dashboard';
+  const secId = pages[pageKey].id;
+  document.querySelectorAll('.scroll-section').forEach(s=>{ s.classList.remove('active'); });
   const sec = document.getElementById(secId);
-  if(sec){
-    sec.classList.add('active');
-    if(module === 'inputs') sec.style.display = 'block';
-  }
+  if(sec) sec.classList.add('active');
+  document.querySelectorAll('[data-nav]').forEach(item => item.classList.toggle('active', item.dataset.nav === pageKey));
+  const titleEl = document.getElementById('appPageTitle');
+  if(titleEl) titleEl.textContent = pages[pageKey].title;
+  const assetBtn = document.getElementById('assetHideBtn');
+  if(assetBtn) assetBtn.style.visibility = pageKey === 'dashboard' ? 'visible' : 'hidden';
   // Close hamburger menu
   const hm = document.getElementById('hamburgerMenu');
   const ho = document.getElementById('hamburgerOverlay');
@@ -2687,23 +2718,26 @@ function navigateTo(module){
   const so = document.getElementById('settingsOverlay');
   if(sp) sp.classList.remove('active');
   if(so) so.classList.remove('active');
+  const pso = document.getElementById('profileSwitchOverlay');
+  const pss = document.getElementById('profileSwitchSheet');
+  if(pso) pso.classList.remove('active');
+  if(pss) pss.classList.remove('active');
   // Close param panel when leaving dashboard
-  if(module !== 'dashboard'){
+  if(pageKey !== 'dashboard'){
     const po = document.getElementById('paramOverlay');
     const ps = document.getElementById('paramSheet');
     if(po) po.classList.remove('active');
     if(ps) ps.classList.remove('active');
   }
   // Scroll to top
-  document.getElementById('phone').scrollTop = 0;
+  const phone = document.getElementById('phone');
+  if(phone) phone.scrollTop = 0;
+  window.scrollTo(0, 0);
   // Render page-specific content
-  if(module === 'profile') renderProfilePage();
-  if(module === 'user-manage') renderUserManagePage();
+  if(pageKey === 'profile') renderProfilePage();
+  if(pageKey === 'user-manage') renderUserManagePage();
   // Recalculate if not on inputs
-  if(module !== 'inputs') recalc();
-  // Show/hide settings FAB based on module
-  const fab = document.getElementById('settingsFab');
-  if(fab) fab.style.display = (module === 'dashboard' || module === 'profile' || module === 'user-manage') ? 'flex' : 'none';
+  if(pageKey !== 'inputs') recalc();
 }
 
 // Keep old switchTab as wrapper for backward compatibility
@@ -2745,6 +2779,19 @@ function toggleSettings(){
 const THEME_KEY = 'shoreos_theme';
 const THEMES = ['pink','mint','warm','purple'];
 
+function updateThemeSelection(theme){
+  THEMES.forEach(t => {
+    const dot = document.getElementById('themeDot'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(dot) dot.classList.toggle('active', t === theme);
+  });
+  document.querySelectorAll('[data-theme-choice]').forEach(item => {
+    item.classList.toggle('active', item.dataset.themeChoice === theme);
+  });
+  document.querySelectorAll('[data-theme-dot]').forEach(dot => {
+    dot.classList.toggle('active', dot.dataset.themeDot === theme);
+  });
+}
+
 function setTheme(theme){
   if(!THEMES.includes(theme)) theme = 'pink';
   // 设置 DOM 属性
@@ -2754,13 +2801,9 @@ function setTheme(theme){
   // 保存到当前用户 profile
   const p = getActiveProfile();
   if(p){ p.theme = theme; saveProfiles(); }
-  // 更新主题圆点选中状态
-  THEMES.forEach(t => {
-    const dot = document.getElementById('themeDot'+t.charAt(0).toUpperCase()+t.slice(1));
-    if(dot) dot.classList.toggle('active', t === theme);
-  });
-  // 关闭设置面板
-  toggleSettings();
+  updateThemeSelection(theme);
+  const panel = document.getElementById('settingsPanel');
+  if(panel && panel.classList.contains('active')) toggleSettings();
 }
 
 function loadTheme(){
@@ -2773,11 +2816,7 @@ function loadTheme(){
   if(!theme || !THEMES.includes(theme)) theme = 'pink';
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem(THEME_KEY, theme);
-  // 更新主题圆点选中状态
-  THEMES.forEach(t => {
-    const dot = document.getElementById('themeDot'+t.charAt(0).toUpperCase()+t.slice(1));
-    if(dot) dot.classList.toggle('active', t === theme);
-  });
+  updateThemeSelection(theme);
 }
 
 // ===== WIZARD NAVIGATION =====
@@ -2811,9 +2850,7 @@ function wizPrev(){
 function wizFinish(){
   try { recalc(); } catch(e){ console.error('recalc error:', e); }
   try {
-    document.querySelectorAll('.scroll-section').forEach(s=>s.classList.remove('active'));
-    document.getElementById('sec-dashboard').classList.add('active');
-    document.getElementById('phone').scrollTop = 0;
+    navigateTo('dashboard');
     document.getElementById('welcomeCard').style.display = 'none';
     document.getElementById('dashboardContent').style.display = 'block';
   } catch(e){ console.error('wizFinish error:', e); }
@@ -3266,7 +3303,6 @@ loadTheme();
 
   wizGoTo(0);
   initVoice();
-  renderUserSwitcher();
   try { recalc(); } catch(e){ console.error('init recalc error:', e); }
   try { refreshDashboard(); } catch(e){ console.error('init refreshDashboard error:', e); }
 
@@ -3289,25 +3325,48 @@ function switchDashTab(idx, btn){
 }
 
 // ===== UPDATE USER INFO BAR =====
+function freedomMood(fi){
+  const moods = ['起步积累','路走一半','曙光在前','接近自由','可以选择不工作了'];
+  const v = Number(fi) || 0;
+  return moods[v<20?0:v<40?1:v<60?2:v<80?3:4];
+}
+
 function updateUserInfoBar(d){
   const p = getActiveProfile();
-  if(!p) return;
   const avEl = document.getElementById('uibarAvatar');
   const nmEl = document.getElementById('uibarName');
+  const moodEl = document.getElementById('uibarMood');
   const fiEl = document.getElementById('uibarFreedom');
   const tgEl = document.getElementById('uibarTarget');
   const gpEl = document.getElementById('uibarGap');
   const etaEl = document.getElementById('uibarETA');
+  if(!p){
+    if(avEl) avEl.textContent = '🐱';
+    if(nmEl) nmEl.textContent = '--';
+    if(moodEl) moodEl.textContent = '未选择档案';
+    if(fiEl) fiEl.textContent = '--%';
+    if(tgEl) tgEl.textContent = '--';
+    if(gpEl) gpEl.textContent = '--';
+    if(etaEl) etaEl.textContent = '--';
+    return;
+  }
   if(avEl) avEl.textContent = p.avatar || '🐱';
   if(nmEl) nmEl.textContent = p.name || '未命名';
   if(d){
-    if(fiEl) fiEl.textContent = 'FI ' + (d.fi||0).toFixed(1) + '%';
-    if(tgEl) tgEl.textContent = '目标 ' + fmtW(d.fire);
-    if(gpEl) gpEl.textContent = 'Gap ' + fmtW(Math.max(d.fire - d.investableAssets, 0));
+    if(moodEl) moodEl.textContent = freedomMood(d.fi);
+    if(fiEl) fiEl.textContent = assetHide ? '**%' : fmtP(d.fi||0);
+    if(tgEl) tgEl.textContent = assetHide ? '****' : fmtW(d.fire);
+    if(gpEl) gpEl.textContent = assetHide ? '****' : fmtW(Math.max(d.fire - d.investableAssets, 0));
     if(etaEl){
-      if(d.fireYearExact) etaEl.textContent = 'ETA ' + d.fireYearExact + '年';
-      else etaEl.textContent = 'ETA --';
+      if(d.fireYearExact) etaEl.textContent = d.fireYearExact + '年' + (d.fireMonthExact || '') + '月';
+      else etaEl.textContent = d.fireYear ? d.fireYear + '年' : (d.gap<=0 ? '已达成' : '--');
     }
+  } else {
+    if(moodEl) moodEl.textContent = '参数未完整';
+    if(fiEl) fiEl.textContent = '--%';
+    if(tgEl) tgEl.textContent = '--';
+    if(gpEl) gpEl.textContent = '--';
+    if(etaEl) etaEl.textContent = '--';
   }
 }
 
@@ -3372,7 +3431,6 @@ function saveProfileInfo(){
   if(phAvatar) phAvatar.textContent = p.avatar;
   // Sync to user info bar
   updateUserInfoBar(calcAll());
-  renderUserSwitcher();
   // Also sync param panel fields
   loadProfileToFields(p);
   recalc();
@@ -3419,6 +3477,53 @@ function renderUserManagePage(){
 
 function switchUserAndGo(uid){
   switchUser(uid);
+  navigateTo('dashboard');
+  const p = getActiveProfile();
+  showToast('已切换到 ' + (p ? p.name : '用户'));
+}
+
+function renderQuickUserList(){
+  const list = document.getElementById('quickUserList');
+  if(!list) return;
+  if(userProfiles.length === 0){
+    list.innerHTML = '<div style="padding:18px 8px;text-align:center;color:var(--sub);font-size:13px;">还没有 FIRE 档案</div>';
+    return;
+  }
+  let html = '';
+  for(const p of userProfiles){
+    const isActive = p.uid === activeUid;
+    const d = calcAllForProfile(p);
+    const fi = d ? fmtP(d.fi || 0) : '--';
+    const eta = d && d.fireYearExact ? d.fireYearExact + '年' + (d.fireMonthExact || '') + '月' : '--';
+    html += '<button type="button" class="switch-user-row' + (isActive ? ' active' : '') + '" onclick="switchUserFromCard(\'' + p.uid + '\')">'
+      + '<span class="switch-user-avatar">' + (p.avatar || '🐱') + '</span>'
+      + '<span class="switch-user-main">'
+      + '<span class="switch-user-name">' + (p.name || '未命名') + '</span>'
+      + '<span class="switch-user-meta">FI ' + fi + ' · 预计 ' + eta + '</span>'
+      + '</span>'
+      + '</button>';
+  }
+  list.innerHTML = html;
+}
+
+function toggleProfileSwitch(force){
+  const overlay = document.getElementById('profileSwitchOverlay');
+  const sheet = document.getElementById('profileSwitchSheet');
+  if(!overlay || !sheet) return;
+  const open = typeof force === 'boolean' ? force : !overlay.classList.contains('active');
+  if(open){
+    renderQuickUserList();
+    overlay.classList.add('active');
+    sheet.classList.add('active');
+  } else {
+    overlay.classList.remove('active');
+    sheet.classList.remove('active');
+  }
+}
+
+function switchUserFromCard(uid){
+  switchUser(uid);
+  toggleProfileSwitch(false);
   navigateTo('dashboard');
   const p = getActiveProfile();
   showToast('已切换到 ' + (p ? p.name : '用户'));
@@ -3475,6 +3580,10 @@ function toggleParamOverlay(){
     overlay.classList.remove('active');
     sheet.classList.remove('active');
   } else {
+    if(!getActiveProfile()){
+      navigateTo('user-manage');
+      return;
+    }
     // Sync param panel from profile first
     if(typeof syncParamPanelFromProfile === 'function') syncParamPanelFromProfile();
     overlay.classList.add('active');
@@ -4074,14 +4183,6 @@ function renderBkAnalysis(){
     </tr>`;
   }).join('');
 }
-</script>
-
-<!-- Initialize settings FAB visibility -->
-<script>
-(function(){
-  const fab = document.getElementById('settingsFab');
-  if(fab) fab.style.display = 'flex';
-})();
 </script>
 
 </body>
