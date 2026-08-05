@@ -349,14 +349,83 @@ td.wn { color: var(--orange); font-weight: 600; }
 .voice-fab:active { transform: scale(0.92); }
 .voice-fab.listening { background: var(--red); animation: pulse 1s infinite; }
 @keyframes pulse { 0%,100% { box-shadow: 0 4px 16px rgba(255,59,48,0.3); } 50% { box-shadow: 0 4px 28px rgba(255,59,48,0.6); } }
-.voice-toast {
-  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 31;
-  background: rgba(0,0,0,0.82); color: #fff; padding: 12px 22px; border-radius: 20px;
-  font-size: 13px; max-width: 320px; text-align: center; display: none;
-  backdrop-filter: blur(10px);
+/* ===== TOAST NOTIFICATION ===== */
+.toast-container {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 200;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  pointer-events: none; width: 90%; max-width: 400px;
 }
-.voice-toast.show { display: block; animation: toastIn 0.3s ease-out; }
-@keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+.toast {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; border-radius: 14px;
+  font-size: 14px; font-weight: 600; line-height: 1.3;
+  pointer-events: auto; width: 100%;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  animation: toastSlideIn 0.35s cubic-bezier(0.21,1.02,0.73,1);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(20px);
+}
+.toast.removing { opacity: 0; transform: translateY(-10px) scale(0.96); }
+.toast-icon { font-size: 20px; flex-shrink: 0; }
+.toast-msg { flex: 1; min-width: 0; }
+.toast-close { font-size: 16px; cursor: pointer; flex-shrink: 0; opacity: 0.6; background: none; border: none; color: inherit; padding: 0 4px; }
+.toast-success { background: rgba(52,199,89,0.95); color: #fff; }
+.toast-error { background: rgba(255,59,48,0.95); color: #fff; }
+.toast-info { background: rgba(0,0,0,0.85); color: #fff; }
+.toast-loading { background: rgba(0,122,255,0.95); color: #fff; }
+.toast-warn { background: rgba(255,149,0,0.95); color: #fff; }
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateY(-20px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===== SKELETON LOADING ===== */
+.skeleton {
+  background: linear-gradient(90deg, var(--sep) 25%, #f0f0f0 50%, var(--sep) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.skeleton-text { height: 14px; margin-bottom: 8px; width: 80%; }
+.skeleton-text.short { width: 50%; }
+.skeleton-card { height: 80px; border-radius: var(--radius); margin-bottom: 12px; }
+.skeleton-avatar { width: 44px; height: 44px; border-radius: 50%; }
+.skeleton-bar { height: 8px; border-radius: 4px; margin-bottom: 6px; }
+.skeleton-row { display: flex; gap: 8px; align-items: center; padding: 12px 16px; }
+
+/* ===== SAVE INDICATOR ===== */
+.save-indicator {
+  position: fixed; top: 10px; right: 16px; z-index: 190;
+  padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  background: rgba(0,0,0,0.75); color: #fff;
+  opacity: 0; transform: translateY(-10px); transition: all 0.3s ease;
+  pointer-events: none; backdrop-filter: blur(10px);
+}
+.save-indicator.visible { opacity: 1; transform: translateY(0); }
+.save-indicator.saved { background: rgba(52,199,89,0.9); }
+
+/* ===== PULL TO REFRESH ===== */
+.ptr-indicator {
+  text-align: center; padding: 0 0 12px; font-size: 12px; color: var(--sub); font-weight: 600;
+  overflow: hidden; max-height: 0; transition: max-height 0.2s ease;
+}
+.ptr-indicator.pulling { max-height: 40px; }
+.ptr-indicator.refreshing { max-height: 40px; color: var(--blue); }
+
+/* ===== SECTION TRANSITIONS ===== */
+.scroll-section {
+  opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none; position: absolute; width: 100%; left: 0;
+}
+.scroll-section.active { opacity: 1; transform: translateY(0); pointer-events: auto; position: relative; }
+
+/* ===== OFFLINE BANNER ===== */
+.offline-banner {
+  background: #fff3cd; color: #856404; text-align: center; padding: 8px 16px; font-size: 12px; font-weight: 600;
+  display: none; position: sticky; top: 0; z-index: 11;
+}
+.offline-banner.show { display: block; }
+.offline-banner .retry-link { color: var(--blue); text-decoration: underline; cursor: pointer; margin-left: 8px; }
 
 /* Quick presets row */
 .quick-row {
@@ -825,6 +894,12 @@ td.wn { color: var(--orange); font-weight: 600; }
 </style>
 </head>
 <body>
+<!-- Toast 容器 -->
+<div class="toast-container" id="toastContainer"></div>
+<!-- 自动保存指示器 -->
+<div class="save-indicator" id="saveIndicator">已保存 ✓</div>
+<!-- 离线横幅 -->
+<div class="offline-banner" id="offlineBanner">⚠️ 网络连接异常 <span class="retry-link" onclick="retryConnection()">重试</span></div>
 <div class="phone" id="phone">
 
   <div class="status-bar app-topbar">
@@ -874,8 +949,16 @@ td.wn { color: var(--orange); font-weight: 600; }
         <button class="dash-tab-btn" onclick="switchDashTab(2,this)">📊 资产图表</button>
       </div>
 
+    <!-- Dashboard Skeleton Loading -->
+    <div id="dashboardSkeleton" class="fade-in" style="padding: 0 12px;">
+      <div class="skeleton-row" style="margin-bottom:16px;"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div></div></div>
+      <div class="skeleton skeleton-card"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;"><div class="skeleton" style="height:72px;border-radius:var(--radius);"></div><div class="skeleton" style="height:72px;border-radius:var(--radius);"></div><div class="skeleton" style="height:72px;border-radius:var(--radius);"></div><div class="skeleton" style="height:72px;border-radius:var(--radius);"></div></div>
+      <div class="skeleton skeleton-card" style="height:200px;"></div>
+    </div>
+
     <!-- Welcome (no data) -->
-    <div class="welcome-card" id="welcomeCard">
+    <div class="welcome-card" id="welcomeCard" style="display:none;">
       <div class="wc-emoji">🌸</div>
       <h2>还没有用户档案</h2>
       <p>先创建一个 FIRE 档案，再查看自由目标、参数和图表。</p>
@@ -995,7 +1078,7 @@ td.wn { color: var(--orange); font-weight: 600; }
   <div class="scroll-section" id="sec-inputs">
     <!-- Voice button (floating) -->
     <button class="voice-fab" id="voiceBtn" onclick="toggleVoice()" title="语音输入填表">🎤</button>
-    <div class="voice-toast" id="voiceToast"></div>
+    <div class="ptr-indicator" id="ptrIndicator">↓ 下拉刷新</div>
 
     <!-- New User Wizard (8 steps, reused from old wizard) -->
     <div class="wizard-progress" id="wizProgress">
@@ -1590,6 +1673,7 @@ const ShoreAPI = {
     if(res.status === 401 && path !== '/api/v1/auth/bootstrap'){
       localStorage.removeItem(TOKEN_KEY);
       apiToken = '';
+      showToast('会话已过期，请刷新页面', 'warn');
     }
     if(!res.ok){
       const msg = body && body.error && body.error.message ? body.error.message : '请求失败';
@@ -2135,22 +2219,53 @@ function wizFinishNew(){
 const origWizFinish = wizFinish;
 wizFinish = function(){ origWizFinish(); };
 
-// Simple toast
-function showToast(msg){
-  const el = document.getElementById('voiceToast');
-  if(!el) return;
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2000);
+// ===== TOAST SYSTEM =====
+let toastTimer = null;
+function showToast(msg, type='info', duration=2500){
+  const container = document.getElementById('toastContainer');
+  if(!container) return;
+  const icons = { success:'✅', error:'❌', info:'ℹ️', loading:'⏳', warn:'⚠️' };
+  const existing = container.querySelector('.toast');
+  if(existing){ existing.classList.add('removing'); setTimeout(() => { if(existing.parentNode) existing.remove(); }, 250); }
+  const toast = document.createElement('div');
+  toast.className = 'toast toast-'+type;
+  toast.innerHTML = '<span class="toast-icon">'+(icons[type]||'')+'</span><span class="toast-msg">'+msg+'</span><button class="toast-close" onclick="this.parentElement.remove()">✕</button>';
+  container.appendChild(toast);
+  if(type !== 'loading'){
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.classList.add('removing'); setTimeout(() => { if(toast.parentNode) toast.remove(); }, 250); }, duration);
+  }
+  return toast;
 }
+function hideToast(toast){ if(toast){ toast.classList.add('removing'); setTimeout(() => { if(toast.parentNode) toast.remove(); }, 250); } }
 
-// Refresh dashboard: re-render UserSwitcher + show/hide welcome
-function refreshDashboard(){
-  const hasData = hasAnyData() || (getActiveProfile() !== null);
+// ===== SKELETON & LOADING =====
+let dashboardLoading = false;
+function showDashboardSkeleton(){
+  dashboardLoading = true;
+  const sk = document.getElementById('dashboardSkeleton');
   const wc = document.getElementById('welcomeCard');
   const dc = document.getElementById('dashboardContent');
+  if(sk) sk.style.display = 'block';
+  if(wc) wc.style.display = 'none';
+  if(dc) dc.style.display = 'none';
+}
+function hideDashboardSkeleton(){
+  dashboardLoading = false;
+  const sk = document.getElementById('dashboardSkeleton');
+  if(sk) sk.style.display = 'none';
+}
+
+// Refresh dashboard: re-render + skeleton control + welcome toggle
+function refreshDashboard(){
+  const hasData = hasAnyData() || (getActiveProfile() !== null);
+  if(dashboardLoading) hideDashboardSkeleton();
+  const wc = document.getElementById('welcomeCard');
+  const dc = document.getElementById('dashboardContent');
+  const sk = document.getElementById('dashboardSkeleton');
   if(wc) wc.style.display = hasData ? 'none' : 'block';
   if(dc) dc.style.display = hasData ? 'block' : 'none';
+  if(sk) sk.style.display = 'none';
 }
 
 // Override recalc to also refresh dashboard
@@ -2185,6 +2300,10 @@ function saveState(){
   data._gender = gender;
   data._ssStrategy = ssStrategy;
   localStorage.setItem(PREFIX+'state', JSON.stringify(data));
+  // 自动保存指示
+  const si = document.getElementById('saveIndicator');
+  if(si){ si.textContent = '已保存 ✓'; si.className = 'save-indicator visible saved';
+    setTimeout(() => { if(si.classList.contains('saved')) si.className = 'save-indicator'; }, 1500); }
 }
 function loadState(){
   try {
@@ -3333,6 +3452,9 @@ loadTheme();
   const yearEl = document.getElementById('currentYear');
   if(yearEl) yearEl.value = String(new Date().getFullYear());
 
+  // 显示骨架屏
+  showDashboardSkeleton();
+
   // 尝试从 ShoreOS API 合并后端 profiles
   await ProfileCloud.mergeFromCloud();
 
@@ -3348,7 +3470,7 @@ loadTheme();
         saveFieldsToProfile();
         activeUid = profile.uid;
         localStorage.setItem(ACTIVE_KEY, activeUid);
-        showToast('✨ 数据已迁移到「'+profile.name+'」');
+        showToast('✨ 数据已迁移到「'+profile.name+'」', 'success');
       }
     } catch(e){ console.warn('v1 migration failed:', e); }
   }
@@ -3377,6 +3499,70 @@ loadTheme();
   if(cbReady) ProfileCloud._pushCloud([...userProfiles]);
 })();
 
+// ===== AUTO-SAVE ON INPUT =====
+let saveDebounce = null;
+document.addEventListener('input', function(e){
+  if(!e.target.closest) return;
+  const inp = e.target.closest('input, select, textarea');
+  if(!inp || !inp.id) return;
+  const saveFields = ['birthYear','currentYear','pensionYears','medicalYears','pensionMin','medicalMin','pensionSelfPay','medicalSelfPay','incomePost'];
+  if(saveFields.includes(inp.id) || inp.closest('.param-field') || inp.closest('.card-row')){
+    clearTimeout(saveDebounce);
+    const si = document.getElementById('saveIndicator');
+    if(si){ si.textContent = '保存中...'; si.className = 'save-indicator visible'; }
+    saveDebounce = setTimeout(() => { saveState(); recalc(); }, 600);
+  }
+});
+
+// ===== PULL-TO-REFRESH =====
+let ptrStartY = 0, ptrPulling = false, ptrRefreshing = false;
+document.addEventListener('touchstart', function(e){ ptrStartY = e.touches[0].clientY; }, {passive:true});
+document.addEventListener('touchmove', function(e){
+  if(ptrRefreshing) return;
+  const y = e.touches[0].clientY;
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+  if(scrollTop <= 0 && y > ptrStartY + 30 && !ptrPulling){
+    ptrPulling = true;
+    const el = document.getElementById('ptrIndicator');
+    if(el) el.className = 'ptr-indicator pulling';
+  }
+}, {passive:true});
+document.addEventListener('touchend', function(){
+  if(!ptrPulling || ptrRefreshing) return;
+  ptrPulling = false;
+  ptrRefreshing = true;
+  const el = document.getElementById('ptrIndicator');
+  if(el){ el.textContent = '⟳ 刷新中...'; el.className = 'ptr-indicator refreshing'; }
+  Promise.all([ProfileCloud.mergeFromCloud(), new Promise(r => setTimeout(r, 500))]).then(() => {
+    if(activeUid){ const p = getActiveProfile(); if(p) loadProfileToFields(p); }
+    recalc(); refreshDashboard();
+    ptrRefreshing = false;
+    if(el){ el.textContent = '✓ 已刷新'; setTimeout(() => { el.className = 'ptr-indicator'; }, 1500); }
+  }).catch(() => {
+    ptrRefreshing = false;
+    if(el){ el.textContent = '下拉刷新'; el.className = 'ptr-indicator'; }
+    showToast('刷新失败，请检查网络', 'error');
+  });
+});
+
+// ===== OFFLINE DETECTION =====
+function updateOnlineStatus(){
+  const banner = document.getElementById('offlineBanner');
+  if(!navigator.onLine){
+    if(banner) banner.classList.add('show');
+    showToast('网络已断开，数据保存在本地', 'warn', 3000);
+  } else {
+    if(banner) banner.classList.remove('show');
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+function retryConnection(){
+  ProfileCloud.mergeFromCloud().then(() => {
+    showToast('连接已恢复 ✓', 'success');
+    document.getElementById('offlineBanner').classList.remove('show');
+  }).catch(() => showToast('仍然无法连接', 'warn'));
+}
 
 // ===== DASHBOARD TAB SWITCHING =====
 function switchDashTab(idx, btn){
