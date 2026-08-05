@@ -2059,8 +2059,10 @@ function saveParamPanel(){
 }
 
 function applyCityPresetParam(city){
-  const p = cityPresets[city];
+  const p = cityPreset(city);
   if(!p) return;
+  const profile = getActiveProfile();
+  if(profile){ profile.city = city; saveProfiles(); }
   document.getElementById("pensionMin").value = p.pensionMin;
   document.getElementById("medicalMin").value = p.medicalMin;
   if(p.penSelf>0) document.getElementById("pensionSelfPay").value = p.penSelf;
@@ -2243,7 +2245,7 @@ function restoreToggles(){
         ssChips.forEach(b=>b.classList.remove('active'));
         ssChips[1].classList.add('active');
         const hint = document.getElementById('wizSSHint');
-        if(hint) hint.textContent = '一直缴到60岁退休，养老金领得更多。每月固定支出多一份';
+        if(hint) hint.textContent = '一直缴到法定退休年龄，养老金领得更多。每月固定支出多一份';
       }
     }
   } catch(e){ /* ignore toggle restore errors */ }
@@ -2263,6 +2265,54 @@ function fmtW(n){ if(Math.abs(n)>=10000) return (n/10000).toFixed(1)+'万'; retu
 function fmtY(n){ if(n>500) return '很久'; if(n>100) return '>100年'; return n.toFixed(1)+'年'; }
 function fmtP(n){ return Math.min(n,100).toFixed(1)+'%'; }
 function fmtM(n){ if(n>1200) return fmtY(n/12); return Math.round(n)+'个月'; }
+
+const CITY_PENSION_POLICY = {
+  beijing: { socialAvg: 11883, contributionRate: 0.20, accountRate: 0.08 },
+  shanghai: { socialAvg: 12307, contributionRate: 0.20, accountRate: 0.08 },
+  guangzhou: { socialAvg: 9867, contributionRate: 0.20, accountRate: 0.08 },
+  shenzhen: { socialAvg: 9867, contributionRate: 0.20, accountRate: 0.08 },
+  other: { socialAvg: 10000, contributionRate: 0.20, accountRate: 0.08 }
+};
+
+function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+function getCurrentCity(){
+  return getActiveProfile()?.city || 'beijing';
+}
+
+function getRetireAge(birthYear, genderValue){
+  const baseAge = genderValue === 'female' ? 55 : 60;
+  const finalAge = genderValue === 'female' ? 58 : 63;
+  if(!birthYear) return finalAge;
+  const baseRetireYear = birthYear + baseAge;
+  if(baseRetireYear < 2025) return baseAge;
+  // 渐进式延迟退休：这里只按出生年估算，不按出生月份做精确表映射。
+  const delayYears = clamp((baseRetireYear - 2025 + 1) * 0.25, 0, finalAge - baseAge);
+  return Math.round((baseAge + delayYears) * 10) / 10;
+}
+
+function getMinPensionYearsByRetireYear(retireYear){
+  if(retireYear < 2030) return 15;
+  return Math.min(20, 15 + (retireYear - 2029) * 0.5);
+}
+
+function getPensionAccountMonths(retireAge){
+  if(retireAge >= 63) return 117;
+  if(retireAge >= 62) return 125;
+  if(retireAge >= 61) return 132;
+  return 139;
+}
+
+function estimatePensionMonthly(city, penSelf, paidYearsAtRetire, paidYearsNow, futurePaidYears, retireAge){
+  if(!penSelf || paidYearsAtRetire <= 0) return 0;
+  const policy = CITY_PENSION_POLICY[city] || CITY_PENSION_POLICY.other;
+  const contributionBase = penSelf / policy.contributionRate;
+  const paymentIndex = clamp(contributionBase / policy.socialAvg, 0.6, 3);
+  const basic = policy.socialAvg * (1 + paymentIndex) / 2 * paidYearsAtRetire * 0.01;
+  const estimatedAccount = contributionBase * policy.accountRate * 12 * Math.max(paidYearsNow + futurePaidYears, 0);
+  const personal = estimatedAccount / getPensionAccountMonths(retireAge);
+  return Math.round(basic + personal);
+}
 
 function getHouseCost(section){
   if(section==='cur'){
@@ -2314,27 +2364,30 @@ function maskAsset(v){
 function calcAll(){
   const birth=val('birthYear'), now=val('currentYear'), age=now-birth;
   if(age<=0||age>120) return null;
+  const city = getCurrentCity();
+  const retireAge = getRetireAge(birth, gender);
+  const retireYear = birth + retireAge;
+  const policyPensionMin = getMinPensionYearsByRetireYear(retireYear);
+  const yearsToRetire = Math.max(retireAge - age, 0);
 
   // Social security: pension + medical, two tracks
   const penY=val('pensionYears'), medY=val('medicalYears');
-  const penMin=val('pensionMin')||15, medMin=val('medicalMin')||25;
+  const manualPenMin=val('pensionMin')||15, medMin=val('medicalMin')||25;
+  const penMin=Math.max(manualPenMin, policyPensionMin);
   const penSelf=val('pensionSelfPay'), medSelf=val('medicalSelfPay');
 
   // Effective self-pay now: what you'd pay monthly if you quit today
   let ssSelfNow = 0;
   if(penY < penMin) ssSelfNow += penSelf;
   if(medY < medMin) ssSelfNow += medSelf;
-  // If ssStrategy is 'retire', user pays until age 60 even after minimums met
+  // If ssStrategy is 'retire', user pays until statutory retirement age even after minimums met.
   if(ssStrategy === 'retire'){
-    ssSelfNow = penSelf + medSelf; // always pay both until 60
+    ssSelfNow = penSelf + medSelf;
   }
 
   // Calculate total self-pay cost
   let ssTotalCost = 0;
   if(ssStrategy === 'retire'){
-    // Pay until age 60
-    const retireAge = 60;
-    const yearsToRetire = Math.max(retireAge - age, 0);
     ssTotalCost = yearsToRetire * (penSelf + medSelf) * 12;
   } else {
     // Staged: stop when minimums met
@@ -2343,6 +2396,7 @@ function calcAll(){
     const stage1Years = Math.min(penRemain, medRemain);
     ssTotalCost += stage1Years * (penSelf + medSelf) * 12;
     penRemain -= stage1Years; medRemain -= stage1Years;
+    if(penRemain > 0) ssTotalCost += penRemain * penSelf * 12;
     if(medRemain > 0) ssTotalCost += medRemain * medSelf * 12;
   }
 
@@ -2359,10 +2413,16 @@ function calcAll(){
   const assets=(val('assetCash')+val('assetDeposit')+val('assetFund')+val('assetStock')+val('assetPension'))*10000;
   const ret=val('assetReturn')/100;
   const inflation=val('inflation')/100 || 0.03;
-  // 养老金估算（简化）
-  const retireAgeX = 60;
-  const pyAtRetire = penY + Math.max(retireAgeX-age,0);
-  const estPensionMonthly = penSelf>0 ? Math.round(penSelf * Math.min(pyAtRetire,35) * 0.7) : 0;
+  // 养老金估算：按最低缴费资格 + 基础养老金 + 个人账户养老金的简化模型。
+  const penRemainToMin = Math.max(penMin - penY, 0);
+  const futurePaidYears = penSelf>0
+    ? (ssStrategy === 'retire' ? yearsToRetire : Math.min(penRemainToMin, yearsToRetire))
+    : 0;
+  const pyAtRetire = penY + futurePaidYears;
+  const pensionEligible = pyAtRetire >= penMin;
+  const estPensionMonthly = pensionEligible
+    ? estimatePensionMonthly(city, penSelf, pyAtRetire, penY, futurePaidYears, retireAge)
+    : 0;
   const estPensionAnnual = estPensionMonthly * 12;
   const cCost=val('childCost')*10000;
 
@@ -2413,7 +2473,7 @@ function calcAll(){
 
   // Scenarios
   const sc=[]; const ages2=[age];
-  for(const a of [35,40,45,50,55,60]) if(a>age) ages2.push(a);
+  for(const a of [35,40,45,50,55,retireAge]) if(a>age && !ages2.includes(a)) ages2.push(a);
   for(const ta of ages2){
     const wy=ta-age; let a=eAssets;
     for(let i=0;i<wy;i++) a=a*(1+ret)+eSave;
@@ -2427,12 +2487,12 @@ function calcAll(){
   function annualExpAtYear(yearIdx){
     let exp = eQA - ssMonthlyEffective*12;
     if(ssStrategy === 'retire'){
-      // Pay until 60, regardless of minimums
-      if(age + yearIdx < 60) exp += (penSelf + medSelf)*12;
+      if(age + yearIdx < retireAge) exp += (penSelf + medSelf)*12;
     } else {
       const pRem = Math.max(penMin - penY, 0);
       const mRem = Math.max(medMin - medY, 0);
       if(yearIdx < Math.min(pRem, mRem)) exp += (penSelf + medSelf)*12;
+      else if(yearIdx < pRem) exp += penSelf*12;
       else if(yearIdx < mRem) exp += medSelf*12;
     }
     return exp;
@@ -2476,7 +2536,7 @@ function calcAll(){
 
   const pY=[1,2,3,5,8,10], sLbl=pY.map(y=>'多干'+y+'年'), sMo=pY.map(y=>eSave*y/eQA*12);
 
-  return {age,penY,medY,penMin,medMin,penSelf,medSelf,penToMin,medToMin,agePenMin,ageMedMin,ssTotalCost,ssSelfNow,income,cm,ca,eCA,qm,qmBase,qa,eQA,assets,eAssets,investableAssets,eSave,fire,fi,gap,ytf,fireYear,qYears,qMonths,ret,perYearMo,mgPrincipalQ,mgMonthlyQ,mgYearsQ,sc,labels,cw,qn,q35,q40,sLbl,sMo,fireYearExact,fireMonthExact,estPensionMonthly,estPensionAnnual};
+  return {age,retireAge,retireYear,policyPensionMin,pensionEligible,pyAtRetire,penY,medY,penMin,medMin,penSelf,medSelf,penToMin,medToMin,agePenMin,ageMedMin,ssTotalCost,ssSelfNow,income,cm,ca,eCA,qm,qmBase,qa,eQA,assets,eAssets,investableAssets,eSave,fire,fi,gap,ytf,fireYear,qYears,qMonths,ret,perYearMo,mgPrincipalQ,mgMonthlyQ,mgYearsQ,sc,labels,cw,qn,q35,q40,sLbl,sMo,fireYearExact,fireMonthExact,estPensionMonthly,estPensionAnnual};
 }
 
 // ===== RENDER =====
@@ -2497,10 +2557,11 @@ function render(d){
   if(!hasData||!d) return;
 
   // 退休节点
-  if(d.estPensionMonthly>0){
-    const retireInfo = '60岁退休 · 养老金约'+d.estPensionMonthly+'元/月';
-    const existing = document.getElementById('retireInfo');
-    if(existing) existing.textContent = retireInfo;
+  const existing = document.getElementById('retireInfo');
+  if(existing){
+    existing.textContent = d.pensionEligible
+      ? d.retireAge+'岁退休 · 养老金约'+d.estPensionMonthly+'元/月'
+      : d.retireAge+'岁退休 · 缴费不足'+d.penMin+'年，职工养老金暂不可领';
   }
 
   // Mini cards
@@ -2951,7 +3012,7 @@ function setSSStrategy(s, btn){
   if(tipEl){
     tipEl.textContent = s==='min'
       ? '达标后不再自缴社保，省下的钱就是安全垫。'
-      : '一直缴到60岁退休，养老金领得更多，但每月固定支出多一份社保钱。';
+      : '一直缴到法定退休年龄，养老金领得更多，但每月固定支出多一份社保钱。';
     tipEl.style.display = 'block';
   }
   recalc();
@@ -3093,17 +3154,23 @@ render = function(d){
 };
 
 // ===== CITY PRESETS (keep for wizard) =====
-const cityPresets = {
-  beijing: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:1265, medSelf:520, label:'北京' },
-  shanghai: { pensionMin:15, medicalMin:15, penSelf:1400, medSelf:580, label:'上海' },
-  guangzhou: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:1100, medSelf:450, label:'广州' },
-  shenzhen: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:1000, medSelf:420, label:'深圳' },
-  other: { pensionMin:15, medicalMin: gender==='female'?20:25, penSelf:0, medSelf:0, label:'其他' }
-};
+function cityPreset(city){
+  const medicalMin = gender === 'female' ? 20 : 25;
+  const presets = {
+    beijing: { pensionMin: 15, medicalMin, penSelf: 1265, medSelf: 520, label: '北京' },
+    shanghai: { pensionMin: 15, medicalMin: 15, penSelf: 1400, medSelf: 580, label: '上海' },
+    guangzhou: { pensionMin: 15, medicalMin, penSelf: 1100, medSelf: 450, label: '广州' },
+    shenzhen: { pensionMin: 15, medicalMin, penSelf: 1000, medSelf: 420, label: '深圳' },
+    other: { pensionMin: 15, medicalMin, penSelf: 0, medSelf: 0, label: '其他' }
+  };
+  return presets[city] || presets.other;
+}
 
 function applyCityPreset(city){
-  const p = cityPresets[city];
+  const p = cityPreset(city);
   if(!p) return;
+  const profile = getActiveProfile();
+  if(profile){ profile.city = city; saveProfiles(); }
   document.getElementById("pensionMin").value = p.pensionMin;
   document.getElementById("medicalMin").value = p.medicalMin;
   if(p.penSelf>0) document.getElementById("pensionSelfPay").value = p.penSelf;

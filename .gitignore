@@ -6,3 +6,5 @@ configs/mysql/*.cnf
 *.db
 *.sqlite
 *.sqlite3
+storage/
+.venv-ledger/
