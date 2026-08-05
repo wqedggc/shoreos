@@ -521,27 +521,34 @@ td.wn { color: var(--orange); font-weight: 600; }
 }
 
 /* ===== WIZARD STYLES ===== */
+/* Step dots */
 .wizard-progress {
-  margin: 12px 16px 0; height: 4px; background: #e5e5ea; border-radius: 2px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 16px 20px 6px;
 }
-.wiz-bar-fill {
-  height: 100%; background: var(--blue); border-radius: 2px;
-  transition: width 0.4s cubic-bezier(0.4,0,0.2,1); width: 0%;
+.wiz-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #e5e5ea;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); flex-shrink: 0;
+}
+.wiz-dot.done { background: var(--pink-deep); }
+.wiz-dot.current {
+  width: 28px; border-radius: 4px; background: var(--grad-pink);
+  box-shadow: 0 2px 8px rgba(251,113,133,0.35);
 }
 .wizard-steps { position: relative; min-height: 360px; }
 .wiz-step {
   position: absolute; width: 100%; top: 0; left: 0;
-  opacity: 0; transform: translateX(40px);
-  pointer-events: none; transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  opacity: 0; transform: translateY(16px);
+  pointer-events: none; transition: all 0.40s cubic-bezier(0.16,1,0.3,1);
   padding: 0 4px;
 }
 .wiz-step.active {
-  position: relative; opacity: 1; transform: translateX(0); pointer-events: auto;
+  position: relative; opacity: 1; transform: translateY(0); pointer-events: auto;
 }
-.wiz-step.exit-left { opacity: 0; transform: translateX(-40px); }
+.wiz-step.exit-left { opacity: 0; transform: translateY(-12px); }
 .wiz-card {
-  background: var(--card); border-radius: var(--radius); padding: 16px 14px;
-  margin: 12px 4px; text-align: center;
+  background: var(--card); border-radius: var(--radius); padding: 20px 16px;
+  margin: 8px 4px; text-align: center;
 }
 .wiz-emoji { font-size: 36px; margin-bottom: 4px; }
 .wiz-question { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
@@ -550,14 +557,26 @@ td.wn { color: var(--orange); font-weight: 600; }
 .wiz-label { font-size: 12px; font-weight: 600; color: var(--sub); display: block; margin: 8px 0 4px; }
 .wiz-label:first-child { margin-top: 0; }
 
-.wiz-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+.wiz-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
 .wiz-chip {
-  padding: 6px 14px; border-radius: 50px; border: 2px solid var(--sep);
-  background: var(--card); font-size: 13px; font-weight: 700; color: var(--text);
-  cursor: pointer; font-family: inherit; transition: all 0.2s; white-space: nowrap;
+  padding: 9px 16px; border-radius: 12px; border: 2px solid var(--sep);
+  background: var(--card); font-size: 14px; font-weight: 600; color: var(--text);
+  cursor: pointer; font-family: inherit; transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+  white-space: nowrap; position: relative; user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.wiz-chip:active, .wiz-chip.active {
+.wiz-chip:hover { border-color: #d0d0d8; background: #fafafc; }
+.wiz-chip:active { transform: scale(0.95); }
+.wiz-chip.active {
   background: var(--blue); color: #fff; border-color: var(--blue);
+  box-shadow: 0 3px 12px rgba(0,122,255,0.25); padding-right: 36px;
+}
+.wiz-chip.active::after {
+  content: '✓'; position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%); font-size: 12px; font-weight: 900;
+  animation: checkPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes checkPop { from { transform: translateY(-50%) scale(0); } to { transform: translateY(-50%) scale(1); } }
   transform: scale(0.96);
 }
 
@@ -607,19 +626,35 @@ td.wn { color: var(--orange); font-weight: 600; }
 }
 
 .wiz-nav {
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  padding: 10px 12px 16px; border-radius: 50px; border: none;
-  font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
-  transition: all 0.2s;
+  display: flex; gap: 12px; align-items: center; padding: 12px 16px;
+  margin: 0 8px 16px; background: var(--card); border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 }
-.wiz-btn-back { background: #f2f2f7; color: var(--sub); }
-.wiz-btn-next { background: var(--blue); color: #fff; }
-.wiz-btn-done {
-  background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff;
-  padding: 12px 28px; font-size: 16px;
+.wiz-btn {
+  padding: 14px 20px; border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+  display: flex; align-items: center; gap: 6px;
 }
 .wiz-btn:active { transform: scale(0.95); }
-.wiz-count { font-size: 13px; color: var(--sub); font-weight: 600; }
+.wiz-btn-back { background: #f2f2f7; color: #8e8e93; }
+.wiz-btn-back:not(:disabled):active { background: #e5e5ea; color: var(--text); }
+.wiz-btn-back:disabled { opacity: 0.35; cursor: not-allowed; }
+.wiz-btn-next {
+  flex: 1; justify-content: center; background: var(--blue); color: #fff;
+  box-shadow: 0 4px 14px rgba(0,122,255,0.3);
+  font-size: 16px; padding: 15px 24px;
+}
+.wiz-btn-done {
+  flex: 1; justify-content: center;
+  background: linear-gradient(135deg, #34d399, #10b981); color: #fff;
+  box-shadow: 0 4px 14px rgba(52,211,153,0.3);
+  font-size: 16px; padding: 15px 24px;
+}
+.wiz-step-indicator {
+  font-size: 12px; font-weight: 600; color: #c7c7cc; text-align: center;
+  flex-shrink: 0; min-width: 36px;
+}
 
 /* Compact stepper */
 .stepper {
@@ -627,15 +662,16 @@ td.wn { color: var(--orange); font-weight: 600; }
   gap: 16px; padding: 8px 0; margin-bottom: 6px;
 }
 .stepper-btn {
-  width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--sep);
-  background: var(--card); font-size: 18px; font-weight: 700; color: var(--text);
+  width: 44px; height: 44px; border-radius: 14px; border: none;
+  background: #f2f2f7; font-size: 22px; font-weight: 600; color: var(--text);
   cursor: pointer; font-family: inherit; display: flex; align-items: center;
-  justify-content: center; transition: all 0.15s; user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  justify-content: center; transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+  user-select: none; -webkit-tap-highlight-color: transparent;
 }
-.stepper-btn:active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.stepper-btn:hover { background: #e5e5ea; }
+.stepper-btn:active { background: var(--blue); color: #fff; transform: scale(0.9); }
 .stepper-val {
-  font-size: 26px; font-weight: 800; color: var(--text); min-width: 80px;
+  font-size: 28px; font-weight: 800; color: var(--text); min-width: 80px;
   text-align: center; user-select: none;
 }
 .stepper-unit { font-size: 13px; color: var(--sub); font-weight: 600; }
@@ -1080,10 +1116,8 @@ td.wn { color: var(--orange); font-weight: 600; }
     <button class="voice-fab" id="voiceBtn" onclick="toggleVoice()" title="语音输入填表">🎤</button>
     <div class="ptr-indicator" id="ptrIndicator">↓ 下拉刷新</div>
 
-    <!-- New User Wizard (8 steps, reused from old wizard) -->
-    <div class="wizard-progress" id="wizProgress">
-      <div class="wiz-bar-fill" id="wizBarFill"></div>
-    </div>
+    <!-- New User Wizard -->
+    <div class="wizard-progress" id="wizProgress"></div>
 
     <div class="wizard-steps" id="wizSteps">
       <!-- Step 0: Name + Avatar -->
@@ -1329,10 +1363,10 @@ td.wn { color: var(--orange); font-weight: 600; }
 
     <!-- Wizard nav -->
     <div class="wiz-nav" id="wizNav">
-      <button class="wiz-btn wiz-btn-back" id="wizBack" onclick="wizPrev()">← 上一题</button>
-      <span class="wiz-count" id="wizCount">1/8</span>
-      <button class="wiz-btn wiz-btn-next" id="wizNext" onclick="wizNext()">下一题 →</button>
-      <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinishNew()" style="display:none;">🌸 创建档案</button>
+      <button class="wiz-btn wiz-btn-back" id="wizBack" onclick="wizPrev()" disabled>← 上一题</button>
+      <span class="wiz-step-indicator" id="wizStepLabel">1 / 8</span>
+      <button class="wiz-btn wiz-btn-next" id="wizNext" onclick="wizNext()">下一题</button>
+      <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinishNew()" style="display:none;">✓ 创建档案</button>
     </div>
 
     <!-- Hidden fields for calc engine -->
@@ -3007,18 +3041,36 @@ function wizGoTo(step){
 
   if(old && old !== next){
     old.classList.add('exit-left');
-    setTimeout(() => { old.classList.remove('active','exit-left'); }, 300);
+    setTimeout(() => { old.classList.remove('active','exit-left'); }, 350);
   }
   setTimeout(() => {
     next.classList.add('active');
     wizStep = step;
     updateWizNav();
-  }, old && old !== next ? 150 : 0);
+  }, old && old !== next ? 120 : 0);
 
-  const pct = ((step+1)/WIZ_TOTAL*100).toFixed(0);
-  document.getElementById('wizBarFill').style.width = pct+'%';
-  document.getElementById('wizCount').textContent = (step+1)+'/'+WIZ_TOTAL;
+  // Render step dots
+  renderWizDots(step);
+  // Focus first input for keyboard nav
+  setTimeout(() => {
+    const firstInput = next.querySelector('input:not([type=hidden])');
+    if(firstInput) firstInput.focus();
+  }, 400);
+
   document.getElementById('phone').scrollTop = 0;
+}
+
+function renderWizDots(current){
+  const container = document.getElementById('wizProgress');
+  if(!container) return;
+  let html = '';
+  for(let i = 0; i < WIZ_TOTAL; i++){
+    let cls = 'wiz-dot';
+    if(i < current) cls += ' done';
+    if(i === current) cls += ' current';
+    html += '<div class="'+cls+'"></div>';
+  }
+  container.innerHTML = html;
 }
 
 function wizNext(){
@@ -3036,20 +3088,30 @@ function wizFinish(){
   } catch(e){ console.error('wizFinish error:', e); }
 }
 function updateWizNav(){
-  document.getElementById('wizBack').style.display = wizStep===0 ? 'none' : '';
-  document.getElementById('wizNext').style.display = wizStep===WIZ_TOTAL-1 ? 'none' : '';
-  document.getElementById('wizDone').style.display = wizStep===WIZ_TOTAL-1 ? '' : 'none';
-  // Bind done button fresh each time it's shown
+  const back = document.getElementById('wizBack');
+  const next = document.getElementById('wizNext');
+  const done = document.getElementById('wizDone');
+  const label = document.getElementById('wizStepLabel');
+
+  back.disabled = wizStep === 0;
+  next.style.display = wizStep === WIZ_TOTAL-1 ? 'none' : '';
+  done.style.display = wizStep === WIZ_TOTAL-1 ? '' : 'none';
+  label.textContent = (wizStep+1) + ' / ' + WIZ_TOTAL;
+
   if(wizStep === WIZ_TOTAL-1){
-    const doneBtn = document.getElementById('wizDone');
-    const newBtn = doneBtn.cloneNode(true);
-    doneBtn.parentNode.replaceChild(newBtn, doneBtn);
-    newBtn.removeAttribute('onclick');
-    newBtn.addEventListener('click', function(e){ e.preventDefault(); wizFinish(); });
+    renderSummary();
+    done.onclick = function(e){ e.preventDefault(); wizFinishNew(); };
   }
-  // Render summary on step 7
-  if(wizStep === WIZ_TOTAL-1) renderSummary();
 }
+
+// Enter key to advance in wizard
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && document.getElementById('sec-inputs').classList.contains('active')){
+    e.preventDefault();
+    if(wizStep < WIZ_TOTAL-1) wizNext();
+    else if(wizStep === WIZ_TOTAL-1) wizFinish();
+  }
+});
 
 // Stepper functions
 let birthYearSel = null, currentWorkYears = null;
