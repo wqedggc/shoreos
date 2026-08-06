@@ -34,8 +34,9 @@ func ModelFromProfile(profile map[string]any, reservedFundCents int64) ScenarioM
 	currentMonthly := houseCost(profile, "cur") + yuan(profile, "expFood") + yuan(profile, "expTransport") +
 		yuan(profile, "expPet") + yuan(profile, "expEntertain") + yuan(profile, "expInsurance") + yuan(profile, "expOther")
 	minimumMortgageMonthly := mortgageMonthly(profile, "min")
-	minimumMonthly := houseCost(profile, "min") + yuan(profile, "expQFood") + yuan(profile, "expQTransport") +
-		yuan(profile, "expQPet") + yuan(profile, "expQEntertain") + yuan(profile, "expQInsurance") + yuan(profile, "expQOther") +
+	// Quit expense fields fall back to current when unset
+	minimumMonthly := houseCost(profile, "min") + yuanQ(profile, "expQFood", "expFood") + yuanQ(profile, "expQTransport", "expTransport") +
+		yuanQ(profile, "expQPet", "expPet") + yuanQ(profile, "expQEntertain", "expEntertain") + yuanQ(profile, "expQInsurance", "expInsurance") + yuanQ(profile, "expQOther", "expOther") +
 		yuan(profile, "pensionSelfPay") + yuan(profile, "medicalSelfPay")
 	currentAnnual := currentMonthly * 12
 	minimumAnnual := minimumMonthly * 12
@@ -107,11 +108,11 @@ func houseCost(profile map[string]any, section string) int64 {
 	case section == "cur":
 		return yuan(profile, "expProperty2")
 	case houseType == "rent":
-		return yuan(profile, "expQRent")
+		return yuanQ(profile, "expQRent", "expRent")
 	case houseType == "mortgage":
-		return yuan(profile, "expQMortgage") + yuan(profile, "expQProperty")
+		return yuanQ(profile, "expQMortgage", "expMortgage") + yuanQ(profile, "expQProperty", "expProperty")
 	default:
-		return yuan(profile, "expQProperty2")
+		return yuanQ(profile, "expQProperty2", "expProperty2")
 	}
 }
 
@@ -127,6 +128,15 @@ func mortgageMonthly(profile map[string]any, section string) int64 {
 
 func yuan(profile map[string]any, key string) int64 {
 	return int64(math.Round(number(profile, key) * 100))
+}
+
+// yuanQ returns the value of qKey, falling back to cKey when qKey is zero or missing.
+func yuanQ(profile map[string]any, qKey, cKey string) int64 {
+	v := number(profile, qKey)
+	if v == 0 {
+		v = number(profile, cKey)
+	}
+	return int64(math.Round(v * 100))
 }
 
 func wanYuan(profile map[string]any, key string) int64 {

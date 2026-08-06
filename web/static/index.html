@@ -2414,6 +2414,14 @@ function hasAnyData(){
 
 // ===== HELPERS =====
 function val(id){ const el=document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; }
+// valQ: quit field value, falls back to current field if quit is empty/unset
+function valQ(qId, cId){
+  const qEl=document.getElementById(qId);
+  if(!qEl) return val(cId);
+  const qv=qEl.value.trim();
+  if(qv!=='') return parseFloat(qv) || 0;
+  return val(cId);
+}
 function fmtW(n){ if(Math.abs(n)>=10000) return (n/10000).toFixed(1)+'万'; return n.toFixed(0); }
 function fmtY(n){ if(n>500) return '很久'; if(n>100) return '>100年'; return n.toFixed(1)+'年'; }
 function fmtP(n){ return Math.min(n,100).toFixed(1)+'%'; }
@@ -2473,9 +2481,10 @@ function getHouseCost(section){
     if(houseTypeCur==='mortgage') return val('expMortgage') + val('expProperty');
     return val('expProperty2');
   } else {
-    if(houseTypeMin==='rent') return val('expQRent');
-    if(houseTypeMin==='mortgage') return val('expQMortgage') + val('expQProperty');
-    return val('expQProperty2');
+    // Quit housing: fall back to current when quit fields are empty
+    if(houseTypeMin==='rent') return valQ('expQRent','expRent');
+    if(houseTypeMin==='mortgage') return valQ('expQMortgage','expMortgage') + valQ('expQProperty','expProperty');
+    return valQ('expQProperty2','expProperty2');
   }
 }
 function getHousePropOnly(section){
@@ -2559,7 +2568,8 @@ function calcAll(){
   const cm = getHouseCost('cur') + val('expFood')+val('expTransport')+val('expPet')+val('expEntertain')+val('expInsurance')+val('expOther');
   const ca=cm*12;
   // Min monthly (base expenses + effective SS self-pay)
-  const qmBase = getHouseCost('min') + val('expQFood')+val('expQTransport')+val('expQPet')+val('expQEntertain')+val('expQInsurance')+val('expQOther');
+  // Quit expense fields fall back to current if empty
+  const qmBase = getHouseCost('min') + valQ('expQFood','expFood')+valQ('expQTransport','expTransport')+valQ('expQPet','expPet')+valQ('expQEntertain','expEntertain')+valQ('expQInsurance','expInsurance')+valQ('expQOther','expOther');
   const qm = qmBase + ssMonthlyEffective;
   const qa=qm*12;
 
