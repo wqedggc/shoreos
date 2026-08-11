@@ -1969,12 +1969,52 @@ function setParamTier(tier, btn){
   pDirty=true;
 }
 
-function createProfile(name, avatar){
-  // 先保存当前用户的数据
+function collectWizardFields(){
+  const fields = {};
+  fields.gender = gender || '';
+  fields.ssStrategy = ssStrategy || 'min';
+  fields.houseTypeCur = houseTypeCur || 'rent';
+  fields.houseTypeMin = houseTypeMin || 'rent';
+  fields.childPlan = childPlan || 'none';
+  // workYears 在 wizard 里存的是 pensionYears 输入框
+  const pyEl = document.getElementById('pensionYears');
+  if(pyEl) fields.workYears = pyEl.value || '';
+  // 遍历所有字段 id
+  for(const id of FIELD_IDS){
+    const el = document.getElementById(id);
+    if(el) fields[id] = el.value;
+  }
+
+  // 兜底：某些 wizard input 可能没触发 onchange（点"创建档案"按钮没失焦）
+  // 这种情况下 hidden 字段还是空的，但从 wizard input 还能读出来
+  const wizToHidden = {
+    'wizFood':'expFood','wizTransport':'expTransport','wizPet':'expPet',
+    'wizEntertain':'expEntertain','wizInsurance':'expInsurance','wizOther':'expOther',
+    'wizQFood':'expQFood','wizQTransport':'expQTransport','wizQPet':'expQPet',
+    'wizQEntertain':'expQEntertain','wizQInsurance':'expQInsurance','wizQOther':'expQOther',
+    'wizQHouse':'expQRent','wizIncome':'incomePost',
+    'wizRent':'expRent','wizMtg':'expMortgage','wizMtgYrs':'mortgageYearsLeft',
+    'wizProp':'expProperty','wizProp2':'expProperty2',
+    'wizCash':'assetCash','wizDep':'assetDeposit','wizFund':'assetFund',
+    'wizStock':'assetStock','wizCC':'childCost',
+    'wizPensionY':'pensionYears','wizMedY':'medicalYears',
+    'wizPensionPay':'pensionSelfPay','wizMedPay':'medicalSelfPay',
+    'wizReturn':'assetReturn',
+  };
+  for(const [wizId, hiddenId] of Object.entries(wizToHidden)){
+    if(fields[hiddenId]) continue;  // hidden 已经有值，跳过
+    const wizEl = document.getElementById(wizId);
+    if(wizEl && wizEl.value) fields[hiddenId] = wizEl.value;
+  }
+  return fields;
+}
+
+function createProfile(name, avatar, fields){
+  // 先保存当前用户的账单/身体数据
   if(activeUid){ saveBills(); saveBodyData(); }
   const uid = 'u_' + Date.now().toString(36);
-  const profile = {
-    uid, name, avatar,
+  // 用 fields（wizard 当前值）合并覆盖默认值；没传 fields 时保持原来的空默认
+  const baseFields = {
     gender: '', ssStrategy: 'min', houseTypeCur: 'rent', houseTypeMin: 'rent', childPlan: 'none',
     birthYear: '', workYears: '', city: 'other',
     incomePost: '', expRent: '', expMortgage: '', mortgageYearsLeft: '', expProperty: '', expProperty2: '',
@@ -1984,9 +2024,10 @@ function createProfile(name, avatar){
     assetCash: '', assetDeposit: '', assetFund: '', assetStock: '', assetPension: '', assetReturn: '', childCost: '',
     pensionYears: '', medicalYears: '', pensionMin: '15', medicalMin: '25', pensionSelfPay: '', medicalSelfPay: '', inflation:'3',
   };
+  const profile = { uid, name, avatar, ...baseFields, ...(fields || {}) };
   userProfiles.push(profile);
   saveProfiles();
-  // 通过 switchUser 切换（会自动保存旧用户数据、加载新用户数据）
+  // 切换到新档案 —— 此时 profile 已经有 wizard 字段，所以 loadProfileToFields 会正确加载
   switchUser(profile.uid);
   return profile;
 }
@@ -2289,12 +2330,29 @@ function setWizAvatar(a, btn){
 }
 
 function wizFinishNew(){
+  // 先让当前 input 失焦，触发所有未同步的 onchange
+  const active = document.activeElement;
+  if(active && (active.tagName==='INPUT' || active.tagName==='TEXTAREA')){
+    active.blur();
+  }
   const name = document.getElementById('wizNewName').value.trim() || '新用户';
-  const profile = createProfile(name, wizNewAvatar);
-  // Save current field values to profile
-  saveFieldsToProfile();
+  // 先抓取 wizard 当前所有字段值，再创建档案
+  // 避免 createProfile 内部 switchUser→loadProfileToFields 把空值覆盖回 DOM
+  const fields = collectWizardFields();
+  const profile = createProfile(name, wizNewAvatar, fields);
+  // 再做一次保存，保证同步状态最新（workYears 之类的特殊字段）
+  if(profile){
+    profile.gender = fields.gender;
+    profile.ssStrategy = fields.ssStrategy;
+    profile.houseTypeCur = fields.houseTypeCur;
+    profile.houseTypeMin = fields.houseTypeMin;
+    profile.childPlan = fields.childPlan;
+    profile.workYears = fields.workYears;
+    saveProfiles();
+  }
   navigateTo('dashboard');
-  switchUser(profile.uid);
+  // 切到新用户已经在 createProfile 里做了，这里无需再 switchUser
+  if(typeof recalc === 'function') recalc();
   showToast('🌸 欢迎「'+name+'」加入 ShoreOS！');
 }
 
