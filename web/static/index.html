@@ -1542,6 +1542,21 @@ td.wn { color: var(--orange); font-weight: 600; }
             <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="" onchange="pDirty=true"></div>
             <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="" onchange="pDirty=true"></div>
             <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="" onchange="pDirty=true"></div>
+            <div style="margin:16px 0 8px;padding:8px 12px;background:var(--card-bg,rgba(0,0,0,0.03));border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);">🔥 FIRE 后月开销</div>
+            <div class="param-field" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+              <label style="margin:0 4px 0 0;">按当前比例</label>
+              <button class="param-seg-btn" onclick="fillQuickMinExpParam(0.5);pDirty=true" style="font-size:11px;padding:4px 10px;">50%</button>
+              <button class="param-seg-btn" onclick="fillQuickMinExpParam(0.6);pDirty=true" style="font-size:11px;padding:4px 10px;">60%</button>
+              <button class="param-seg-btn" onclick="fillQuickMinExpParam(0.7);pDirty=true" style="font-size:11px;padding:4px 10px;">70%</button>
+              <button class="param-seg-btn" onclick="fillQuickMinExpParam(0.8);pDirty=true" style="font-size:11px;padding:4px 10px;">80%</button>
+            </div>
+            <div class="param-field"><label>FIRE后 月住房</label><input type="number" class="param-input" id="pQHouse" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月餐饮</label><input type="number" class="param-input" id="pQFood" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月交通</label><input type="number" class="param-input" id="pQTransport" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月宠物</label><input type="number" class="param-input" id="pQPet" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月娱乐</label><input type="number" class="param-input" id="pQEntertain" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月医疗/保险</label><input type="number" class="param-input" id="pQInsurance" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月其他</label><input type="number" class="param-input" id="pQOther" placeholder="留空=同当前" onchange="pDirty=true"></div>
           </div>
           <div class="param-page" id="paramPage2">
             <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
@@ -2044,6 +2059,16 @@ function syncParamPanelFromProfile(){
   document.getElementById('pEntertain').value = p.expEntertain || '';
   document.getElementById('pInsurance').value = p.expInsurance || '';
   document.getElementById('pOther').value = p.expOther || '';
+  // FIRE后支出
+  const qHouseVal = houseTypeMin==='rent' ? (p.expQRent||'') :
+    houseTypeMin==='mortgage' ? (p.expQMortgage||'') : (p.expQProperty2||'');
+  document.getElementById('pQHouse').value = qHouseVal;
+  document.getElementById('pQFood').value = p.expQFood || '';
+  document.getElementById('pQTransport').value = p.expQTransport || '';
+  document.getElementById('pQPet').value = p.expQPet || '';
+  document.getElementById('pQEntertain').value = p.expQEntertain || '';
+  document.getElementById('pQInsurance').value = p.expQInsurance || '';
+  document.getElementById('pQOther').value = p.expQOther || '';
   document.getElementById('pRent').value = p.expRent || '';
   document.getElementById('pMtg').value = p.expMortgage || '';
   document.getElementById('pMtgYrs').value = p.mortgageYearsLeft || '';
@@ -2155,6 +2180,17 @@ function saveParamPanel(){
   document.getElementById('expEntertain').value = document.getElementById('pEntertain').value;
   document.getElementById('expInsurance').value = document.getElementById('pInsurance').value;
   document.getElementById('expOther').value = document.getElementById('pOther').value;
+  // FIRE后支出 → 隐藏字段
+  const pQHouseVal = document.getElementById('pQHouse').value;
+  if(houseTypeMin==='rent') document.getElementById('expQRent').value = pQHouseVal;
+  else if(houseTypeMin==='mortgage'){ document.getElementById('expQMortgage').value = pQHouseVal; }
+  else document.getElementById('expQProperty2').value = pQHouseVal;
+  document.getElementById('expQFood').value = document.getElementById('pQFood').value;
+  document.getElementById('expQTransport').value = document.getElementById('pQTransport').value;
+  document.getElementById('expQPet').value = document.getElementById('pQPet').value;
+  document.getElementById('expQEntertain').value = document.getElementById('pQEntertain').value;
+  document.getElementById('expQInsurance').value = document.getElementById('pQInsurance').value;
+  document.getElementById('expQOther').value = document.getElementById('pQOther').value;
   document.getElementById('expRent').value = document.getElementById('pRent').value;
   document.getElementById('expMortgage').value = document.getElementById('pMtg').value;
   document.getElementById('mortgageYearsLeft').value = document.getElementById('pMtgYrs').value;
@@ -2174,6 +2210,19 @@ function saveParamPanel(){
   document.getElementById('paramOverlay')?.classList.remove('active');
   document.getElementById('paramSheet')?.classList.remove('active');
   showToast('✅ 已保存并重算');
+}
+
+function fillQuickMinExpParam(ratio){
+  const curHouse = parseFloat(document.getElementById('pRent').value) ||
+    parseFloat(document.getElementById('pMtg').value) ||
+    parseFloat(document.getElementById('pProp2').value) || 0;
+  document.getElementById('pQHouse').value = Math.round(curHouse * ratio) || '';
+  document.getElementById('pQFood').value = Math.round((parseFloat(document.getElementById('pFood').value)||0) * ratio) || '';
+  document.getElementById('pQTransport').value = Math.round((parseFloat(document.getElementById('pTransport').value)||0) * ratio) || '';
+  document.getElementById('pQPet').value = Math.round((parseFloat(document.getElementById('pPet').value)||0) * ratio) || '';
+  document.getElementById('pQEntertain').value = Math.round((parseFloat(document.getElementById('pEntertain').value)||0) * ratio) || '';
+  document.getElementById('pQInsurance').value = Math.round((parseFloat(document.getElementById('pInsurance').value)||0) * ratio) || '';
+  document.getElementById('pQOther').value = Math.round((parseFloat(document.getElementById('pOther').value)||0) * ratio) || '';
 }
 
 function applyCityPresetParam(city){
