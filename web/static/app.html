@@ -1388,6 +1388,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     </div>
 
     <!-- Hidden fields for calc engine -->
+    <input type="hidden" id="workYears">
     <input type="hidden" id="birthYear">
     <input type="hidden" id="currentYear" value="2026">
     <input type="hidden" id="inflation" value="3">
@@ -1549,6 +1550,10 @@ td.wn { color: var(--orange); font-weight: 600; }
             <div class="param-field"><label>性别</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pGenderM" onclick="setParamGender('male',this)" style="flex:1;">👨 男</button><button class="param-seg-btn" id="pGenderF" onclick="setParamGender('female',this)" style="flex:1;">👩 女</button></div></div>
             <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" data-field="birthYear" placeholder="" onchange="pDirty=true"></div>
             <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" data-field="workYears" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>已缴养老（年）</label><input type="number" class="param-input" id="pPensionYears" data-field="pensionYears" placeholder="与已工作年限独立" onchange="pDirty=true"></div>
+            <div class="param-field"><label>已缴医保（年）</label><input type="number" class="param-input" id="pMedicalYears" data-field="medicalYears" placeholder="与已工作年限独立" onchange="pDirty=true"></div>
+            <div class="param-field"><label>养老最低年限</label><input type="number" class="param-input" id="pPensionMin" data-field="pensionMin" placeholder="15" onchange="pDirty=true"></div>
+            <div class="param-field"><label>医保最低年限</label><input type="number" class="param-input" id="pMedicalMin" data-field="medicalMin" placeholder="25" onchange="pDirty=true"></div>
             <div class="param-field"><label>城市</label><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="param-seg-btn" onclick="applyCityPresetParam('beijing');pDirty=true" style="font-size:11px;">📍北京</button><button class="param-seg-btn" onclick="applyCityPresetParam('shanghai');pDirty=true" style="font-size:11px;">📍上海</button><button class="param-seg-btn" onclick="applyCityPresetParam('guangzhou');pDirty=true" style="font-size:11px;">📍广州</button><button class="param-seg-btn" onclick="applyCityPresetParam('shenzhen');pDirty=true" style="font-size:11px;">📍深圳</button><button class="param-seg-btn" onclick="applyCityPresetParam('other');pDirty=true" style="font-size:11px;">📍其他</button></div></div>
             <div class="param-field"><label>社保策略</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pSSMin" onclick="setParamSS('min',this)" style="flex:1;">🛑 达标即停</button><button class="param-seg-btn" id="pSSRetire" onclick="setParamSS('retire',this)" style="flex:1;">💪 缴到退休</button></div></div>
           </div>
@@ -1578,6 +1583,7 @@ td.wn { color: var(--orange); font-weight: 600; }
           </div>
           <div class="param-page" id="paramPage2">
             <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
+            <div class="param-field"><label>FIRE后住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pQHouseTypeRent" onclick="setParamQHouseType('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pQHouseTypeMtg" onclick="setParamQHouseType('mortgage',this)" style="flex:1;">🏦 仍有房贷</button><button class="param-seg-btn" id="pQHouseTypeNone" onclick="setParamQHouseType('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
             <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" data-field="expRent" placeholder="" onchange="pDirty=true"></div></div>
             <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" data-field="expMortgage" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" data-field="mortgageYearsLeft" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" data-field="expProperty" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>FIRE后 月物业取暖</label><input type="number" class="param-input" id="pQProperty" data-field="expQProperty" placeholder="留空=同当前" onchange="pDirty=true"></div></div>
             <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" data-field="expProperty2" placeholder="" onchange="pDirty=true"></div></div>
@@ -1725,7 +1731,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 <script>
 // ===== 版本号：每次迭代必须递增 =====
-const APP_VERSION = 'v5.4.0';
+const APP_VERSION = 'v5.5.0';
 const APP_BUILD_DATE = '2026-08-05';
 console.log('[ShoreOS] 版本 ' + APP_VERSION + ' (' + APP_BUILD_DATE + ')');
 
@@ -2011,39 +2017,18 @@ function collectWizardFields(){
   fields.houseTypeCur = houseTypeCur || 'rent';
   fields.houseTypeMin = houseTypeMin || 'rent';
   fields.childPlan = childPlan || 'none';
-  // workYears 在 wizard 里存的是 pensionYears 输入框
-  const pyEl = document.getElementById('pensionYears');
-  if(pyEl) fields.workYears = pyEl.value || '';
-  // schema 驱动：从 hidden 兼容层收集基线（等价于旧 FIELD_IDS 循环）
-  Object.assign(fields, profileStore.collect(null));
-
-  // 兜底：某些 wizard input 可能没触发 onchange（点"创建档案"按钮没失焦）
-  // 这种情况下 hidden 字段还是空的，但从 wizard input 还能读出来
-  const wizToHidden = {
-    'wizFood':'expFood','wizTransport':'expTransport','wizPet':'expPet',
-    'wizEntertain':'expEntertain','wizInsurance':'expInsurance','wizOther':'expOther',
-    'wizQFood':'expQFood','wizQTransport':'expQTransport','wizQPet':'expQPet',
-    'wizQEntertain':'expQEntertain','wizQInsurance':'expQInsurance','wizQOther':'expQOther',
-    'wizIncome':'incomePost',
-    'wizRent':'expRent','wizMtg':'expMortgage','wizMtgYrs':'mortgageYearsLeft',
-    'wizProp':'expProperty','wizProp2':'expProperty2',
-    'wizQMtgYrsQ':'mortgageYearsLeftQ','wizQProp':'expQProperty',
-    'wizCash':'assetCash','wizDep':'assetDeposit','wizFund':'assetFund',
-    'wizStock':'assetStock','wizCC':'childCost',
-    'wizPensionY':'pensionYears','wizMedY':'medicalYears',
-    'wizPensionPay':'pensionSelfPay','wizMedPay':'medicalSelfPay',
-    'wizReturn':'assetReturn',
-  };
-  for(const [wizId, hiddenId] of Object.entries(wizToHidden)){
-    // wizard 值非空时优先用 wizard 值（覆盖 hidden 旧值）；wizard 为空则保留 hidden 已有值
-    const wizEl = document.getElementById(wizId);
-    if(wizEl && wizEl.value) fields[hiddenId] = wizEl.value;
-  }
-  // FIRE后住房按 houseTypeMin 分支写入对应字段（不再无脑写 expQRent）
-  const qHouseMap = { rent:['wizQHouse','expQRent'], mortgage:['wizQHouseMtg','expQMortgage'], none:['wizQHouseProp2','expQProperty2'] };
-  const qh = qHouseMap[houseTypeMin] || qHouseMap.rent;
-  const wizQHouseEl = document.getElementById(qh[0]);
-  if(wizQHouseEl && wizQHouseEl.value) fields[qh[1]] = wizQHouseEl.value;
+  // P2：编辑器直写 profile —— 直接从 wizard 控件 [data-field] 收值，
+  // wizard 无控件的字段（birthYear/pensionYears/workYears 等）回退 hidden 兼容层。
+  // 不再经 wizToHidden/hidden 中转拷贝（P2 删除 hidden 写路径）。
+  const patch = profileStore.collect(null, document.getElementById('wizSteps'));
+  if(patch.name === '') delete patch.name; // 昵称留空时用 createProfile 参数回退
+  // FIRE后住房：只保留 houseTypeMin 当前分支，其余清空防陈旧值（design §4.7）
+  const keepMap = { rent:['expQRent'], mortgage:['expQMortgage','mortgageYearsLeftQ','expQProperty'], none:['expQProperty2'] };
+  const keep = keepMap[houseTypeMin] || keepMap.rent;
+  ['expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2'].forEach(k => {
+    if(!keep.includes(k)) patch[k] = '';
+  });
+  Object.assign(fields, patch);
   return fields;
 }
 
@@ -2081,15 +2066,18 @@ function deleteProfile(uid){
 }
 
 // Save current fields back to active profile
+// P2：仅剩 v1 数据迁移场景使用（loadState 把旧版数据载入 hidden 后收集进 profile），
+// 属于「hidden 兼容层作为旧数据容器」的只读用途；编辑器写路径已全部改为直写 profile。
 function saveFieldsToProfile(){
   const p = getActiveProfile();
   if(!p) return;
-  // schema 驱动：从 hidden 兼容层收集全部数值字段 patch
   const patch = profileStore.collect(null);
+  const wyEl = document.getElementById('workYears');
   Object.assign(p, {
     gender: gender, ssStrategy: ssStrategy,
     houseTypeCur: houseTypeCur, houseTypeMin: houseTypeMin, childPlan: childPlan,
-    workYears: parseFloat(document.getElementById('pensionYears').value) || 0,
+    // 旧数据无独立 workYears，回退用 pensionYears（旧语义：已工作年限≈已缴社保年限）
+    workYears: (wyEl && wyEl.value) || document.getElementById('pensionYears').value || '',
   }, patch);
   saveProfiles();
 }
@@ -2112,41 +2100,30 @@ function loadProfileToFields(p){
   syncParamPanelFromProfile();
 }
 
-// 参数面板控件 → profile 字段 映射表（schema 驱动，替代手写 30 行赋值）
-const PARAM_FIELD_MAP = {
-  pName:'name', pAvatar:'avatar', pBirthYear:'birthYear', pWorkYears:'workYears',
-  pIncome:'incomePost',
-  pFood:'expFood', pTransport:'expTransport', pPet:'expPet',
-  pEntertain:'expEntertain', pInsurance:'expInsurance', pOther:'expOther',
-  pQFood:'expQFood', pQTransport:'expQTransport', pQPet:'expQPet',
-  pQEntertain:'expQEntertain', pQInsurance:'expQInsurance', pQOther:'expQOther',
-  pRent:'expRent', pMtg:'expMortgage', pMtgYrs:'mortgageYearsLeft',
-  pProp:'expProperty', pProp2:'expProperty2', pQProperty:'expQProperty',
-  pCash:'assetCash', pDeposit:'assetDeposit', pFund:'assetFund', pStock:'assetStock',
-  pReturn:'assetReturn', pInflation:'inflation', pChildCost:'childCost',
-};
+// 参数面板控件均已带 data-field 属性（与 wizard/hidden 同名），由 profileStore.apply/collect 统一驱动
 
 function syncParamPanelFromProfile(){
   const p = getActiveProfile();
   if(!p) return;
-  // schema 驱动：profile → 参数面板控件（读值统一走 profileStore.get，兼容 string/number 混存）
-  for(const [id, key] of Object.entries(PARAM_FIELD_MAP)){
+  // P2：schema 驱动 apply 直接渲染所有 [data-field] 控件（param 面板），
+  // 不再经 PARAM_FIELD_MAP 手写回填；hidden 由 apply 只读投影。
+  profileStore.apply(p);
+  // 缺省值占位显示（不改 profile，仅 UI，兼容存量缺字段的旧 profile）
+  [['pAvatar','avatar'],['pInflation','inflation'],['pPensionMin','pensionMin'],['pMedicalMin','medicalMin']].forEach(([id, key]) => {
     const el = document.getElementById(id);
-    if(!el) continue;
-    let v = profileStore.get(p, key);
-    if(key === 'avatar' && !v) v = '🐱';
-    if(key === 'inflation' && !v) v = '3';
-    el.value = v;
-  }
-  // FIRE后住房：pQHouse 显示 houseTypeMin 对应分支字段
+    const d = FIELD_BY_KEY[key]?.defaultValue;
+    if(el && !el.value && d) el.value = d;
+  });
+  // FIRE后住房：pQHouse 显示 houseTypeMin 对应分支字段（该控件无 data-field，手写三分支映射）
   const qHouseVal = houseTypeMin==='rent' ? (p.expQRent||'') :
     houseTypeMin==='mortgage' ? (p.expQMortgage||'') : (p.expQProperty2||'');
   document.getElementById('pQHouse').value = qHouseVal;
-  // Restore toggle buttons
+  // Restore toggle buttons + FIRE后住房类型 chips
   setParamGenderUI(p.gender);
   setParamSSUI(p.ssStrategy);
   setParamHouseUI(p.houseTypeCur);
   setParamChildUI(p.childPlan);
+  setParamQHouseTypeUI(p.houseTypeMin);
 }
 
 function showUserMenu(uid){
@@ -2180,6 +2157,9 @@ function switchParamTab(idx, btn){
 function setParamGender(g, btn){
   gender = g;
   setParamGenderUI(g);
+  // 与 wizard setWizGender 保持一致：女性医保最低年限 20，男性 25
+  const mmEl = document.getElementById('medicalMin');
+  if(mmEl) mmEl.value = g==='female' ? '20' : '25';
   pDirty = true;
 }
 function setParamGenderUI(g){
@@ -2211,6 +2191,28 @@ function setParamHouseUI(type){
   document.getElementById('pMtgDiv').style.display = type==='mortgage'?'block':'none';
   document.getElementById('pNoneDiv').style.display = type==='none'?'block':'none';
 }
+// FIRE后住房类型（houseTypeMin）：param 面板补 UI，切换时清空另外两组字段（design §4.7）
+function setParamQHouseType(type, btn){
+  houseTypeMin = type;
+  setParamQHouseTypeUI(type);
+  const p = getActiveProfile();
+  if(p){
+    const keepMap = { rent:['expQRent'], mortgage:['expQMortgage','mortgageYearsLeftQ','expQProperty'], none:['expQProperty2'] };
+    const keep = keepMap[type] || [];
+    ['expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2'].forEach(key => {
+      if(!keep.includes(key)) profileStore.set(p, key, '');
+    });
+    saveProfiles();
+    profileStore.apply(p); // 只读投影 hidden（calc 兼容）+ 控件
+  }
+  pDirty = true;
+}
+function setParamQHouseTypeUI(type){
+  ['rent','mortgage','none'].forEach(t => {
+    const el = document.getElementById('pQHouseType'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el) el.classList.toggle('active', type===t);
+  });
+}
 function setParamChild(plan, btn){
   childPlan = plan;
   setParamChildUI(plan);
@@ -2225,53 +2227,29 @@ function setParamChildUI(plan){
 function saveParamPanel(){
   const p = getActiveProfile();
   if(!p){ alert('请先创建用户'); return; }
-  p.name = document.getElementById('pName').value || p.name;
-  p.avatar = document.getElementById('pAvatar').value || p.avatar;
-  p.birthYear = parseInt(document.getElementById('pBirthYear').value) || p.birthYear;
-  p.workYears = parseInt(document.getElementById('pWorkYears').value) || p.workYears;
-
-  // Sync to hidden fields for calc engine
-  document.getElementById('birthYear').value = p.birthYear;
-  document.getElementById('pensionYears').value = p.workYears;
-  document.getElementById('medicalYears').value = p.workYears;
-  document.getElementById('incomePost').value = document.getElementById('pIncome').value;
-  document.getElementById('expFood').value = document.getElementById('pFood').value;
-  document.getElementById('expTransport').value = document.getElementById('pTransport').value;
-  document.getElementById('expPet').value = document.getElementById('pPet').value;
-  document.getElementById('expEntertain').value = document.getElementById('pEntertain').value;
-  document.getElementById('expInsurance').value = document.getElementById('pInsurance').value;
-  document.getElementById('expOther').value = document.getElementById('pOther').value;
-  // FIRE后支出 → 隐藏字段（只保留当前 houseTypeMin 分支，清空其他分支旧值防脏数据）
+  // P2：编辑器直写 profile —— 直接收集 [data-field] 控件 → profile，
+  // 替换 40 行手写赋值与 hidden 中转（hidden 仅由 apply 只读投影，calc 兼容）。
+  const patch = profileStore.collect(null, document.getElementById('paramSheet'));
+  // FIRE后住房：pQHouse（无 data-field）按 houseTypeMin 分支写入，同时清空其他分支防脏数据
   const pQHouseVal = document.getElementById('pQHouse').value;
-  document.getElementById('expQRent').value = houseTypeMin==='rent' ? pQHouseVal : '';
-  document.getElementById('expQMortgage').value = houseTypeMin==='mortgage' ? pQHouseVal : '';
-  document.getElementById('expQProperty2').value = houseTypeMin==='none' ? pQHouseVal : '';
+  patch.expQRent = houseTypeMin==='rent' ? pQHouseVal : '';
+  patch.expQMortgage = houseTypeMin==='mortgage' ? pQHouseVal : '';
+  patch.expQProperty2 = houseTypeMin==='none' ? pQHouseVal : '';
   if(houseTypeMin==='mortgage'){
-    document.getElementById('expQProperty').value = document.getElementById('pQProperty').value;
+    patch.expQProperty = document.getElementById('pQProperty').value;
   } else {
-    document.getElementById('expQProperty').value = '';
-    document.getElementById('mortgageYearsLeftQ').value = '';
+    patch.expQProperty = '';
+    patch.mortgageYearsLeftQ = '';
   }
-  document.getElementById('expQFood').value = document.getElementById('pQFood').value;
-  document.getElementById('expQTransport').value = document.getElementById('pQTransport').value;
-  document.getElementById('expQPet').value = document.getElementById('pQPet').value;
-  document.getElementById('expQEntertain').value = document.getElementById('pQEntertain').value;
-  document.getElementById('expQInsurance').value = document.getElementById('pQInsurance').value;
-  document.getElementById('expQOther').value = document.getElementById('pQOther').value;
-  document.getElementById('expRent').value = document.getElementById('pRent').value;
-  document.getElementById('expMortgage').value = document.getElementById('pMtg').value;
-  document.getElementById('mortgageYearsLeft').value = document.getElementById('pMtgYrs').value;
-  document.getElementById('expProperty').value = document.getElementById('pProp').value;
-  document.getElementById('expProperty2').value = document.getElementById('pProp2').value;
-  document.getElementById('assetCash').value = document.getElementById('pCash').value;
-  document.getElementById('assetDeposit').value = document.getElementById('pDeposit').value;
-  document.getElementById('assetFund').value = document.getElementById('pFund').value;
-  document.getElementById('assetStock').value = document.getElementById('pStock').value;
-  document.getElementById('assetReturn').value = document.getElementById('pReturn').value;
-  document.getElementById('inflation').value = document.getElementById('pInflation').value || '3';
-  document.getElementById('childCost').value = document.getElementById('pChildCost').value;
-
-  saveFieldsToProfile();
+  // enum 全局态（chips 控件无 data-field，随保存写入）
+  patch.gender = gender; patch.ssStrategy = ssStrategy;
+  patch.houseTypeCur = houseTypeCur; patch.houseTypeMin = houseTypeMin; patch.childPlan = childPlan;
+  // 身份字段允许清空 UI 但不清空 profile（保留旧值，与旧行为一致）
+  if(!patch.name) delete patch.name;
+  if(!patch.avatar) delete patch.avatar;
+  // 数值字段直接存控件值：清空即存 ''（A7 清空语义，不再 parseInt||旧值）
+  profileStore.save(p, patch);
+  profileStore.apply(p); // 只读投影 hidden（calc 引擎读取）+ 控件
   pDirty = false;
   recalc();
   document.getElementById('paramOverlay')?.classList.remove('active');
@@ -2317,6 +2295,7 @@ function startNewUserWizard(){
     if(el) el.value = '';
   }
   document.getElementById('birthYear').value = '1995';
+  document.getElementById('workYears').value = '';
   document.getElementById('pensionYears').value = '7';
   document.getElementById('medicalYears').value = '7';
   document.getElementById('pensionMin').value = '15';
@@ -2372,20 +2351,10 @@ function wizFinishNew(){
     active.blur();
   }
   const name = document.getElementById('wizNewName').value.trim() || '新用户';
-  // 先抓取 wizard 当前所有字段值，再创建档案
-  // 避免 createProfile 内部 switchUser→loadProfileToFields 把空值覆盖回 DOM
+  // P2：collectWizardFields 直读 wizard 控件 → createProfile 一次性写入 profile，
+  // 已包含 gender/ssStrategy/houseTypeCur/houseTypeMin/childPlan/workYears 等特殊字段，去掉双保存 hack。
   const fields = collectWizardFields();
-  const profile = createProfile(name, wizNewAvatar, fields);
-  // 再做一次保存，保证同步状态最新（workYears 之类的特殊字段）
-  if(profile){
-    profile.gender = fields.gender;
-    profile.ssStrategy = fields.ssStrategy;
-    profile.houseTypeCur = fields.houseTypeCur;
-    profile.houseTypeMin = fields.houseTypeMin;
-    profile.childPlan = fields.childPlan;
-    profile.workYears = fields.workYears;
-    saveProfiles();
-  }
+  createProfile(name, wizNewAvatar, fields);
   navigateTo('dashboard');
   // 切到新用户已经在 createProfile 里做了，这里无需再 switchUser
   if(typeof recalc === 'function') recalc();
@@ -3413,8 +3382,8 @@ function stepWorkYears(delta){
   if(currentWorkYears === null || currentWorkYears === '') currentWorkYears = 0;
   currentWorkYears = Math.max(0, Math.min(50, currentWorkYears + delta));
   document.getElementById('workYearsDisplay').textContent = currentWorkYears;
-  document.getElementById('pensionYears').value = currentWorkYears;
-  document.getElementById('medicalYears').value = currentWorkYears;
+  // P2：workYears 独立存储，不再同步覆盖 pensionYears/medicalYears（已缴社保单独 stepper 设置）
+  document.getElementById('workYears').value = currentWorkYears;
   recalc();
 }
 function stepPensionYears(delta){
@@ -3518,6 +3487,16 @@ function setWizQHouseType(type, btn){
   document.getElementById('wizQHouseRentDiv').style.display = type==='rent'?'block':'none';
   document.getElementById('wizQHouseMtgDiv').style.display = type==='mortgage'?'block':'none';
   document.getElementById('wizQHouseNoneDiv').style.display = type==='none'?'block':'none';
+  // 切换 FIRE后住房类型：清空另外两组字段防陈旧值（design §4.7，wizard 与 param 一致）
+  const keepMap = { rent:['expQRent'], mortgage:['expQMortgage','mortgageYearsLeftQ','expQProperty'], none:['expQProperty2'] };
+  const keep = keepMap[type] || [];
+  ['expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2'].forEach(key => {
+    if(!keep.includes(key)){
+      document.querySelectorAll('[data-field="' + key + '"]').forEach(el => el.value = '');
+      const h = document.getElementById(key);
+      if(h) h.value = '';
+    }
+  });
   recalc();
 }
 
