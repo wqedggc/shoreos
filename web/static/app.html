@@ -1300,7 +1300,25 @@ td.wn { color: var(--orange); font-weight: 600; }
             </div>
             <div class="wiz-divider"><span>或逐项填写</span></div>
             <div class="wiz-exp-grid">
-              <div class="wiz-input-row wiz-sm"><span>🏡 住房</span><input type="number" id="wizQHouse" placeholder="月均" onchange="document.getElementById('expQRent').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm" style="grid-column:1/-1;">
+                <span>🏡 FIRE后住房类型</span>
+                <div class="wiz-chips" id="wizQHouseType">
+                  <button class="wiz-chip active" onclick="setWizQHouseType('rent',this)">🔑 租房</button>
+                  <button class="wiz-chip" onclick="setWizQHouseType('mortgage',this)">🏦 仍有房贷</button>
+                  <button class="wiz-chip" onclick="setWizQHouseType('none',this)">🏡 无房贷</button>
+                </div>
+              </div>
+              <div id="wizQHouseRentDiv" style="grid-column:1/-1;">
+                <div class="wiz-input-row wiz-sm"><span>🏡 月租</span><input type="number" id="wizQHouse" placeholder="月均" onchange="document.getElementById('expQRent').value=this.value;recalc()"><span>元</span></div>
+              </div>
+              <div id="wizQHouseMtgDiv" style="display:none;grid-column:1/-1;">
+                <div class="wiz-input-row wiz-sm"><span>🏡 月供</span><input type="number" id="wizQHouseMtg" placeholder="月均" onchange="document.getElementById('expQMortgage').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>⏳ 剩余年限</span><input type="number" id="wizQMtgYrsQ" placeholder="年" onchange="document.getElementById('mortgageYearsLeftQ').value=this.value;recalc()"><span>年</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏢 物业取暖</span><input type="number" id="wizQProp" placeholder="月均" onchange="document.getElementById('expQProperty').value=this.value;recalc()"><span>元</span></div>
+              </div>
+              <div id="wizQHouseNoneDiv" style="display:none;grid-column:1/-1;">
+                <div class="wiz-input-row wiz-sm"><span>🏡 物业取暖</span><input type="number" id="wizQHouseProp2" placeholder="月均" onchange="document.getElementById('expQProperty2').value=this.value;recalc()"><span>元</span></div>
+              </div>
               <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizQFood" placeholder="月均" onchange="document.getElementById('expQFood').value=this.value;recalc()"><span>元</span></div>
               <div class="wiz-input-row wiz-sm"><span>🚌 交通</span><input type="number" id="wizQTransport" placeholder="月均" onchange="document.getElementById('expQTransport').value=this.value;recalc()"><span>元</span></div>
               <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizQPet" placeholder="月均" onchange="document.getElementById('expQPet').value=this.value;recalc()"><span>元</span></div>
@@ -1561,7 +1579,7 @@ td.wn { color: var(--orange); font-weight: 600; }
           <div class="param-page" id="paramPage2">
             <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
             <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="" onchange="pDirty=true"></div></div>
-            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>FIRE后 月物业取暖</label><input type="number" class="param-input" id="pQProperty" placeholder="留空=同当前" onchange="pDirty=true"></div></div>
             <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="" onchange="pDirty=true"></div></div>
           </div>
           <div class="param-page" id="paramPage3">
@@ -1707,7 +1725,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 <script>
 // ===== 版本号：每次迭代必须递增 =====
-const APP_VERSION = 'v5.2.0';
+const APP_VERSION = 'v5.3.0';
 const APP_BUILD_DATE = '2026-08-12';
 console.log('[ShoreOS] 版本 ' + APP_VERSION + ' (' + APP_BUILD_DATE + ')');
 
@@ -1877,8 +1895,9 @@ const ProfileCloud = {
     return null;
   },
 
-  // 推送到云端（全量覆盖）
+  // 推送到云端（全量覆盖）；空数组直接跳过，防止误清空服务端该用户全部档案
   async _pushCloud(profiles){
+    if(!Array.isArray(profiles) || profiles.length === 0) return;
     if(!await this._waitReady()) return;
     try {
       await ShoreAPI.request('/api/v1/fire/scenarios/sync', {
@@ -1889,14 +1908,24 @@ const ProfileCloud = {
     } catch(e){ console.warn('[API] 推送 profiles 失败:', e.message); }
   },
 
-  // 初始化时从云端合并数据（云端优先）
+  // 初始化时从云端合并数据（本地优先：本地非空字段保留本地，本地为空才用云端）
   async mergeFromCloud(){
     const cloudProfiles = await this._fetchCloud();
     if(!cloudProfiles || cloudProfiles.length === 0) return;
-    // 合并策略：云端有的用云端，本地独有的保留
+    // 合并策略：同 uid 时本地字段非空则保留本地，本地为空用云端补；本地独有的保留，云端独有的并入
     const merged = new Map();
     userProfiles.forEach(p => merged.set(p.uid, p));
-    cloudProfiles.forEach(p => merged.set(p.uid, p));
+    cloudProfiles.forEach(cp => {
+      const lp = merged.get(cp.uid);
+      if(!lp){ merged.set(cp.uid, cp); return; }
+      const out = {};
+      const keys = new Set([...Object.keys(cp), ...Object.keys(lp)]);
+      for(const k of keys){
+        const lv = lp[k], cv = cp[k];
+        out[k] = (lv !== undefined && lv !== null && lv !== '') ? lv : cv;
+      }
+      merged.set(cp.uid, out);
+    });
     userProfiles = Array.from(merged.values());
     localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
     // 恢复 activeUid
@@ -1998,9 +2027,10 @@ function collectWizardFields(){
     'wizEntertain':'expEntertain','wizInsurance':'expInsurance','wizOther':'expOther',
     'wizQFood':'expQFood','wizQTransport':'expQTransport','wizQPet':'expQPet',
     'wizQEntertain':'expQEntertain','wizQInsurance':'expQInsurance','wizQOther':'expQOther',
-    'wizQHouse':'expQRent','wizIncome':'incomePost',
+    'wizIncome':'incomePost',
     'wizRent':'expRent','wizMtg':'expMortgage','wizMtgYrs':'mortgageYearsLeft',
     'wizProp':'expProperty','wizProp2':'expProperty2',
+    'wizQMtgYrsQ':'mortgageYearsLeftQ','wizQProp':'expQProperty',
     'wizCash':'assetCash','wizDep':'assetDeposit','wizFund':'assetFund',
     'wizStock':'assetStock','wizCC':'childCost',
     'wizPensionY':'pensionYears','wizMedY':'medicalYears',
@@ -2008,17 +2038,22 @@ function collectWizardFields(){
     'wizReturn':'assetReturn',
   };
   for(const [wizId, hiddenId] of Object.entries(wizToHidden)){
-    if(fields[hiddenId]) continue;  // hidden 已经有值，跳过
+    // wizard 值非空时优先用 wizard 值（覆盖 hidden 旧值）；wizard 为空则保留 hidden 已有值
     const wizEl = document.getElementById(wizId);
     if(wizEl && wizEl.value) fields[hiddenId] = wizEl.value;
   }
+  // FIRE后住房按 houseTypeMin 分支写入对应字段（不再无脑写 expQRent）
+  const qHouseMap = { rent:['wizQHouse','expQRent'], mortgage:['wizQHouseMtg','expQMortgage'], none:['wizQHouseProp2','expQProperty2'] };
+  const qh = qHouseMap[houseTypeMin] || qHouseMap.rent;
+  const wizQHouseEl = document.getElementById(qh[0]);
+  if(wizQHouseEl && wizQHouseEl.value) fields[qh[1]] = wizQHouseEl.value;
   return fields;
 }
 
 function createProfile(name, avatar, fields){
   // 先保存当前用户的账单/身体数据
   if(activeUid){ saveBills(); saveBodyData(); }
-  const uid = 'u_' + Date.now().toString(36);
+  const uid = 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
   // 用 fields（wizard 当前值）合并覆盖默认值；没传 fields 时保持原来的空默认
   const baseFields = {
     gender: '', ssStrategy: 'min', houseTypeCur: 'rent', houseTypeMin: 'rent', childPlan: 'none',
@@ -2121,6 +2156,7 @@ function syncParamPanelFromProfile(){
   document.getElementById('pMtgYrs').value = p.mortgageYearsLeft || '';
   document.getElementById('pProp').value = p.expProperty || '';
   document.getElementById('pProp2').value = p.expProperty2 || '';
+  document.getElementById('pQProperty').value = p.expQProperty || '';
   document.getElementById('pCash').value = p.assetCash || '';
   document.getElementById('pDeposit').value = p.assetDeposit || '';
   document.getElementById('pFund').value = p.assetFund || '';
@@ -2227,11 +2263,17 @@ function saveParamPanel(){
   document.getElementById('expEntertain').value = document.getElementById('pEntertain').value;
   document.getElementById('expInsurance').value = document.getElementById('pInsurance').value;
   document.getElementById('expOther').value = document.getElementById('pOther').value;
-  // FIRE后支出 → 隐藏字段
+  // FIRE后支出 → 隐藏字段（只保留当前 houseTypeMin 分支，清空其他分支旧值防脏数据）
   const pQHouseVal = document.getElementById('pQHouse').value;
-  if(houseTypeMin==='rent') document.getElementById('expQRent').value = pQHouseVal;
-  else if(houseTypeMin==='mortgage'){ document.getElementById('expQMortgage').value = pQHouseVal; }
-  else document.getElementById('expQProperty2').value = pQHouseVal;
+  document.getElementById('expQRent').value = houseTypeMin==='rent' ? pQHouseVal : '';
+  document.getElementById('expQMortgage').value = houseTypeMin==='mortgage' ? pQHouseVal : '';
+  document.getElementById('expQProperty2').value = houseTypeMin==='none' ? pQHouseVal : '';
+  if(houseTypeMin==='mortgage'){
+    document.getElementById('expQProperty').value = document.getElementById('pQProperty').value;
+  } else {
+    document.getElementById('expQProperty').value = '';
+    document.getElementById('mortgageYearsLeftQ').value = '';
+  }
   document.getElementById('expQFood').value = document.getElementById('pQFood').value;
   document.getElementById('expQTransport').value = document.getElementById('pQTransport').value;
   document.getElementById('expQPet').value = document.getElementById('pQPet').value;
@@ -2264,6 +2306,9 @@ function fillQuickMinExpParam(ratio){
     parseFloat(document.getElementById('pMtg').value) ||
     parseFloat(document.getElementById('pProp2').value) || 0;
   document.getElementById('pQHouse').value = Math.round(curHouse * ratio) || '';
+  if(houseTypeMin==='mortgage'){
+    document.getElementById('pQProperty').value = Math.round((parseFloat(document.getElementById('pProp').value)||0) * ratio) || '';
+  }
   document.getElementById('pQFood').value = Math.round((parseFloat(document.getElementById('pFood').value)||0) * ratio) || '';
   document.getElementById('pQTransport').value = Math.round((parseFloat(document.getElementById('pTransport').value)||0) * ratio) || '';
   document.getElementById('pQPet').value = Math.round((parseFloat(document.getElementById('pPet').value)||0) * ratio) || '';
@@ -2299,7 +2344,7 @@ function startNewUserWizard(){
   document.getElementById('pensionMin').value = '15';
   document.getElementById('medicalMin').value = '25';
   document.getElementById('currentYear').value = String(new Date().getFullYear());
-  gender = ''; ssStrategy = 'min'; houseTypeCur = 'rent'; childPlan = 'none';
+  gender = ''; ssStrategy = 'min'; houseTypeCur = 'rent'; houseTypeMin = 'rent'; childPlan = 'none';
   birthYearSel = null; currentWorkYears = null;
   document.getElementById('yearDisplay').textContent = '--';
   document.getElementById('workYearsDisplay').textContent = '--';
@@ -2307,7 +2352,8 @@ function startNewUserWizard(){
   // Also clear all wizard input fields
   ['wizPensionY','wizIncome','wizRent','wizMtg','wizMtgYrs','wizProp','wizProp2',
    'wizFood','wizTransport','wizPet','wizEntertain','wizInsurance','wizOther',
-   'wizQHouse','wizQFood','wizQTransport','wizQPet','wizQEntertain','wizQInsurance','wizQOther',
+   'wizQHouse','wizQHouseMtg','wizQMtgYrsQ','wizQProp','wizQHouseProp2',
+   'wizQFood','wizQTransport','wizQPet','wizQEntertain','wizQInsurance','wizQOther',
    'wizCash','wizDep','wizFund','wizStock','wizCC'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.value = '';
@@ -2318,6 +2364,12 @@ function startNewUserWizard(){
   document.querySelectorAll('#wizSSStrategy .wiz-chip')[0]?.classList.add('active');
   document.querySelectorAll('#wizHouseType .wiz-chip').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('#wizHouseType .wiz-chip')[0]?.classList.add('active');
+  // Reset FIRE后住房类型选择（houseTypeMin 已重置为 rent）
+  document.querySelectorAll('#wizQHouseType .wiz-chip').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#wizQHouseType .wiz-chip')[0]?.classList.add('active');
+  const wizQHRent = document.getElementById('wizQHouseRentDiv'); if(wizQHRent) wizQHRent.style.display = 'block';
+  const wizQHMtg = document.getElementById('wizQHouseMtgDiv'); if(wizQHMtg) wizQHMtg.style.display = 'none';
+  const wizQHNone = document.getElementById('wizQHouseNoneDiv'); if(wizQHNone) wizQHNone.style.display = 'none';
   document.querySelectorAll('#wizAvatars .wiz-chip').forEach(b=>b.classList.remove('active'));
 
   wizStep = 0; WIZ_TOTAL_NEW = 8;
@@ -3343,6 +3395,17 @@ function setWizHouseType(type, btn){
   document.getElementById('wizHouseRent').style.display = type==='rent'?'block':'none';
   document.getElementById('wizHouseMortgage').style.display = type==='mortgage'?'block':'none';
   document.getElementById('wizHouseNone').style.display = type==='none'?'block':'none';
+  recalc();
+}
+
+// FIRE后 住房类型选择（作用于 houseTypeMin，联动显示对应输入框）
+function setWizQHouseType(type, btn){
+  houseTypeMin = type;
+  document.querySelectorAll('#wizQHouseType .wiz-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('wizQHouseRentDiv').style.display = type==='rent'?'block':'none';
+  document.getElementById('wizQHouseMtgDiv').style.display = type==='mortgage'?'block':'none';
+  document.getElementById('wizQHouseNoneDiv').style.display = type==='none'?'block':'none';
   recalc();
 }
 

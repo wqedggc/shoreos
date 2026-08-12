@@ -242,6 +242,10 @@ ORDER BY id ASC
 }
 
 func (s *Store) SyncProfiles(ctx context.Context, userID int64, profiles []map[string]any) error {
+	// 防御：空 profiles 视为"无同步意图"，直接返回，避免误 DELETE 清空该用户全部档案
+	if len(profiles) == 0 {
+		return nil
+	}
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
