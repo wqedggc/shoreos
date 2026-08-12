@@ -1127,7 +1127,7 @@ td.wn { color: var(--orange); font-weight: 600; }
           <h2 class="wiz-question">你好呀，怎么称呼？</h2>
           <div class="wiz-fields">
             <label class="wiz-label">昵称</label>
-            <input type="text" class="wiz-input" id="wizNewName" placeholder="给自己取个可爱的名字" onchange="document.getElementById('pName').value=this.value">
+            <input type="text" class="wiz-input" id="wizNewName" data-field="name" placeholder="给自己取个可爱的名字" onchange="document.getElementById('pName').value=this.value">
             <label class="wiz-label">选一个头像吧</label>
             <div class="wiz-chips" id="wizAvatars">
               <button class="wiz-chip" onclick="setWizAvatar('🐱',this)">🐱</button>
@@ -1220,7 +1220,7 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="setWizVal('incomePost','80',this)">80万</button>
             </div>
             <div class="wiz-input-row">
-              <input type="number" class="wiz-input" id="wizIncome" placeholder="或手动输入" step="0.5" onchange="document.getElementById('incomePost').value=this.value;recalc()">
+              <input type="number" class="wiz-input" id="wizIncome" data-field="incomePost" placeholder="或手动输入" step="0.5" onchange="document.getElementById('incomePost').value=this.value;recalc()">
               <span class="wiz-input-suffix">万元/年</span>
             </div>
           </div>
@@ -1239,15 +1239,15 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="setWizHouseType('none',this)">🏡 无房贷</button>
             </div>
             <div id="wizHouseRent">
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizRent" placeholder="月租金" onchange="document.getElementById('expRent').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizRent" data-field="expRent" placeholder="月租金" onchange="document.getElementById('expRent').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
             <div id="wizHouseMortgage" style="display:none;">
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtg" placeholder="月供" onchange="document.getElementById('expMortgage').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtgYrs" placeholder="剩余年限" onchange="document.getElementById('mortgageYearsLeft').value=this.value;recalc()"><span class="wiz-input-suffix">年</span></div>
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp" placeholder="物业取暖月均" onchange="document.getElementById('expProperty').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtg" data-field="expMortgage" placeholder="月供" onchange="document.getElementById('expMortgage').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtgYrs" data-field="mortgageYearsLeft" placeholder="剩余年限" onchange="document.getElementById('mortgageYearsLeft').value=this.value;recalc()"><span class="wiz-input-suffix">年</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp" data-field="expProperty" placeholder="物业取暖月均" onchange="document.getElementById('expProperty').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
             <div id="wizHouseNone" style="display:none;">
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp2" placeholder="物业取暖月均" onchange="document.getElementById('expProperty2').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp2" data-field="expProperty2" placeholder="物业取暖月均" onchange="document.getElementById('expProperty2').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
           </div>
         </div>
@@ -1270,12 +1270,12 @@ td.wn { color: var(--orange); font-weight: 600; }
             </div>
             <div class="wiz-divider"><span>或逐项填写</span></div>
             <div class="wiz-exp-grid">
-              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizFood" placeholder="月均" onchange="document.getElementById('expFood').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🚇 交通</span><input type="number" id="wizTransport" placeholder="月均" onchange="document.getElementById('expTransport').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizPet" placeholder="月均" onchange="document.getElementById('expPet').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🎬 娱乐</span><input type="number" id="wizEntertain" placeholder="月均" onchange="document.getElementById('expEntertain').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizInsurance" placeholder="月均" onchange="document.getElementById('expInsurance').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizOther" placeholder="月均" onchange="document.getElementById('expOther').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizFood" data-field="expFood" placeholder="月均" onchange="document.getElementById('expFood').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🚇 交通</span><input type="number" id="wizTransport" data-field="expTransport" placeholder="月均" onchange="document.getElementById('expTransport').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizPet" data-field="expPet" placeholder="月均" onchange="document.getElementById('expPet').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🎬 娱乐</span><input type="number" id="wizEntertain" data-field="expEntertain" placeholder="月均" onchange="document.getElementById('expEntertain').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizInsurance" data-field="expInsurance" placeholder="月均" onchange="document.getElementById('expInsurance').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizOther" data-field="expOther" placeholder="月均" onchange="document.getElementById('expOther').value=this.value;recalc()"><span>元</span></div>
             </div>
             <div class="wiz-summary"><span>月合计（不含住房）</span><b id="wizNowSubtotal">--</b></div>
           </div>
@@ -1309,22 +1309,22 @@ td.wn { color: var(--orange); font-weight: 600; }
                 </div>
               </div>
               <div id="wizQHouseRentDiv" style="grid-column:1/-1;">
-                <div class="wiz-input-row wiz-sm"><span>🏡 月租</span><input type="number" id="wizQHouse" placeholder="月均" onchange="document.getElementById('expQRent').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏡 月租</span><input type="number" id="wizQHouse" data-field="expQRent" placeholder="月均" onchange="document.getElementById('expQRent').value=this.value;recalc()"><span>元</span></div>
               </div>
               <div id="wizQHouseMtgDiv" style="display:none;grid-column:1/-1;">
-                <div class="wiz-input-row wiz-sm"><span>🏡 月供</span><input type="number" id="wizQHouseMtg" placeholder="月均" onchange="document.getElementById('expQMortgage').value=this.value;recalc()"><span>元</span></div>
-                <div class="wiz-input-row wiz-sm"><span>⏳ 剩余年限</span><input type="number" id="wizQMtgYrsQ" placeholder="年" onchange="document.getElementById('mortgageYearsLeftQ').value=this.value;recalc()"><span>年</span></div>
-                <div class="wiz-input-row wiz-sm"><span>🏢 物业取暖</span><input type="number" id="wizQProp" placeholder="月均" onchange="document.getElementById('expQProperty').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏡 月供</span><input type="number" id="wizQHouseMtg" data-field="expQMortgage" placeholder="月均" onchange="document.getElementById('expQMortgage').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>⏳ 剩余年限</span><input type="number" id="wizQMtgYrsQ" data-field="mortgageYearsLeftQ" placeholder="年" onchange="document.getElementById('mortgageYearsLeftQ').value=this.value;recalc()"><span>年</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏢 物业取暖</span><input type="number" id="wizQProp" data-field="expQProperty" placeholder="月均" onchange="document.getElementById('expQProperty').value=this.value;recalc()"><span>元</span></div>
               </div>
               <div id="wizQHouseNoneDiv" style="display:none;grid-column:1/-1;">
-                <div class="wiz-input-row wiz-sm"><span>🏡 物业取暖</span><input type="number" id="wizQHouseProp2" placeholder="月均" onchange="document.getElementById('expQProperty2').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏡 物业取暖</span><input type="number" id="wizQHouseProp2" data-field="expQProperty2" placeholder="月均" onchange="document.getElementById('expQProperty2').value=this.value;recalc()"><span>元</span></div>
               </div>
-              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizQFood" placeholder="月均" onchange="document.getElementById('expQFood').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🚌 交通</span><input type="number" id="wizQTransport" placeholder="月均" onchange="document.getElementById('expQTransport').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizQPet" placeholder="月均" onchange="document.getElementById('expQPet').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🎮 娱乐</span><input type="number" id="wizQEntertain" placeholder="月均" onchange="document.getElementById('expQEntertain').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizQInsurance" placeholder="月均" onchange="document.getElementById('expQInsurance').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizQOther" placeholder="月均" onchange="document.getElementById('expQOther').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizQFood" data-field="expQFood" placeholder="月均" onchange="document.getElementById('expQFood').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🚌 交通</span><input type="number" id="wizQTransport" data-field="expQTransport" placeholder="月均" onchange="document.getElementById('expQTransport').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizQPet" data-field="expQPet" placeholder="月均" onchange="document.getElementById('expQPet').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🎮 娱乐</span><input type="number" id="wizQEntertain" data-field="expQEntertain" placeholder="月均" onchange="document.getElementById('expQEntertain').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizQInsurance" data-field="expQInsurance" placeholder="月均" onchange="document.getElementById('expQInsurance').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizQOther" data-field="expQOther" placeholder="月均" onchange="document.getElementById('expQOther').value=this.value;recalc()"><span>元</span></div>
             </div>
             <div class="wiz-summary"><span>月合计（含自缴社保）</span><b id="wizMinSubtotal">--</b></div>
           </div>
@@ -1348,10 +1348,10 @@ td.wn { color: var(--orange); font-weight: 600; }
             </div>
             <div class="wiz-divider"><span>或分类填写</span></div>
             <div class="wiz-exp-grid">
-              <div class="wiz-input-row wiz-sm"><span>💵 现金</span><input type="number" id="wizCash" placeholder="万" onchange="document.getElementById('assetCash').value=this.value;recalc()"><span>万</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🏦 定存理财</span><input type="number" id="wizDep" placeholder="万" onchange="document.getElementById('assetDeposit').value=this.value;recalc()"><span>万</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📊 基金</span><input type="number" id="wizFund" placeholder="万" onchange="document.getElementById('assetFund').value=this.value;recalc()"><span>万</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📈 股票</span><input type="number" id="wizStock" placeholder="万" onchange="document.getElementById('assetStock').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>💵 现金</span><input type="number" id="wizCash" data-field="assetCash" placeholder="万" onchange="document.getElementById('assetCash').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🏦 定存理财</span><input type="number" id="wizDep" data-field="assetDeposit" placeholder="万" onchange="document.getElementById('assetDeposit').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📊 基金</span><input type="number" id="wizFund" data-field="assetFund" placeholder="万" onchange="document.getElementById('assetFund').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📈 股票</span><input type="number" id="wizStock" data-field="assetStock" placeholder="万" onchange="document.getElementById('assetStock').value=this.value;recalc()"><span>万</span></div>
             </div>
             <div class="wiz-summary"><span>总资产</span><b id="wizAssetTotal">--</b></div>
           </div>
@@ -1544,22 +1544,22 @@ td.wn { color: var(--orange); font-weight: 600; }
         </div>
         <div class="param-body">
           <div class="param-page active" id="paramPage0">
-            <div class="param-field"><label>昵称</label><input class="param-input" id="pName" placeholder="给自己取个名" onchange="pDirty=true"></div>
-            <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
+            <div class="param-field"><label>昵称</label><input class="param-input" id="pName" data-field="name" placeholder="给自己取个名" onchange="pDirty=true"></div>
+            <div class="param-field"><label>头像Emoji</label><input class="param-input" id="pAvatar" data-field="avatar" placeholder="🐱" maxlength="4" onchange="pDirty=true"></div>
             <div class="param-field"><label>性别</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pGenderM" onclick="setParamGender('male',this)" style="flex:1;">👨 男</button><button class="param-seg-btn" id="pGenderF" onclick="setParamGender('female',this)" style="flex:1;">👩 女</button></div></div>
-            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>出生年份</label><input type="number" class="param-input" id="pBirthYear" data-field="birthYear" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>已工作年限</label><input type="number" class="param-input" id="pWorkYears" data-field="workYears" placeholder="" onchange="pDirty=true"></div>
             <div class="param-field"><label>城市</label><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="param-seg-btn" onclick="applyCityPresetParam('beijing');pDirty=true" style="font-size:11px;">📍北京</button><button class="param-seg-btn" onclick="applyCityPresetParam('shanghai');pDirty=true" style="font-size:11px;">📍上海</button><button class="param-seg-btn" onclick="applyCityPresetParam('guangzhou');pDirty=true" style="font-size:11px;">📍广州</button><button class="param-seg-btn" onclick="applyCityPresetParam('shenzhen');pDirty=true" style="font-size:11px;">📍深圳</button><button class="param-seg-btn" onclick="applyCityPresetParam('other');pDirty=true" style="font-size:11px;">📍其他</button></div></div>
             <div class="param-field"><label>社保策略</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pSSMin" onclick="setParamSS('min',this)" style="flex:1;">🛑 达标即停</button><button class="param-seg-btn" id="pSSRetire" onclick="setParamSS('retire',this)" style="flex:1;">💪 缴到退休</button></div></div>
           </div>
           <div class="param-page" id="paramPage1">
-            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" placeholder="" onchange="pDirty=true"></div>
-            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>年收入（到手，万元）</label><input type="number" class="param-input" id="pIncome" data-field="incomePost" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月餐饮</label><input type="number" class="param-input" id="pFood" data-field="expFood" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月交通</label><input type="number" class="param-input" id="pTransport" data-field="expTransport" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月宠物</label><input type="number" class="param-input" id="pPet" data-field="expPet" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月娱乐</label><input type="number" class="param-input" id="pEntertain" data-field="expEntertain" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月医疗/保险</label><input type="number" class="param-input" id="pInsurance" data-field="expInsurance" placeholder="" onchange="pDirty=true"></div>
+            <div class="param-field"><label>月其他</label><input type="number" class="param-input" id="pOther" data-field="expOther" placeholder="" onchange="pDirty=true"></div>
             <div style="margin:16px 0 8px;padding:8px 12px;background:var(--card-bg,rgba(0,0,0,0.03));border-radius:10px;font-size:13px;font-weight:700;color:var(--sub);">🔥 FIRE 后月开销</div>
             <div class="param-field" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
               <label style="margin:0 4px 0 0;">按当前比例</label>
@@ -1569,29 +1569,29 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="param-seg-btn" onclick="fillQuickMinExpParam(0.8);pDirty=true" style="font-size:11px;padding:4px 10px;">80%</button>
             </div>
             <div class="param-field"><label>FIRE后 月住房</label><input type="number" class="param-input" id="pQHouse" placeholder="留空=同当前" onchange="pDirty=true"></div>
-            <div class="param-field"><label>FIRE后 月餐饮</label><input type="number" class="param-input" id="pQFood" placeholder="留空=同当前" onchange="pDirty=true"></div>
-            <div class="param-field"><label>FIRE后 月交通</label><input type="number" class="param-input" id="pQTransport" placeholder="留空=同当前" onchange="pDirty=true"></div>
-            <div class="param-field"><label>FIRE后 月宠物</label><input type="number" class="param-input" id="pQPet" placeholder="留空=同当前" onchange="pDirty=true"></div>
-            <div class="param-field"><label>FIRE后 月娱乐</label><input type="number" class="param-input" id="pQEntertain" placeholder="留空=同当前" onchange="pDirty=true"></div>
-            <div class="param-field"><label>FIRE后 月医疗/保险</label><input type="number" class="param-input" id="pQInsurance" placeholder="留空=同当前" onchange="pDirty=true"></div>
-            <div class="param-field"><label>FIRE后 月其他</label><input type="number" class="param-input" id="pQOther" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月餐饮</label><input type="number" class="param-input" id="pQFood" data-field="expQFood" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月交通</label><input type="number" class="param-input" id="pQTransport" data-field="expQTransport" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月宠物</label><input type="number" class="param-input" id="pQPet" data-field="expQPet" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月娱乐</label><input type="number" class="param-input" id="pQEntertain" data-field="expQEntertain" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月医疗/保险</label><input type="number" class="param-input" id="pQInsurance" data-field="expQInsurance" placeholder="留空=同当前" onchange="pDirty=true"></div>
+            <div class="param-field"><label>FIRE后 月其他</label><input type="number" class="param-input" id="pQOther" data-field="expQOther" placeholder="留空=同当前" onchange="pDirty=true"></div>
           </div>
           <div class="param-page" id="paramPage2">
             <div class="param-field"><label>住房类型</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pHouseRent" onclick="setParamHouse('rent',this)" style="flex:1;">🔑 租房</button><button class="param-seg-btn" id="pHouseMtg" onclick="setParamHouse('mortgage',this)" style="flex:1;">🏦 有房贷</button><button class="param-seg-btn" id="pHouseNone" onclick="setParamHouse('none',this)" style="flex:1;">🏡 无房贷</button></div></div>
-            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" placeholder="" onchange="pDirty=true"></div></div>
-            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>FIRE后 月物业取暖</label><input type="number" class="param-input" id="pQProperty" placeholder="留空=同当前" onchange="pDirty=true"></div></div>
-            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pRentDiv"><div class="param-field"><label>月租金</label><input type="number" class="param-input" id="pRent" data-field="expRent" placeholder="" onchange="pDirty=true"></div></div>
+            <div id="pMtgDiv" style="display:none;"><div class="param-field"><label>月供</label><input type="number" class="param-input" id="pMtg" data-field="expMortgage" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>剩余年限</label><input type="number" class="param-input" id="pMtgYrs" data-field="mortgageYearsLeft" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>月物业取暖</label><input type="number" class="param-input" id="pProp" data-field="expProperty" placeholder="" onchange="pDirty=true"></div><div class="param-field"><label>FIRE后 月物业取暖</label><input type="number" class="param-input" id="pQProperty" data-field="expQProperty" placeholder="留空=同当前" onchange="pDirty=true"></div></div>
+            <div id="pNoneDiv" style="display:none;"><div class="param-field"><label>月物业取暖（可选）</label><input type="number" class="param-input" id="pProp2" data-field="expProperty2" placeholder="" onchange="pDirty=true"></div></div>
           </div>
           <div class="param-page" id="paramPage3">
-            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" placeholder="" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>年化收益率（%）</label><input type="number" class="param-input" id="pReturn" placeholder="5" step="0.5" onchange="pDirty=true"></div>
-            <div class="param-field"><label>通胀率（%）</label><input type="number" class="param-input" id="pInflation" placeholder="3" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>现金（万元）</label><input type="number" class="param-input" id="pCash" data-field="assetCash" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>定存/理财（万元）</label><input type="number" class="param-input" id="pDeposit" data-field="assetDeposit" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>基金（万元）</label><input type="number" class="param-input" id="pFund" data-field="assetFund" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>股票（万元）</label><input type="number" class="param-input" id="pStock" data-field="assetStock" placeholder="" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>年化收益率（%）</label><input type="number" class="param-input" id="pReturn" data-field="assetReturn" placeholder="5" step="0.5" onchange="pDirty=true"></div>
+            <div class="param-field"><label>通胀率（%）</label><input type="number" class="param-input" id="pInflation" data-field="inflation" placeholder="3" step="0.5" onchange="pDirty=true"></div>
             <div class="param-field"><label>社保档位</label><div id="pTierGroup" style="display:flex;gap:8px;"><button class="param-seg-btn" id="pTierLow" onclick="setParamTier('low',this)" style="flex:1;">最低档</button><button class="param-seg-btn" id="pTierMid" onclick="setParamTier('mid',this)" style="flex:1;">标准档</button><button class="param-seg-btn" id="pTierHigh" onclick="setParamTier('high',this)" style="flex:1;">最高档</button></div></div>
             <div class="param-field"><label>子女计划</label><div style="display:flex;gap:8px;"><button class="param-seg-btn" id="pChildNone" onclick="setParamChild('none',this)" style="flex:1;">暂无计划</button><button class="param-seg-btn" id="pChildOne" onclick="setParamChild('one',this)" style="flex:1;">计划要孩子</button></div></div>
-            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" placeholder="" step="0.5" onchange="pDirty=true"></div></div>
+            <div id="pChildCostDiv" style="display:none;"><div class="param-field"><label>预计年支出（万元）</label><input type="number" class="param-input" id="pChildCost" data-field="childCost" placeholder="" step="0.5" onchange="pDirty=true"></div></div>
           </div>
           <button class="param-save-btn" onclick="saveParamPanel()">💾 保存并重算</button>
         </div>
@@ -1725,8 +1725,8 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 <script>
 // ===== 版本号：每次迭代必须递增 =====
-const APP_VERSION = 'v5.3.0';
-const APP_BUILD_DATE = '2026-08-12';
+const APP_VERSION = 'v5.4.0';
+const APP_BUILD_DATE = '2026-08-05';
 console.log('[ShoreOS] 版本 ' + APP_VERSION + ' (' + APP_BUILD_DATE + ')');
 
 // ===== ShoreOS API 数据层 =====
@@ -2014,11 +2014,8 @@ function collectWizardFields(){
   // workYears 在 wizard 里存的是 pensionYears 输入框
   const pyEl = document.getElementById('pensionYears');
   if(pyEl) fields.workYears = pyEl.value || '';
-  // 遍历所有字段 id
-  for(const id of FIELD_IDS){
-    const el = document.getElementById(id);
-    if(el) fields[id] = el.value;
-  }
+  // schema 驱动：从 hidden 兼容层收集基线（等价于旧 FIELD_IDS 循环）
+  Object.assign(fields, profileStore.collect(null));
 
   // 兜底：某些 wizard input 可能没触发 onchange（点"创建档案"按钮没失焦）
   // 这种情况下 hidden 字段还是空的，但从 wizard input 还能读出来
@@ -2054,18 +2051,8 @@ function createProfile(name, avatar, fields){
   // 先保存当前用户的账单/身体数据
   if(activeUid){ saveBills(); saveBodyData(); }
   const uid = 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-  // 用 fields（wizard 当前值）合并覆盖默认值；没传 fields 时保持原来的空默认
-  const baseFields = {
-    gender: '', ssStrategy: 'min', houseTypeCur: 'rent', houseTypeMin: 'rent', childPlan: 'none',
-    birthYear: '', workYears: '', city: 'other',
-    incomePost: '', expRent: '', expMortgage: '', mortgageYearsLeft: '', expProperty: '', expProperty2: '',
-    expFood: '', expTransport: '', expPet: '', expEntertain: '', expInsurance: '', expOther: '',
-    expQRent: '', expQMortgage: '', mortgageYearsLeftQ: '', expQProperty: '', expQProperty2: '',
-    expQFood: '', expQTransport: '', expQPet: '', expQEntertain: '', expQInsurance: '', expQOther: '',
-    assetCash: '', assetDeposit: '', assetFund: '', assetStock: '', assetPension: '', assetReturn: '', childCost: '',
-    pensionYears: '', medicalYears: '', pensionMin: '15', medicalMin: '25', pensionSelfPay: '', medicalSelfPay: '', inflation:'3',
-  };
-  const profile = { uid, name, avatar, ...baseFields, ...(fields || {}) };
+  // schema 驱动的默认值（PROFILE_DEFAULTS 取代手写 baseFields）+ 收集结果覆盖
+  const profile = { uid, name, avatar, ...PROFILE_DEFAULTS, ...(fields || {}) };
   userProfiles.push(profile);
   saveProfiles();
   // 切换到新档案 —— 此时 profile 已经有 wizard 字段，所以 loadProfileToFields 会正确加载
@@ -2097,13 +2084,13 @@ function deleteProfile(uid){
 function saveFieldsToProfile(){
   const p = getActiveProfile();
   if(!p) return;
-  p.gender = gender; p.ssStrategy = ssStrategy;
-  p.houseTypeCur = houseTypeCur; p.houseTypeMin = houseTypeMin; p.childPlan = childPlan;
-  p.birthYear = val('birthYear'); p.workYears = parseFloat(document.getElementById('pensionYears').value) || 0;
-  for(const id of FIELD_IDS){
-    const el = document.getElementById(id);
-    if(el) p[id] = el.value;
-  }
+  // schema 驱动：从 hidden 兼容层收集全部数值字段 patch
+  const patch = profileStore.collect(null);
+  Object.assign(p, {
+    gender: gender, ssStrategy: ssStrategy,
+    houseTypeCur: houseTypeCur, houseTypeMin: houseTypeMin, childPlan: childPlan,
+    workYears: parseFloat(document.getElementById('pensionYears').value) || 0,
+  }, patch);
   saveProfiles();
 }
 
@@ -2112,10 +2099,8 @@ function loadProfileToFields(p){
   gender = p.gender || ''; ssStrategy = p.ssStrategy || 'min';
   houseTypeCur = p.houseTypeCur || 'rent'; houseTypeMin = p.houseTypeMin || 'rent';
   childPlan = p.childPlan || 'none';
-  for(const id of FIELD_IDS){
-    const el = document.getElementById(id);
-    if(el && p[id] !== undefined) el.value = p[id];
-  }
+  // schema 驱动：profile → hidden 兼容层 + data-field 控件（只同步 p 中存在的字段）
+  profileStore.apply(p);
   // Sync wizard year stepper
   if(p.birthYear) { birthYearSel = p.birthYear; document.getElementById('yearDisplay').textContent = p.birthYear; }
   else { birthYearSel = null; document.getElementById('yearDisplay').textContent = '--'; }
@@ -2127,43 +2112,36 @@ function loadProfileToFields(p){
   syncParamPanelFromProfile();
 }
 
+// 参数面板控件 → profile 字段 映射表（schema 驱动，替代手写 30 行赋值）
+const PARAM_FIELD_MAP = {
+  pName:'name', pAvatar:'avatar', pBirthYear:'birthYear', pWorkYears:'workYears',
+  pIncome:'incomePost',
+  pFood:'expFood', pTransport:'expTransport', pPet:'expPet',
+  pEntertain:'expEntertain', pInsurance:'expInsurance', pOther:'expOther',
+  pQFood:'expQFood', pQTransport:'expQTransport', pQPet:'expQPet',
+  pQEntertain:'expQEntertain', pQInsurance:'expQInsurance', pQOther:'expQOther',
+  pRent:'expRent', pMtg:'expMortgage', pMtgYrs:'mortgageYearsLeft',
+  pProp:'expProperty', pProp2:'expProperty2', pQProperty:'expQProperty',
+  pCash:'assetCash', pDeposit:'assetDeposit', pFund:'assetFund', pStock:'assetStock',
+  pReturn:'assetReturn', pInflation:'inflation', pChildCost:'childCost',
+};
+
 function syncParamPanelFromProfile(){
   const p = getActiveProfile();
   if(!p) return;
-  document.getElementById('pName').value = p.name || '';
-  document.getElementById('pAvatar').value = p.avatar || '🐱';
-  document.getElementById('pBirthYear').value = p.birthYear || '';
-  document.getElementById('pWorkYears').value = p.workYears || '';
-  document.getElementById('pIncome').value = p.incomePost || '';
-  document.getElementById('pFood').value = p.expFood || '';
-  document.getElementById('pTransport').value = p.expTransport || '';
-  document.getElementById('pPet').value = p.expPet || '';
-  document.getElementById('pEntertain').value = p.expEntertain || '';
-  document.getElementById('pInsurance').value = p.expInsurance || '';
-  document.getElementById('pOther').value = p.expOther || '';
-  // FIRE后支出
+  // schema 驱动：profile → 参数面板控件（读值统一走 profileStore.get，兼容 string/number 混存）
+  for(const [id, key] of Object.entries(PARAM_FIELD_MAP)){
+    const el = document.getElementById(id);
+    if(!el) continue;
+    let v = profileStore.get(p, key);
+    if(key === 'avatar' && !v) v = '🐱';
+    if(key === 'inflation' && !v) v = '3';
+    el.value = v;
+  }
+  // FIRE后住房：pQHouse 显示 houseTypeMin 对应分支字段
   const qHouseVal = houseTypeMin==='rent' ? (p.expQRent||'') :
     houseTypeMin==='mortgage' ? (p.expQMortgage||'') : (p.expQProperty2||'');
   document.getElementById('pQHouse').value = qHouseVal;
-  document.getElementById('pQFood').value = p.expQFood || '';
-  document.getElementById('pQTransport').value = p.expQTransport || '';
-  document.getElementById('pQPet').value = p.expQPet || '';
-  document.getElementById('pQEntertain').value = p.expQEntertain || '';
-  document.getElementById('pQInsurance').value = p.expQInsurance || '';
-  document.getElementById('pQOther').value = p.expQOther || '';
-  document.getElementById('pRent').value = p.expRent || '';
-  document.getElementById('pMtg').value = p.expMortgage || '';
-  document.getElementById('pMtgYrs').value = p.mortgageYearsLeft || '';
-  document.getElementById('pProp').value = p.expProperty || '';
-  document.getElementById('pProp2').value = p.expProperty2 || '';
-  document.getElementById('pQProperty').value = p.expQProperty || '';
-  document.getElementById('pCash').value = p.assetCash || '';
-  document.getElementById('pDeposit').value = p.assetDeposit || '';
-  document.getElementById('pFund').value = p.assetFund || '';
-  document.getElementById('pStock').value = p.assetStock || '';
-  document.getElementById('pReturn').value = p.assetReturn || '';
-  document.getElementById('pInflation').value = p.inflation || '3';
-  document.getElementById('pChildCost').value = p.childCost || '';
   // Restore toggle buttons
   setParamGenderUI(p.gender);
   setParamSSUI(p.ssStrategy);
@@ -2481,13 +2459,166 @@ let wizStep = 0; const WIZ_TOTAL_OLD = 8; let WIZ_TOTAL = 8;
 
 // ===== STORAGE =====
 const PREFIX = 'shoreos_v05_';
-const FIELD_IDS = ['birthYear','currentYear','pensionYears','medicalYears','pensionMin','medicalMin','pensionSelfPay','medicalSelfPay','incomePost',
-  'expRent','expMortgage','mortgageYearsLeft','expProperty','expProperty2',
-  'expFood','expTransport','expPet','expEntertain','expInsurance','expOther',
-  'expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2',
-  'expQFood','expQTransport','expQPet','expQEntertain','expQInsurance','expQOther',
-  'assetCash','assetDeposit','assetFund','assetStock','assetPension','assetReturn',
-  'childCost','inflation'];
+
+// ===== FIELD SCHEMA（唯一字段清单，drives profileStore/FIELD_IDS/validateProfile）=====
+// type: number | enum | text；group: identity/basic/income/expenseCur/expenseMin/asset/social/assumption
+// wizard.step / param.tab 为编辑器位置元数据（P1 静态骨架已含控件，P2 起由 renderField 复用）
+// fallbackFrom: valQ 语义回退源（该字段为空时回退读此字段）
+const FIELD_SCHEMA = [
+  { key:'uid', label:'UID', type:'text', group:'identity', defaultValue:'', wizard:{show:false}, param:{show:false}, note:'系统生成只读' },
+  { key:'name', label:'昵称', type:'text', group:'identity', defaultValue:'', wizard:{step:0,show:true}, param:{tab:0,show:true} },
+  { key:'avatar', label:'头像', type:'text', group:'identity', defaultValue:'🐱', wizard:{step:0,show:true}, param:{tab:0,show:true}, placeholder:'🐱' },
+  { key:'gender', label:'性别', type:'enum', group:'basic', options:[{value:'male',label:'男'},{value:'female',label:'女'}], defaultValue:'', wizard:{step:1,show:true}, param:{tab:0,show:true} },
+  { key:'birthYear', label:'出生年份', type:'number', group:'basic', unit:'年', defaultValue:'', min:1940, max:2015, step:1, wizard:{step:1,show:true}, param:{tab:0,show:true} },
+  { key:'workYears', label:'已工作年限', type:'number', group:'basic', unit:'年', defaultValue:'', min:0, max:50, step:1, wizard:{step:1,show:true}, param:{tab:0,show:true} },
+  { key:'city', label:'城市', type:'enum', group:'basic', options:[{value:'beijing',label:'北京'},{value:'shanghai',label:'上海'},{value:'guangzhou',label:'广州'},{value:'shenzhen',label:'深圳'},{value:'other',label:'其他'}], defaultValue:'other', wizard:{step:1,show:true}, param:{tab:0,show:true} },
+  { key:'ssStrategy', label:'社保策略', type:'enum', group:'basic', options:[{value:'min',label:'达标即停'},{value:'retire',label:'缴到退休'}], defaultValue:'min', wizard:{step:1,show:true}, param:{tab:0,show:true} },
+  { key:'houseTypeCur', label:'当前住房', type:'enum', group:'basic', options:[{value:'rent',label:'租房'},{value:'mortgage',label:'有房贷'},{value:'none',label:'无房贷'}], defaultValue:'rent', wizard:{step:3,show:true}, param:{tab:2,show:true} },
+  { key:'houseTypeMin', label:'FIRE后住房', type:'enum', group:'basic', options:[{value:'rent',label:'租房'},{value:'mortgage',label:'仍有房贷'},{value:'none',label:'无房贷'}], defaultValue:'rent', wizard:{step:5,show:true}, param:{tab:2,show:true} },
+  { key:'childPlan', label:'子女计划', type:'enum', group:'basic', options:[{value:'none',label:'暂无计划'},{value:'one',label:'计划要孩子'}], defaultValue:'none', wizard:{show:false}, param:{tab:3,show:true} },
+  { key:'incomePost', label:'年收入', title:'年收入（到手）', type:'number', group:'income', unit:'万元/年', defaultValue:'', min:0, step:0.5, wizard:{step:2,show:true}, param:{tab:1,show:true} },
+  { key:'expRent', label:'月租金', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:3,show:true}, param:{tab:2,show:true}, dependsOn:{field:'houseTypeCur',value:'rent'} },
+  { key:'expMortgage', label:'月供', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:3,show:true}, param:{tab:2,show:true}, dependsOn:{field:'houseTypeCur',value:'mortgage'} },
+  { key:'mortgageYearsLeft', label:'剩余年限', type:'number', group:'expenseCur', unit:'年', defaultValue:'', min:0, step:1, wizard:{step:3,show:true}, param:{tab:2,show:true}, dependsOn:{field:'houseTypeCur',value:'mortgage'} },
+  { key:'expProperty', label:'物业取暖', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:3,show:true}, param:{tab:2,show:true}, dependsOn:{field:'houseTypeCur',value:'mortgage'} },
+  { key:'expProperty2', label:'无房贷物业', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:3,show:true}, param:{tab:2,show:true}, dependsOn:{field:'houseTypeCur',value:'none'} },
+  { key:'expFood', label:'餐饮', title:'月餐饮', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:4,show:true}, param:{tab:1,show:true} },
+  { key:'expTransport', label:'交通', title:'月交通', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:4,show:true}, param:{tab:1,show:true} },
+  { key:'expPet', label:'宠物', title:'月宠物', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:4,show:true}, param:{tab:1,show:true} },
+  { key:'expEntertain', label:'娱乐', title:'月娱乐', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:4,show:true}, param:{tab:1,show:true} },
+  { key:'expInsurance', label:'医疗保险', title:'月医疗/保险', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:4,show:true}, param:{tab:1,show:true} },
+  { key:'expOther', label:'其他', title:'月其他', type:'number', group:'expenseCur', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:4,show:true}, param:{tab:1,show:true} },
+  { key:'expQRent', label:'FIRE后月租', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:1,show:true}, fallbackFrom:'expRent', dependsOn:{field:'houseTypeMin',value:'rent'} },
+  { key:'expQMortgage', label:'FIRE后月供', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:2,show:true}, fallbackFrom:'expMortgage', dependsOn:{field:'houseTypeMin',value:'mortgage'} },
+  { key:'mortgageYearsLeftQ', label:'FIRE后剩余年限', type:'number', group:'expenseMin', unit:'年', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:2,show:true}, fallbackFrom:'mortgageYearsLeft', dependsOn:{field:'houseTypeMin',value:'mortgage'} },
+  { key:'expQProperty', label:'FIRE后物业', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:2,show:true}, fallbackFrom:'expProperty', dependsOn:{field:'houseTypeMin',value:'mortgage'} },
+  { key:'expQProperty2', label:'FIRE后无房贷物业', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:2,show:true}, fallbackFrom:'expProperty2', dependsOn:{field:'houseTypeMin',value:'none'} },
+  { key:'expQFood', label:'FIRE后餐饮', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:1,show:true}, fallbackFrom:'expFood' },
+  { key:'expQTransport', label:'FIRE后交通', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:1,show:true}, fallbackFrom:'expTransport' },
+  { key:'expQPet', label:'FIRE后宠物', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:1,show:true}, fallbackFrom:'expPet' },
+  { key:'expQEntertain', label:'FIRE后娱乐', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:1,show:true}, fallbackFrom:'expEntertain' },
+  { key:'expQInsurance', label:'FIRE后医疗保险', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:1,show:true}, fallbackFrom:'expInsurance' },
+  { key:'expQOther', label:'FIRE后其他', type:'number', group:'expenseMin', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{step:5,show:true}, param:{tab:1,show:true}, fallbackFrom:'expOther' },
+  { key:'assetCash', label:'现金', type:'number', group:'asset', unit:'万元', defaultValue:'', min:0, step:0.5, wizard:{step:6,show:true}, param:{tab:3,show:true} },
+  { key:'assetDeposit', label:'定存理财', type:'number', group:'asset', unit:'万元', defaultValue:'', min:0, step:0.5, wizard:{step:6,show:true}, param:{tab:3,show:true} },
+  { key:'assetFund', label:'基金', type:'number', group:'asset', unit:'万元', defaultValue:'', min:0, step:0.5, wizard:{step:6,show:true}, param:{tab:3,show:true} },
+  { key:'assetStock', label:'股票', type:'number', group:'asset', unit:'万元', defaultValue:'', min:0, step:0.5, wizard:{step:6,show:true}, param:{tab:3,show:true} },
+  { key:'assetPension', label:'养老金/年金余额', type:'number', group:'asset', unit:'万元', defaultValue:'', min:0, step:0.5, wizard:{show:false}, param:{tab:3,show:true} },
+  { key:'assetReturn', label:'年化收益率', type:'number', group:'asset', unit:'%', defaultValue:'', min:0, step:0.5, wizard:{show:false}, param:{tab:3,show:true} },
+  { key:'childCost', label:'子女年支出', type:'number', group:'asset', unit:'万元/年', defaultValue:'', min:0, step:0.5, wizard:{show:false}, param:{tab:3,show:true} },
+  { key:'pensionYears', label:'已缴养老', type:'number', group:'social', unit:'年', defaultValue:'', min:0, max:50, step:1, wizard:{step:1,show:true}, param:{tab:0,show:true} },
+  { key:'medicalYears', label:'已缴医保', type:'number', group:'social', unit:'年', defaultValue:'', min:0, max:50, step:1, wizard:{step:1,show:true}, param:{tab:0,show:true} },
+  { key:'pensionMin', label:'养老最低年限', type:'number', group:'social', unit:'年', defaultValue:'15', min:0, step:1, wizard:{show:false}, param:{tab:0,show:true} },
+  { key:'medicalMin', label:'医保最低年限', type:'number', group:'social', unit:'年', defaultValue:'25', min:0, step:1, wizard:{show:false}, param:{tab:0,show:true} },
+  { key:'pensionSelfPay', label:'养老自缴', type:'number', group:'social', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{show:false}, param:{tab:0,show:true} },
+  { key:'medicalSelfPay', label:'医保自缴', type:'number', group:'social', unit:'元/月', defaultValue:'', min:0, step:1, wizard:{show:false}, param:{tab:0,show:true} },
+  { key:'inflation', label:'通胀率', type:'number', group:'assumption', unit:'%', defaultValue:'3', min:0, step:0.5, wizard:{show:false}, param:{tab:3,show:true} },
+];
+
+// 快速索引 + 默认值（取代 createProfile 的 baseFields 手写清单）
+const FIELD_BY_KEY = Object.fromEntries(FIELD_SCHEMA.map(f => [f.key, f]));
+const PROFILE_DEFAULTS = Object.fromEntries(FIELD_SCHEMA
+  .filter(f => !['uid','name','avatar'].includes(f.key) && f.type !== 'derived')
+  .map(f => [f.key, f.defaultValue ?? '']));
+
+// hidden 兼容层 id 清单：schema 中所有有 hidden 投影的数值字段 + 派生字段 currentYear
+// （enum 全局态 / workYears 无 hidden 投影，不进入 FIELD_IDS）
+const FIELD_IDS = FIELD_SCHEMA
+  .filter(f => f.group !== 'identity' && f.type === 'number' && f.key !== 'workYears')
+  .map(f => f.key)
+  .concat(['currentYear']);
+
+// ===== profileStore（单一数据源，schema 驱动）=====
+const profileStore = {
+  // 读取：数值一律返回 string（''=未设置）；字段不存在/undefined 时返回 schema 默认值
+  get(p, key){
+    const f = FIELD_BY_KEY[key];
+    const v = p ? p[key] : undefined;
+    if(v === undefined || v === null) return f ? (f.defaultValue ?? '') : '';
+    return String(v);
+  },
+  // valQ 语义：q 字段非空 → q；空 → 回退读 c 字段
+  q(p, qKey, cKey){
+    const v = String(p ? (p[qKey] ?? '') : '').trim();
+    return v !== '' ? v : String(p ? (p[cKey] ?? '') : '');
+  },
+  // 统一写入口：字符串化（与存量 string/number 混存兼容）
+  set(p, key, value){
+    p[key] = value === undefined || value === null ? '' : String(value);
+  },
+  // 收集编辑器 → patch：优先读 [data-field] 控件，无则回退读 hidden 兼容层
+  collect(p, container){
+    const patch = {};
+    FIELD_SCHEMA.forEach(f => {
+      const el = (container && container.querySelector('[data-field="' + f.key + '"]')) || document.getElementById(f.key);
+      if(el) patch[f.key] = el.value;
+    });
+    return patch;
+  },
+  // 渲染：profile → 所有 [data-field] 控件 + hidden 兼容层（只读投影，不写回 profile）
+  // 仅同步 p 中已存在的字段，避免缺省值无意义回填触发全量同步
+  apply(p){
+    if(!p) return;
+    FIELD_SCHEMA.forEach(f => {
+      if(p[f.key] === undefined) return;
+      const v = this.get(p, f.key);
+      document.querySelectorAll('[data-field="' + f.key + '"]').forEach(el => { el.value = v; });
+      const hidden = document.getElementById(f.key);
+      if(hidden) hidden.value = v;
+    });
+    if(typeof restoreToggles === 'function') restoreToggles();
+  },
+  // 保存：合并 patch → profile → saveProfiles() → recalc()
+  save(p, patch){
+    if(patch) FIELD_SCHEMA.forEach(f => {
+      if(f.key in patch) this.set(p, f.key, patch[f.key]);
+    });
+    saveProfiles();
+    recalc();
+  }
+};
+
+// ===== validateProfile（P1 提供，接入 UI 属 P2 范围）=====
+function validateProfile(p){
+  const issues = [];
+  FIELD_SCHEMA.forEach(f => {
+    if(!f.wizard.show && !f.param.show) return;
+    const v = profileStore.get(p, f.key);
+    if(v === ''){ if(f.required) issues.push({key: f.key, level: 'error', msg: (f.title || f.label) + '未填写'}); return; }
+    if(f.type === 'number'){
+      const n = parseFloat(v);
+      if(isNaN(n)) issues.push({key: f.key, level: 'error', msg: (f.title || f.label) + '不是数字'});
+      else if(f.min !== undefined && n < f.min) issues.push({key: f.key, level: 'warn', msg: (f.title || f.label) + '偏低'});
+      else if(f.max !== undefined && n > f.max) issues.push({key: f.key, level: 'warn', msg: (f.title || f.label) + '偏高'});
+    }
+  });
+  return issues;
+}
+
+// ===== renderField（schema 驱动控件生成器；P1 静态骨架已含控件，本函数供 P2+ 动态渲染复用）=====
+function renderField(f, mode, p){
+  const el = document.createElement(f.type === 'enum' ? 'div' : 'input');
+  el.dataset.field = f.key;
+  if(f.type === 'enum'){
+    (f.options || []).forEach(opt => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = opt.label;
+      b.className = 'wiz-chip' + (profileStore.get(p, f.key) === opt.value ? ' active' : '');
+      b.onclick = () => { profileStore.set(p, f.key, opt.value); profileStore.save(p, { [f.key]: opt.value }); };
+      el.appendChild(b);
+    });
+  } else {
+    el.type = f.type === 'number' ? 'number' : 'text';
+    el.value = profileStore.get(p, f.key);
+    if(f.min !== undefined) el.min = f.min;
+    if(f.max !== undefined) el.max = f.max;
+    if(f.step !== undefined) el.step = f.step;
+    if(f.placeholder) el.placeholder = f.placeholder;
+    el.onchange = () => profileStore.save(p, { [f.key]: el.value });
+  }
+  return el;
+}
 
 
 function saveState(){
@@ -3050,25 +3181,6 @@ function recalc(){
   render(d);
 }
 
-function setHouseType(type, btn, section){
-  if(section==='cur') houseTypeCur=type; else houseTypeMin=type;
-  const groupId = section==='cur' ? 'toggleHouseType' : 'toggleHouseTypeQ';
-  document.querySelectorAll('#'+groupId+' button').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  toggleHouseFields(section);
-  recalc();
-}
-
-function toggleHouseFields(section){
-  const t = section==='cur' ? houseTypeCur : houseTypeMin;
-  const prefix = section==='cur' ? 'houseCur' : 'houseMin';
-  ['Rent','Mortgage','None'].forEach(s=>{
-    document.getElementById(prefix+s).style.display = 'none';
-  });
-  const map = {rent:'Rent', mortgage:'Mortgage', none:'None'};
-  document.getElementById(prefix+map[t]).style.display = 'block';
-}
-
 function setChild(p, btn){
   childPlan=p;
   document.querySelectorAll('#toggleChild button').forEach(b=>b.classList.remove('active'));
@@ -3409,14 +3521,6 @@ function setWizQHouseType(type, btn){
   recalc();
 }
 
-function setWizChild(plan, btn){
-  childPlan = plan;
-  document.querySelectorAll('#wizChild .wiz-chip').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('wizChildCost').style.display = plan==='one'?'block':'none';
-  recalc();
-}
-
 function fillQuickExpenses(total){
   // Smart split: housing already filled separately, split remainder among categories
   const housing = houseTypeCur==='rent' ? (val('expRent')) : (houseTypeCur==='mortgage' ? val('expMortgage')+val('expProperty') : val('expProperty2'));
@@ -3470,14 +3574,6 @@ function fillQuickAssets(total){
   syncHidToWiz('assetCash','wizCash'); syncHidToWiz('assetDeposit','wizDep');
   syncHidToWiz('assetFund','wizFund'); syncHidToWiz('assetStock','wizStock');
   recalc();
-}
-
-// Deprecated alias
-function syncWizToHidden(hiddenId, wizId){ syncHidToWiz(hiddenId, wizId); }
-function syncWizToHidden(hiddenId, wizId){
-  const h = document.getElementById(hiddenId);
-  const w = document.getElementById(wizId);
-  if(h && w && h.value) w.value = h.value;
 }
 
 // Update wizard subtotals — always calculate from field values directly
