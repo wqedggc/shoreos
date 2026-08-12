@@ -942,7 +942,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     <button class="icon-btn" id="hamburgerBtn" onclick="toggleHamburger()" aria-label="打开侧边菜单">☰</button>
     <div class="topbar-title">
       <strong id="appPageTitle">FIRE 目标</strong>
-      <small>ShoreOS v4.1</small>
+      <small id="topbarVersion">ShoreOS v4.1</small>
     </div>
     <button class="icon-btn" id="assetHideBtn" onclick="toggleAssetHide()" aria-label="隐藏或显示资产">👁️</button>
   </div>
@@ -1597,7 +1597,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     <button class="hm-item" data-nav="bookkeeping" onclick="navigateTo('bookkeeping')"><span class="hm-icon">🧾</span>记账管理</button>
     <button class="hm-item" data-nav="profile" onclick="navigateTo('profile')"><span class="hm-icon">👤</span>当前用户资料</button>
     <button class="hm-item" data-nav="settings" onclick="navigateTo('settings')"><span class="hm-icon">⚙️</span>设置</button>
-    <div class="hm-footer">ShoreOS v4.1 · 左侧菜单切换页面</div>
+    <div class="hm-footer">ShoreOS <span id="hmVersion">v4.1</span> · 左侧菜单切换页面</div>
   </div>
 
   <!-- ===== LEGACY SETTINGS PANEL (kept for old calls) ===== -->
@@ -1610,7 +1610,7 @@ td.wn { color: var(--orange); font-weight: 600; }
     <div class="sp-item" onclick="setTheme('warm')"><span class="sp-icon">🍊</span><span class="sp-theme-label">暖橘</span><span class="theme-dot" id="themeDotWarm" style="background:#f97316;"></span></div>
     <div class="sp-item" onclick="setTheme('purple')"><span class="sp-icon">🍇</span><span class="sp-theme-label">紫色</span><span class="theme-dot" id="themeDotPurple" style="background:#a78bfa;"></span></div>
     <button class="sp-item" onclick="toggleSettings();navigateTo('user-manage');"><span class="sp-icon">👥</span>用户管理</button>
-    <button class="sp-item" onclick="toggleSettings();showToast('🌸 ShoreOS v4.0 · 人生自由度仪表盘 · 算清楚你离财务自由还差多远')"><span class="sp-icon">ℹ️</span>关于</button>
+    <button class="sp-item" onclick="toggleSettings();showToast('🌸 ShoreOS ' + APP_VERSION + ' · ' + APP_BUILD_DATE + ' · 人生自由度仪表盘 · 算清楚你离财务自由还差多远')"><span class="sp-icon">ℹ️</span>关于</button>
   </div>
 
   <!-- ===== SETTINGS PAGE ===== -->
@@ -1626,7 +1626,8 @@ td.wn { color: var(--orange); font-weight: 600; }
       <button class="sp-item" data-theme-choice="purple" onclick="setTheme('purple')"><span class="sp-icon">🍇</span><span class="sp-theme-label">紫色</span><span class="theme-dot" data-theme-dot="purple" style="background:#a78bfa;"></span></button>
     </div>
     <div class="settings-page-list">
-      <button class="sp-item" onclick="showToast('ShoreOS v4.1 · FIRE、体重、记账分页面管理')"><span class="sp-icon">ℹ️</span>关于 ShoreOS</button>
+      <button class="sp-item" onclick="showToast('ShoreOS ' + APP_VERSION + ' (' + APP_BUILD_DATE + ') · FIRE、体重、记账分页面管理')"><span class="sp-icon">ℹ️</span>关于 ShoreOS</button>
+      <div style="padding:12px 16px;font-size:11px;color:var(--sub);text-align:center;" id="settingsVersionLine">版本 <span id="settingsVersion">--</span></div>
     </div>
   </div>
 
@@ -1705,6 +1706,11 @@ td.wn { color: var(--orange); font-weight: 600; }
 </div>
 
 <script>
+// ===== 版本号：每次迭代必须递增 =====
+const APP_VERSION = 'v5.2.0';
+const APP_BUILD_DATE = '2026-08-12';
+console.log('[ShoreOS] 版本 ' + APP_VERSION + ' (' + APP_BUILD_DATE + ')');
+
 // ===== ShoreOS API 数据层 =====
 const TOKEN_KEY = 'shoreos:v1:token';
 let apiToken = localStorage.getItem(TOKEN_KEY) || '';
@@ -3622,6 +3628,16 @@ function parseVoiceText(text){
 }
 
 // ===== INIT =====
+// 版本号写入 UI（顶栏 + 汉堡菜单 footer）
+try {
+  const tv = document.getElementById('topbarVersion');
+  if(tv) tv.textContent = 'ShoreOS ' + APP_VERSION;
+  const hv = document.getElementById('hmVersion');
+  if(hv) hv.textContent = APP_VERSION;
+  const sv = document.getElementById('settingsVersion');
+  if(sv) sv.textContent = APP_VERSION + ' (' + APP_BUILD_DATE + ')';
+} catch(e){}
+
 loadProfiles();
 activeUid = localStorage.getItem(ACTIVE_KEY) || '';
 loadTheme();
