@@ -1159,12 +1159,15 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="stepper-btn" onclick="stepYear(-1)">−</button>
               <div><span class="stepper-val" id="yearDisplay">--</span><span class="stepper-unit">年</span></div>
               <button class="stepper-btn" onclick="stepYear(1)">+</button>
+              <!-- P3：stepper 承载控件（无 id，仅由 data-field 驱动 collect/apply，替代已删除的 hidden 中间层） -->
+              <input type="hidden" data-field="birthYear">
             </div>
             <label class="wiz-label">已工作年限</label>
             <div class="stepper">
               <button class="stepper-btn" onclick="stepWorkYears(-1)">−</button>
               <div><span class="stepper-val" id="workYearsDisplay">--</span><span class="stepper-unit">年</span></div>
               <button class="stepper-btn" onclick="stepWorkYears(1)">+</button>
+              <input type="hidden" data-field="workYears">
             </div>
             <label class="wiz-label">工作城市（点一下自动填社保参数）</label>
             <div class="wiz-chips">
@@ -1189,6 +1192,7 @@ td.wn { color: var(--orange); font-weight: 600; }
                   <button class="stepper-btn" onclick="stepPensionYears(-1)">−</button>
                   <div><span class="stepper-val" id="pensionYearsDisplay">--</span><span class="stepper-unit">年</span></div>
                   <button class="stepper-btn" onclick="stepPensionYears(1)">+</button>
+                  <input type="hidden" data-field="pensionYears">
                 </div>
               </div>
               <div style="flex:1;">
@@ -1197,6 +1201,7 @@ td.wn { color: var(--orange); font-weight: 600; }
                   <button class="stepper-btn" onclick="stepMedicalYears(-1)">−</button>
                   <div><span class="stepper-val" id="medicalYearsDisplay">--</span><span class="stepper-unit">年</span></div>
                   <button class="stepper-btn" onclick="stepMedicalYears(1)">+</button>
+                  <input type="hidden" data-field="medicalYears">
                 </div>
               </div>
             </div>
@@ -1220,7 +1225,7 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="setWizVal('incomePost','80',this)">80万</button>
             </div>
             <div class="wiz-input-row">
-              <input type="number" class="wiz-input" id="wizIncome" data-field="incomePost" placeholder="或手动输入" step="0.5" onchange="document.getElementById('incomePost').value=this.value;recalc()">
+              <input type="number" class="wiz-input" id="wizIncome" data-field="incomePost" placeholder="或手动输入" step="0.5" onchange="recalc()">
               <span class="wiz-input-suffix">万元/年</span>
             </div>
           </div>
@@ -1239,15 +1244,15 @@ td.wn { color: var(--orange); font-weight: 600; }
               <button class="wiz-chip" onclick="setWizHouseType('none',this)">🏡 无房贷</button>
             </div>
             <div id="wizHouseRent">
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizRent" data-field="expRent" placeholder="月租金" onchange="document.getElementById('expRent').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizRent" data-field="expRent" placeholder="月租金" onchange="recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
             <div id="wizHouseMortgage" style="display:none;">
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtg" data-field="expMortgage" placeholder="月供" onchange="document.getElementById('expMortgage').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtgYrs" data-field="mortgageYearsLeft" placeholder="剩余年限" onchange="document.getElementById('mortgageYearsLeft').value=this.value;recalc()"><span class="wiz-input-suffix">年</span></div>
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp" data-field="expProperty" placeholder="物业取暖月均" onchange="document.getElementById('expProperty').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtg" data-field="expMortgage" placeholder="月供" onchange="recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizMtgYrs" data-field="mortgageYearsLeft" placeholder="剩余年限" onchange="recalc()"><span class="wiz-input-suffix">年</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp" data-field="expProperty" placeholder="物业取暖月均" onchange="recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
             <div id="wizHouseNone" style="display:none;">
-              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp2" data-field="expProperty2" placeholder="物业取暖月均" onchange="document.getElementById('expProperty2').value=this.value;recalc()"><span class="wiz-input-suffix">元/月</span></div>
+              <div class="wiz-input-row"><input type="number" class="wiz-input" id="wizProp2" data-field="expProperty2" placeholder="物业取暖月均" onchange="recalc()"><span class="wiz-input-suffix">元/月</span></div>
             </div>
           </div>
         </div>
@@ -1270,12 +1275,12 @@ td.wn { color: var(--orange); font-weight: 600; }
             </div>
             <div class="wiz-divider"><span>或逐项填写</span></div>
             <div class="wiz-exp-grid">
-              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizFood" data-field="expFood" placeholder="月均" onchange="document.getElementById('expFood').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🚇 交通</span><input type="number" id="wizTransport" data-field="expTransport" placeholder="月均" onchange="document.getElementById('expTransport').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizPet" data-field="expPet" placeholder="月均" onchange="document.getElementById('expPet').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🎬 娱乐</span><input type="number" id="wizEntertain" data-field="expEntertain" placeholder="月均" onchange="document.getElementById('expEntertain').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizInsurance" data-field="expInsurance" placeholder="月均" onchange="document.getElementById('expInsurance').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizOther" data-field="expOther" placeholder="月均" onchange="document.getElementById('expOther').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizFood" data-field="expFood" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🚇 交通</span><input type="number" id="wizTransport" data-field="expTransport" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizPet" data-field="expPet" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🎬 娱乐</span><input type="number" id="wizEntertain" data-field="expEntertain" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizInsurance" data-field="expInsurance" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizOther" data-field="expOther" placeholder="月均" onchange="recalc()"><span>元</span></div>
             </div>
             <div class="wiz-summary"><span>月合计（不含住房）</span><b id="wizNowSubtotal">--</b></div>
           </div>
@@ -1309,22 +1314,22 @@ td.wn { color: var(--orange); font-weight: 600; }
                 </div>
               </div>
               <div id="wizQHouseRentDiv" style="grid-column:1/-1;">
-                <div class="wiz-input-row wiz-sm"><span>🏡 月租</span><input type="number" id="wizQHouse" data-field="expQRent" placeholder="月均" onchange="document.getElementById('expQRent').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏡 月租</span><input type="number" id="wizQHouse" data-field="expQRent" placeholder="月均" onchange="recalc()"><span>元</span></div>
               </div>
               <div id="wizQHouseMtgDiv" style="display:none;grid-column:1/-1;">
-                <div class="wiz-input-row wiz-sm"><span>🏡 月供</span><input type="number" id="wizQHouseMtg" data-field="expQMortgage" placeholder="月均" onchange="document.getElementById('expQMortgage').value=this.value;recalc()"><span>元</span></div>
-                <div class="wiz-input-row wiz-sm"><span>⏳ 剩余年限</span><input type="number" id="wizQMtgYrsQ" data-field="mortgageYearsLeftQ" placeholder="年" onchange="document.getElementById('mortgageYearsLeftQ').value=this.value;recalc()"><span>年</span></div>
-                <div class="wiz-input-row wiz-sm"><span>🏢 物业取暖</span><input type="number" id="wizQProp" data-field="expQProperty" placeholder="月均" onchange="document.getElementById('expQProperty').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏡 月供</span><input type="number" id="wizQHouseMtg" data-field="expQMortgage" placeholder="月均" onchange="recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>⏳ 剩余年限</span><input type="number" id="wizQMtgYrsQ" data-field="mortgageYearsLeftQ" placeholder="年" onchange="recalc()"><span>年</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏢 物业取暖</span><input type="number" id="wizQProp" data-field="expQProperty" placeholder="月均" onchange="recalc()"><span>元</span></div>
               </div>
               <div id="wizQHouseNoneDiv" style="display:none;grid-column:1/-1;">
-                <div class="wiz-input-row wiz-sm"><span>🏡 物业取暖</span><input type="number" id="wizQHouseProp2" data-field="expQProperty2" placeholder="月均" onchange="document.getElementById('expQProperty2').value=this.value;recalc()"><span>元</span></div>
+                <div class="wiz-input-row wiz-sm"><span>🏡 物业取暖</span><input type="number" id="wizQHouseProp2" data-field="expQProperty2" placeholder="月均" onchange="recalc()"><span>元</span></div>
               </div>
-              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizQFood" data-field="expQFood" placeholder="月均" onchange="document.getElementById('expQFood').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🚌 交通</span><input type="number" id="wizQTransport" data-field="expQTransport" placeholder="月均" onchange="document.getElementById('expQTransport').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizQPet" data-field="expQPet" placeholder="月均" onchange="document.getElementById('expQPet').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🎮 娱乐</span><input type="number" id="wizQEntertain" data-field="expQEntertain" placeholder="月均" onchange="document.getElementById('expQEntertain').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizQInsurance" data-field="expQInsurance" placeholder="月均" onchange="document.getElementById('expQInsurance').value=this.value;recalc()"><span>元</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizQOther" data-field="expQOther" placeholder="月均" onchange="document.getElementById('expQOther').value=this.value;recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🍜 餐饮</span><input type="number" id="wizQFood" data-field="expQFood" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🚌 交通</span><input type="number" id="wizQTransport" data-field="expQTransport" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🐾 宠物</span><input type="number" id="wizQPet" data-field="expQPet" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🎮 娱乐</span><input type="number" id="wizQEntertain" data-field="expQEntertain" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🩺 医疗保险</span><input type="number" id="wizQInsurance" data-field="expQInsurance" placeholder="月均" onchange="recalc()"><span>元</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📦 其他</span><input type="number" id="wizQOther" data-field="expQOther" placeholder="月均" onchange="recalc()"><span>元</span></div>
             </div>
             <div class="wiz-summary"><span>月合计（含自缴社保）</span><b id="wizMinSubtotal">--</b></div>
           </div>
@@ -1348,10 +1353,10 @@ td.wn { color: var(--orange); font-weight: 600; }
             </div>
             <div class="wiz-divider"><span>或分类填写</span></div>
             <div class="wiz-exp-grid">
-              <div class="wiz-input-row wiz-sm"><span>💵 现金</span><input type="number" id="wizCash" data-field="assetCash" placeholder="万" onchange="document.getElementById('assetCash').value=this.value;recalc()"><span>万</span></div>
-              <div class="wiz-input-row wiz-sm"><span>🏦 定存理财</span><input type="number" id="wizDep" data-field="assetDeposit" placeholder="万" onchange="document.getElementById('assetDeposit').value=this.value;recalc()"><span>万</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📊 基金</span><input type="number" id="wizFund" data-field="assetFund" placeholder="万" onchange="document.getElementById('assetFund').value=this.value;recalc()"><span>万</span></div>
-              <div class="wiz-input-row wiz-sm"><span>📈 股票</span><input type="number" id="wizStock" data-field="assetStock" placeholder="万" onchange="document.getElementById('assetStock').value=this.value;recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>💵 现金</span><input type="number" id="wizCash" data-field="assetCash" placeholder="万" onchange="recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>🏦 定存理财</span><input type="number" id="wizDep" data-field="assetDeposit" placeholder="万" onchange="recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📊 基金</span><input type="number" id="wizFund" data-field="assetFund" placeholder="万" onchange="recalc()"><span>万</span></div>
+              <div class="wiz-input-row wiz-sm"><span>📈 股票</span><input type="number" id="wizStock" data-field="assetStock" placeholder="万" onchange="recalc()"><span>万</span></div>
             </div>
             <div class="wiz-summary"><span>总资产</span><b id="wizAssetTotal">--</b></div>
           </div>
@@ -1387,30 +1392,8 @@ td.wn { color: var(--orange); font-weight: 600; }
       <button class="wiz-btn wiz-btn-done" id="wizDone" onclick="wizFinishNew()" style="display:none;">✓ 创建档案</button>
     </div>
 
-    <!-- Hidden fields for calc engine -->
-    <input type="hidden" id="workYears">
-    <input type="hidden" id="birthYear">
-    <input type="hidden" id="currentYear" value="2026">
-    <input type="hidden" id="inflation" value="3">
-    <input type="hidden" id="pensionYears" step="0.5">
-    <input type="hidden" id="medicalYears" step="0.5">
-    <input type="hidden" id="pensionMin" value="15">
-    <input type="hidden" id="medicalMin" value="25">
-    <input type="hidden" id="pensionSelfPay">
-    <input type="hidden" id="medicalSelfPay">
-    <input type="hidden" id="incomePost" step="0.5">
-    <input type="hidden" id="expRent"><input type="hidden" id="expMortgage"><input type="hidden" id="mortgageYearsLeft">
-    <input type="hidden" id="expProperty"><input type="hidden" id="expProperty2">
-    <input type="hidden" id="expFood"><input type="hidden" id="expTransport"><input type="hidden" id="expPet">
-    <input type="hidden" id="expEntertain"><input type="hidden" id="expInsurance"><input type="hidden" id="expOther">
-    <input type="hidden" id="expQRent"><input type="hidden" id="expQMortgage"><input type="hidden" id="mortgageYearsLeftQ">
-    <input type="hidden" id="expQProperty"><input type="hidden" id="expQProperty2">
-    <input type="hidden" id="expQFood"><input type="hidden" id="expQTransport"><input type="hidden" id="expQPet">
-    <input type="hidden" id="expQEntertain"><input type="hidden" id="expQInsurance"><input type="hidden" id="expQOther">
-    <input type="hidden" id="assetCash" step="0.5"><input type="hidden" id="assetDeposit" step="0.5">
-    <input type="hidden" id="assetFund" step="0.5"><input type="hidden" id="assetStock" step="0.5">
-    <input type="hidden" id="assetPension" step="0.5"><input type="hidden" id="assetReturn" step="0.5">
-    <input type="hidden" id="childCost">
+    <!-- P3：hidden 中间层已彻底删除。calc 引擎直接读 profile；
+         wizard/param 控件（含 step1 内 data-field 承载控件）为唯一 UI 输入承载。 -->
   </div>
 
 
@@ -1731,7 +1714,7 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 <script>
 // ===== 版本号：每次迭代必须递增 =====
-const APP_VERSION = 'v5.5.0';
+const APP_VERSION = 'v5.6.0';
 const APP_BUILD_DATE = '2026-08-05';
 console.log('[ShoreOS] 版本 ' + APP_VERSION + ' (' + APP_BUILD_DATE + ')');
 
@@ -2003,9 +1986,9 @@ function setParamTier(tier, btn){
   const base = {beijing:{low:760,mid:1265,high:2530}, shanghai:{low:840,mid:1400,high:2800}, guangzhou:{low:660,mid:1100,high:2200}, shenzhen:{low:600,mid:1000,high:2000}};
   const t = base[city] || base['beijing'];
   if(tier!=='none' && t[tier]){
-    document.getElementById('pensionSelfPay') && (document.getElementById('pensionSelfPay').value = t[tier]);
+    setFieldValue('pensionSelfPay', t[tier]);
     // medical 约为 pension 的 40%
-    document.getElementById('medicalSelfPay') && (document.getElementById('medicalSelfPay').value = Math.round(t[tier]*0.41));
+    setFieldValue('medicalSelfPay', Math.round(t[tier]*0.41));
   }
   pDirty=true;
 }
@@ -2017,9 +2000,8 @@ function collectWizardFields(){
   fields.houseTypeCur = houseTypeCur || 'rent';
   fields.houseTypeMin = houseTypeMin || 'rent';
   fields.childPlan = childPlan || 'none';
-  // P2：编辑器直写 profile —— 直接从 wizard 控件 [data-field] 收值，
-  // wizard 无控件的字段（birthYear/pensionYears/workYears 等）回退 hidden 兼容层。
-  // 不再经 wizToHidden/hidden 中转拷贝（P2 删除 hidden 写路径）。
+  // P3：编辑器直写 profile —— 直接从 wizard 容器内 [data-field] 控件收值，
+  // （step1 stepper 承载控件提供 birthYear/workYears/pensionYears/medicalYears，hidden 已删除）
   const patch = profileStore.collect(null, document.getElementById('wizSteps'));
   if(patch.name === '') delete patch.name; // 昵称留空时用 createProfile 参数回退
   // FIRE后住房：只保留 houseTypeMin 当前分支，其余清空防陈旧值（design §4.7）
@@ -2066,19 +2048,16 @@ function deleteProfile(uid){
 }
 
 // Save current fields back to active profile
-// P2：仅剩 v1 数据迁移场景使用（loadState 把旧版数据载入 hidden 后收集进 profile），
-// 属于「hidden 兼容层作为旧数据容器」的只读用途；编辑器写路径已全部改为直写 profile。
+// P3：v1 数据迁移场景使用（loadState 已直接合并进 profile，此处只补 workYears 回退并落盘）
 function saveFieldsToProfile(){
   const p = getActiveProfile();
   if(!p) return;
-  const patch = profileStore.collect(null);
-  const wyEl = document.getElementById('workYears');
   Object.assign(p, {
     gender: gender, ssStrategy: ssStrategy,
     houseTypeCur: houseTypeCur, houseTypeMin: houseTypeMin, childPlan: childPlan,
     // 旧数据无独立 workYears，回退用 pensionYears（旧语义：已工作年限≈已缴社保年限）
-    workYears: (wyEl && wyEl.value) || document.getElementById('pensionYears').value || '',
-  }, patch);
+    workYears: p.workYears || p.pensionYears || '',
+  });
   saveProfiles();
 }
 
@@ -2105,8 +2084,7 @@ function loadProfileToFields(p){
 function syncParamPanelFromProfile(){
   const p = getActiveProfile();
   if(!p) return;
-  // P2：schema 驱动 apply 直接渲染所有 [data-field] 控件（param 面板），
-  // 不再经 PARAM_FIELD_MAP 手写回填；hidden 由 apply 只读投影。
+  // P3：schema 驱动 apply 直接渲染所有 [data-field] 控件（param 面板），hidden 已删除
   profileStore.apply(p);
   // 缺省值占位显示（不改 profile，仅 UI，兼容存量缺字段的旧 profile）
   [['pAvatar','avatar'],['pInflation','inflation'],['pPensionMin','pensionMin'],['pMedicalMin','medicalMin']].forEach(([id, key]) => {
@@ -2158,8 +2136,7 @@ function setParamGender(g, btn){
   gender = g;
   setParamGenderUI(g);
   // 与 wizard setWizGender 保持一致：女性医保最低年限 20，男性 25
-  const mmEl = document.getElementById('medicalMin');
-  if(mmEl) mmEl.value = g==='female' ? '20' : '25';
+  setFieldValue('medicalMin', g==='female' ? '20' : '25');
   pDirty = true;
 }
 function setParamGenderUI(g){
@@ -2249,7 +2226,7 @@ function saveParamPanel(){
   if(!patch.avatar) delete patch.avatar;
   // 数值字段直接存控件值：清空即存 ''（A7 清空语义，不再 parseInt||旧值）
   profileStore.save(p, patch);
-  profileStore.apply(p); // 只读投影 hidden（calc 引擎读取）+ 控件
+  profileStore.apply(p); // 回填 [data-field] 控件（wizard/param 统一）
   pDirty = false;
   recalc();
   document.getElementById('paramOverlay')?.classList.remove('active');
@@ -2278,10 +2255,11 @@ function applyCityPresetParam(city){
   if(!p) return;
   const profile = getActiveProfile();
   if(profile){ profile.city = city; saveProfiles(); }
-  document.getElementById("pensionMin").value = p.pensionMin;
-  document.getElementById("medicalMin").value = p.medicalMin;
-  if(p.penSelf>0) document.getElementById("pensionSelfPay").value = p.penSelf;
-  if(p.medSelf>0) document.getElementById("medicalSelfPay").value = p.medSelf;
+  // P3：写 [data-field] 控件（pensionMin/medicalMin 有 param 控件；penSelf/medSelf 无控件则空操作）
+  setFieldValue("pensionMin", p.pensionMin);
+  setFieldValue("medicalMin", p.medicalMin);
+  if(p.penSelf>0) setFieldValue("pensionSelfPay", p.penSelf);
+  if(p.medSelf>0) setFieldValue("medicalSelfPay", p.medSelf);
   showVoiceToast("OK: applied "+p.label);
   setTimeout(()=> hideVoiceToast(), 2000);
   recalc();
@@ -2289,18 +2267,13 @@ function applyCityPresetParam(city){
 
 // ===== NEW USER WIZARD =====
 function startNewUserWizard(){
-  // Reset hidden fields
-  for(const id of FIELD_IDS){
-    const el = document.getElementById(id);
-    if(el) el.value = '';
-  }
-  document.getElementById('birthYear').value = '1995';
-  document.getElementById('workYears').value = '';
-  document.getElementById('pensionYears').value = '7';
-  document.getElementById('medicalYears').value = '7';
-  document.getElementById('pensionMin').value = '15';
-  document.getElementById('medicalMin').value = '25';
-  document.getElementById('currentYear').value = String(new Date().getFullYear());
+  // P3：hidden 中间层已删除，统一经 setFieldValue 写 [data-field] 控件（wizard/param 同步）
+  setFieldValue('birthYear', '1995');
+  setFieldValue('workYears', '');
+  setFieldValue('pensionYears', '7');
+  setFieldValue('medicalYears', '7');
+  setFieldValue('pensionMin', '15');
+  setFieldValue('medicalMin', '25');
   gender = ''; ssStrategy = 'min'; houseTypeCur = 'rent'; houseTypeMin = 'rent'; childPlan = 'none';
   birthYearSel = null; currentWorkYears = null;
   document.getElementById('yearDisplay').textContent = '--';
@@ -2429,7 +2402,7 @@ let wizStep = 0; const WIZ_TOTAL_OLD = 8; let WIZ_TOTAL = 8;
 // ===== STORAGE =====
 const PREFIX = 'shoreos_v05_';
 
-// ===== FIELD SCHEMA（唯一字段清单，drives profileStore/FIELD_IDS/validateProfile）=====
+// ===== FIELD SCHEMA（唯一字段清单，drives profileStore/validateProfile）=====
 // type: number | enum | text；group: identity/basic/income/expenseCur/expenseMin/asset/social/assumption
 // wizard.step / param.tab 为编辑器位置元数据（P1 静态骨架已含控件，P2 起由 renderField 复用）
 // fallbackFrom: valQ 语义回退源（该字段为空时回退读此字段）
@@ -2490,12 +2463,7 @@ const PROFILE_DEFAULTS = Object.fromEntries(FIELD_SCHEMA
   .filter(f => !['uid','name','avatar'].includes(f.key) && f.type !== 'derived')
   .map(f => [f.key, f.defaultValue ?? '']));
 
-// hidden 兼容层 id 清单：schema 中所有有 hidden 投影的数值字段 + 派生字段 currentYear
-// （enum 全局态 / workYears 无 hidden 投影，不进入 FIELD_IDS）
-const FIELD_IDS = FIELD_SCHEMA
-  .filter(f => f.group !== 'identity' && f.type === 'number' && f.key !== 'workYears')
-  .map(f => f.key)
-  .concat(['currentYear']);
+// P3：FIELD_IDS 已删除（hidden 中间层移除）。hasAnyData/saveState/loadState 直接读 profile。
 
 // ===== profileStore（单一数据源，schema 驱动）=====
 const profileStore = {
@@ -2515,16 +2483,16 @@ const profileStore = {
   set(p, key, value){
     p[key] = value === undefined || value === null ? '' : String(value);
   },
-  // 收集编辑器 → patch：优先读 [data-field] 控件，无则回退读 hidden 兼容层
+  // 收集编辑器 → patch：从容器内 [data-field] 控件读取（P3：hidden 已删除，无回退）
   collect(p, container){
     const patch = {};
     FIELD_SCHEMA.forEach(f => {
-      const el = (container && container.querySelector('[data-field="' + f.key + '"]')) || document.getElementById(f.key);
+      const el = container && container.querySelector('[data-field="' + f.key + '"]');
       if(el) patch[f.key] = el.value;
     });
     return patch;
   },
-  // 渲染：profile → 所有 [data-field] 控件 + hidden 兼容层（只读投影，不写回 profile）
+  // 渲染：profile → 所有 [data-field] 控件（wizard + param 统一驱动）
   // 仅同步 p 中已存在的字段，避免缺省值无意义回填触发全量同步
   apply(p){
     if(!p) return;
@@ -2532,8 +2500,6 @@ const profileStore = {
       if(p[f.key] === undefined) return;
       const v = this.get(p, f.key);
       document.querySelectorAll('[data-field="' + f.key + '"]').forEach(el => { el.value = v; });
-      const hidden = document.getElementById(f.key);
-      if(hidden) hidden.value = v;
     });
     if(typeof restoreToggles === 'function') restoreToggles();
   },
@@ -2591,38 +2557,32 @@ function renderField(f, mode, p){
 
 
 function saveState(){
-  const data = {};
-  for(const id of FIELD_IDS){ const el=document.getElementById(id); if(el) data[id]=el.value; }
-  data._houseTypeCur = houseTypeCur;
-  data._houseTypeMin = houseTypeMin;
-  data._childPlan = childPlan;
-  data._gender = gender;
-  data._ssStrategy = ssStrategy;
-  localStorage.setItem(PREFIX+'state', JSON.stringify(data));
-  // 自动保存指示
+  // P3：hidden 中间层已删除，不再写 v1 状态数据（v1 key 仅保留读迁移）；
+  // saveState 仅保留「自动保存」指示器 UI。
   const si = document.getElementById('saveIndicator');
   if(si){ si.textContent = '已保存 ✓'; si.className = 'save-indicator visible saved';
     setTimeout(() => { if(si.classList.contains('saved')) si.className = 'save-indicator'; }, 1500); }
 }
+// v1 旧数据迁移（仅读）：旧版把字段状态存在 localStorage('shoreos_v05_state')，
+// P3 起直接合并进当前活跃 profile（hidden 已删除，不再作为数据容器）。
 function loadState(){
   try {
     const raw = localStorage.getItem(PREFIX+'state');
     if(!raw) return false;
     const data = JSON.parse(raw);
+    const p = getActiveProfile();
+    if(!p) return false;
     let any = false;
-    for(const id of FIELD_IDS){
-      if(data[id] !== undefined && data[id] !== ''){
-        const el = document.getElementById(id);
-        if(el){ el.value = data[id]; any = true; }
+    FIELD_SCHEMA.forEach(f => {
+      if(data[f.key] !== undefined && data[f.key] !== ''){
+        p[f.key] = String(data[f.key]); any = true;
       }
-    }
-    if(data._houseTypeCur) houseTypeCur = data._houseTypeCur;
-    if(data._houseTypeMin) houseTypeMin = data._houseTypeMin;
-    if(data._childPlan) childPlan = data._childPlan;
-    if(data._gender) gender = data._gender;
-    if(data._ssStrategy) ssStrategy = data._ssStrategy;
-    // Restore toggle UIs
-    restoreToggles();
+    });
+    if(data._houseTypeCur) p.houseTypeCur = data._houseTypeCur;
+    if(data._houseTypeMin) p.houseTypeMin = data._houseTypeMin;
+    if(data._childPlan) p.childPlan = data._childPlan;
+    if(data._gender) p.gender = data._gender;
+    if(data._ssStrategy) p.ssStrategy = data._ssStrategy;
     return any;
   } catch(e){ return false; }
 }
@@ -2669,24 +2629,36 @@ function restoreToggles(){
   } catch(e){ /* ignore toggle restore errors */ }
 }
 
+// P3：检查活跃 profile 是否有任何数值字段数据（原 hidden 遍历改为 profile 读取）
 function hasAnyData(){
-  for(const id of FIELD_IDS){
-    const el=document.getElementById(id);
-    if(el && el.value && el.value.trim()!=='') return true;
-  }
-  return false;
+  const p = getActiveProfile();
+  if(!p) return false;
+  return FIELD_SCHEMA.some(f => {
+    if(f.group === 'identity' || f.type !== 'number') return false;
+    const v = p[f.key];
+    return v !== undefined && v !== null && String(v).trim() !== '';
+  });
 }
 
 // ===== HELPERS =====
-function val(id){ const el=document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; }
-// valQ: quit field value, falls back to current field if quit is empty/unset
-function valQ(qId, cId){
-  const qEl=document.getElementById(qId);
-  if(!qEl) return val(cId);
-  const qv=qEl.value.trim();
-  if(qv!=='') return parseFloat(qv) || 0;
-  return val(cId);
+// P3：calc 引擎从 profile 取数（不再读 DOM hidden），profile 为唯一数据源。
+// profileVal(p, key)：读取字段数值（string/number 混存兼容，'' 视为 0）；字段缺失用 schema 默认值。
+// profileQVal(p, qKey, cKey)：valQ 语义保留——q 字段非空 → 取 q；q 为空/未设 → 回退读 c 字段。
+function profileVal(p, key){
+  const f = FIELD_BY_KEY[key];
+  const v = p ? p[key] : undefined;
+  if(v === undefined || v === null) return f ? (parseFloat(f.defaultValue) || 0) : 0;
+  return parseFloat(v) || 0;
 }
+function profileQVal(p, qKey, cKey){
+  const qv = p ? p[qKey] : undefined;
+  if(qv !== undefined && qv !== null && String(qv).trim() !== '') return parseFloat(qv) || 0;
+  return profileVal(p, cKey);
+}
+// 兼容薄壳：读当前活跃 profile（供 UI 计算函数与旧调用点使用，不再触碰 DOM）
+function val(key){ return profileVal(getActiveProfile(), key); }
+// valQ: quit field value, falls back to current field if quit is empty/unset
+function valQ(qKey, cKey){ return profileQVal(getActiveProfile(), qKey, cKey); }
 function fmtW(n){ if(Math.abs(n)>=10000) return (n/10000).toFixed(1)+'万'; return n.toFixed(0); }
 function fmtY(n){ if(n>500) return '很久'; if(n>100) return '>100年'; return n.toFixed(1)+'年'; }
 function fmtP(n){ return Math.min(n,100).toFixed(1)+'%'; }
@@ -2740,37 +2712,50 @@ function estimatePensionMonthly(city, penSelf, paidYearsAtRetire, paidYearsNow, 
   return Math.round(basic + personal);
 }
 
-function getHouseCost(section){
+// P3：读 profile（p 可选，未传时取当前活跃 profile）；houseType 从 p 读，profile 不存在时回退全局态
+function getHouseCost(section, p){
+  if(!p) p = getActiveProfile();
+  const hc = (p && (p.houseTypeCur || 'rent')) || houseTypeCur;
+  const hm = (p && (p.houseTypeMin || 'rent')) || houseTypeMin;
   if(section==='cur'){
-    if(houseTypeCur==='rent') return val('expRent');
-    if(houseTypeCur==='mortgage') return val('expMortgage') + val('expProperty');
-    return val('expProperty2');
+    if(hc==='rent') return profileVal(p,'expRent');
+    if(hc==='mortgage') return profileVal(p,'expMortgage') + profileVal(p,'expProperty');
+    return profileVal(p,'expProperty2');
   } else {
     // Quit housing: fall back to current when quit fields are empty
-    if(houseTypeMin==='rent') return valQ('expQRent','expRent');
-    if(houseTypeMin==='mortgage') return valQ('expQMortgage','expMortgage') + valQ('expQProperty','expProperty');
-    return valQ('expQProperty2','expProperty2');
+    if(hm==='rent') return profileQVal(p,'expQRent','expRent');
+    if(hm==='mortgage') return profileQVal(p,'expQMortgage','expMortgage') + profileQVal(p,'expQProperty','expProperty');
+    return profileQVal(p,'expQProperty2','expProperty2');
   }
 }
-function getHousePropOnly(section){
+function getHousePropOnly(section, p){
+  if(!p) p = getActiveProfile();
+  const hc = (p && (p.houseTypeCur || 'rent')) || houseTypeCur;
+  const hm = (p && (p.houseTypeMin || 'rent')) || houseTypeMin;
   if(section==='cur'){
-    if(houseTypeCur==='mortgage') return val('expProperty');
-    if(houseTypeCur==='none') return val('expProperty2');
+    if(hc==='mortgage') return profileVal(p,'expProperty');
+    if(hc==='none') return profileVal(p,'expProperty2');
     return 0;
   } else {
-    if(houseTypeMin==='mortgage') return val('expQProperty');
-    if(houseTypeMin==='none') return val('expQProperty2');
+    if(hm==='mortgage') return profileVal(p,'expQProperty');
+    if(hm==='none') return profileVal(p,'expQProperty2');
     return 0;
   }
 }
-function getMortgageMonthly(section){
-  if(section==='cur' && houseTypeCur==='mortgage') return val('expMortgage');
-  if(section==='min' && houseTypeMin==='mortgage') return val('expQMortgage');
+function getMortgageMonthly(section, p){
+  if(!p) p = getActiveProfile();
+  const hc = (p && (p.houseTypeCur || 'rent')) || houseTypeCur;
+  const hm = (p && (p.houseTypeMin || 'rent')) || houseTypeMin;
+  if(section==='cur' && hc==='mortgage') return profileVal(p,'expMortgage');
+  if(section==='min' && hm==='mortgage') return profileVal(p,'expQMortgage');
   return 0;
 }
-function getMortgageYears(section){
-  if(section==='cur' && houseTypeCur==='mortgage') return val('mortgageYearsLeft');
-  if(section==='min' && houseTypeMin==='mortgage') return val('mortgageYearsLeftQ');
+function getMortgageYears(section, p){
+  if(!p) p = getActiveProfile();
+  const hc = (p && (p.houseTypeCur || 'rent')) || houseTypeCur;
+  const hm = (p && (p.houseTypeMin || 'rent')) || houseTypeMin;
+  if(section==='cur' && hc==='mortgage') return profileVal(p,'mortgageYearsLeft');
+  if(section==='min' && hm==='mortgage') return profileVal(p,'mortgageYearsLeftQ');
   return 0;
 }
 
@@ -2788,20 +2773,26 @@ function maskAsset(v){
   if(typeof v === 'string') return '****';
   return '****';
 }
-function calcAll(){
-  const birth=val('birthYear'), now=val('currentYear'), age=now-birth;
+// P3：calcAll 读 profile（p 可选，未传时取当前活跃 profile），
+// 全程使用同一份 profile 快照，不再触碰 DOM hidden / 全局态，保证数据一致性。
+function calcAll(p){
+  if(!p) p = getActiveProfile();
+  if(!p) return null;
+  const birth=profileVal(p,'birthYear'), now=new Date().getFullYear(), age=now-birth;
   if(age<=0||age>120) return null;
-  const city = getCurrentCity();
-  const retireAge = getRetireAge(birth, gender);
+  const city = p.city || 'beijing';
+  const ssStrategy = p.ssStrategy || 'min';
+  const childPlan = p.childPlan || 'none';
+  const retireAge = getRetireAge(birth, p.gender || '');
   const retireYear = birth + retireAge;
   const policyPensionMin = getMinPensionYearsByRetireYear(retireYear);
   const yearsToRetire = Math.max(retireAge - age, 0);
 
   // Social security: pension + medical, two tracks
-  const penY=val('pensionYears'), medY=val('medicalYears');
-  const manualPenMin=val('pensionMin')||15, medMin=val('medicalMin')||25;
+  const penY=profileVal(p,'pensionYears'), medY=profileVal(p,'medicalYears');
+  const manualPenMin=profileVal(p,'pensionMin')||15, medMin=profileVal(p,'medicalMin')||25;
   const penMin=Math.max(manualPenMin, policyPensionMin);
-  const penSelf=val('pensionSelfPay'), medSelf=val('medicalSelfPay');
+  const penSelf=profileVal(p,'pensionSelfPay'), medSelf=profileVal(p,'medicalSelfPay');
 
   // Effective self-pay now: what you'd pay monthly if you quit today
   let ssSelfNow = 0;
@@ -2828,19 +2819,19 @@ function calcAll(){
   }
 
   const ssMonthlyEffective = ssSelfNow;
-  const income=val('incomePost')*10000;
+  const income=profileVal(p,'incomePost')*10000;
   // Current monthly
-  const cm = getHouseCost('cur') + val('expFood')+val('expTransport')+val('expPet')+val('expEntertain')+val('expInsurance')+val('expOther');
+  const cm = getHouseCost('cur', p) + profileVal(p,'expFood')+profileVal(p,'expTransport')+profileVal(p,'expPet')+profileVal(p,'expEntertain')+profileVal(p,'expInsurance')+profileVal(p,'expOther');
   const ca=cm*12;
   // Min monthly (base expenses + effective SS self-pay)
   // Quit expense fields fall back to current if empty
-  const qmBase = getHouseCost('min') + valQ('expQFood','expFood')+valQ('expQTransport','expTransport')+valQ('expQPet','expPet')+valQ('expQEntertain','expEntertain')+valQ('expQInsurance','expInsurance')+valQ('expQOther','expOther');
+  const qmBase = getHouseCost('min', p) + profileQVal(p,'expQFood','expFood')+profileQVal(p,'expQTransport','expTransport')+profileQVal(p,'expQPet','expPet')+profileQVal(p,'expQEntertain','expEntertain')+profileQVal(p,'expQInsurance','expInsurance')+profileQVal(p,'expQOther','expOther');
   const qm = qmBase + ssMonthlyEffective;
   const qa=qm*12;
 
-  const assets=(val('assetCash')+val('assetDeposit')+val('assetFund')+val('assetStock')+val('assetPension'))*10000;
-  const ret=val('assetReturn')/100;
-  const inflation=val('inflation')/100 || 0.03;
+  const assets=(profileVal(p,'assetCash')+profileVal(p,'assetDeposit')+profileVal(p,'assetFund')+profileVal(p,'assetStock')+profileVal(p,'assetPension'))*10000;
+  const ret=profileVal(p,'assetReturn')/100;
+  const inflation=profileVal(p,'inflation')/100 || 0.03;
   // 养老金估算：按最低缴费资格 + 基础养老金 + 个人账户养老金的简化模型。
   const penRemainToMin = Math.max(penMin - penY, 0);
   const futurePaidYears = penSelf>0
@@ -2852,16 +2843,16 @@ function calcAll(){
     ? estimatePensionMonthly(city, penSelf, pyAtRetire, penY, futurePaidYears, retireAge)
     : 0;
   const estPensionAnnual = estPensionMonthly * 12;
-  const cCost=val('childCost')*10000;
+  const cCost=profileVal(p,'childCost')*10000;
 
   let eCA=ca, eAssets=assets, eQA=qa;
   if(childPlan==='one'){ eCA+=cCost; eQA+=cCost; }
 
   // Mortgage: remaining principal estimate
-  const mgMonthly=getMortgageMonthly('cur'), mgYears=getMortgageYears('cur');
+  const mgMonthly=getMortgageMonthly('cur', p), mgYears=getMortgageYears('cur', p);
   let mgPrincipalCur=0;
   if(mgMonthly>0&&mgYears>0) mgPrincipalCur=mgMonthly*12*mgYears*0.85; // rough principal estimate
-  const mgMonthlyQ=getMortgageMonthly('min'), mgYearsQ=getMortgageYears('min');
+  const mgMonthlyQ=getMortgageMonthly('min', p), mgYearsQ=getMortgageYears('min', p);
   let mgPrincipalQ=0;
   if(mgMonthlyQ>0&&mgYearsQ>0) mgPrincipalQ=mgMonthlyQ*12*mgYearsQ*0.85;
 
@@ -3112,11 +3103,8 @@ function render(d){
     const allocLabels = [];
     const allocData = [];
     const allocColors = [];
-    const cash = parseFloat(document.getElementById('assetCash')?.value) || 0;
-    const deposit = parseFloat(document.getElementById('assetDeposit')?.value) || 0;
-    const fund = parseFloat(document.getElementById('assetFund')?.value) || 0;
-    const stock = parseFloat(document.getElementById('assetStock')?.value) || 0;
-    const pension = parseFloat(document.getElementById('assetPension')?.value) || 0;
+    // P3：资产配置图改读 profile（与 calc 引擎同一数据源，不再读 DOM hidden）
+    const cash = val('assetCash'), deposit = val('assetDeposit'), fund = val('assetFund'), stock = val('assetStock'), pension = val('assetPension');
     const items = [
       { label: '现金', val: cash, color: '#94a3b8' },
       { label: '存款', val: deposit, color: '#60a5fa' },
@@ -3371,32 +3359,38 @@ document.addEventListener('keydown', function(e){
 
 // Stepper functions
 let birthYearSel = null, currentWorkYears = null;
+// P3：写所有 [data-field] 控件（替代已删除的 hidden 中间层；wizard/param 同步）
+function setFieldValue(key, v){
+  document.querySelectorAll('[data-field="' + key + '"]').forEach(el => { el.value = v; });
+}
 function stepYear(delta){
   if(birthYearSel === null || birthYearSel === '') birthYearSel = 1990;
   birthYearSel = Math.max(1960, Math.min(2010, birthYearSel + delta));
   document.getElementById('yearDisplay').textContent = birthYearSel;
-  document.getElementById('birthYear').value = birthYearSel;
+  setFieldValue('birthYear', birthYearSel);
   recalc();
 }
 function stepWorkYears(delta){
   if(currentWorkYears === null || currentWorkYears === '') currentWorkYears = 0;
   currentWorkYears = Math.max(0, Math.min(50, currentWorkYears + delta));
   document.getElementById('workYearsDisplay').textContent = currentWorkYears;
-  // P2：workYears 独立存储，不再同步覆盖 pensionYears/medicalYears（已缴社保单独 stepper 设置）
-  document.getElementById('workYears').value = currentWorkYears;
+  // workYears 独立存储，不再同步覆盖 pensionYears/medicalYears（已缴社保单独 stepper 设置）
+  setFieldValue('workYears', currentWorkYears);
   recalc();
 }
 function stepPensionYears(delta){
-  let v = parseInt(document.getElementById('pensionYears').value) || 0;
+  const el = document.querySelector('[data-field="pensionYears"]');
+  let v = el ? (parseFloat(el.value) || 0) : 0;
   v = Math.max(0, Math.min(50, v + delta));
-  document.getElementById('pensionYears').value = v;
+  setFieldValue('pensionYears', v);
   document.getElementById('pensionYearsDisplay').textContent = v;
   recalc();
 }
 function stepMedicalYears(delta){
-  let v = parseInt(document.getElementById('medicalYears').value) || 0;
+  const el = document.querySelector('[data-field="medicalYears"]');
+  let v = el ? (parseFloat(el.value) || 0) : 0;
   v = Math.max(0, Math.min(50, v + delta));
-  document.getElementById('medicalYears').value = v;
+  setFieldValue('medicalYears', v);
   document.getElementById('medicalYearsDisplay').textContent = v;
   recalc();
 }
@@ -3435,7 +3429,7 @@ function setWizGender(g, btn){
   gender = g;
   document.querySelectorAll('#wizGender .wiz-chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('medicalMin').value = g==='female' ? '20' : '25';
+  setFieldValue('medicalMin', g==='female' ? '20' : '25');
   recalc();
 }
 
@@ -3456,10 +3450,9 @@ function setSSStrategy(s, btn){
 }
 
 // ===== WIZARD QUICK FILLS =====
-function setWizVal(fieldId, val, btn){
-  document.getElementById(fieldId).value = val;
-  // Also sync medicalYears with pensionYears
-  if(fieldId==='pensionYears') document.getElementById('medicalYears').value = val;
+function setWizVal(fieldKey, val, btn){
+  setFieldValue(fieldKey, val);
+  // 便捷预设：养老与医保已缴年限独立设置，不再联动（P2 解耦）
   if(btn) btn.parentElement.querySelectorAll('.wiz-chip').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   recalc();
@@ -3491,11 +3484,7 @@ function setWizQHouseType(type, btn){
   const keepMap = { rent:['expQRent'], mortgage:['expQMortgage','mortgageYearsLeftQ','expQProperty'], none:['expQProperty2'] };
   const keep = keepMap[type] || [];
   ['expQRent','expQMortgage','mortgageYearsLeftQ','expQProperty','expQProperty2'].forEach(key => {
-    if(!keep.includes(key)){
-      document.querySelectorAll('[data-field="' + key + '"]').forEach(el => el.value = '');
-      const h = document.getElementById(key);
-      if(h) h.value = '';
-    }
+    if(!keep.includes(key)) setFieldValue(key, '');
   });
   recalc();
 }
@@ -3505,25 +3494,17 @@ function fillQuickExpenses(total){
   const housing = houseTypeCur==='rent' ? (val('expRent')) : (houseTypeCur==='mortgage' ? val('expMortgage')+val('expProperty') : val('expProperty2'));
   const remaining = Math.max(total - housing, 0);
   const ratios = { food: 0.35, transport: 0.1, pet: 0.1, entertain: 0.15, insurance: 0.1, other: 0.2 };
-  document.getElementById('expFood').value = Math.round(remaining*ratios.food);
-  document.getElementById('expTransport').value = Math.round(remaining*ratios.transport);
-  document.getElementById('expPet').value = Math.round(remaining*ratios.pet);
-  document.getElementById('expEntertain').value = Math.round(remaining*ratios.entertain);
-  document.getElementById('expInsurance').value = Math.round(remaining*ratios.insurance);
-  document.getElementById('expOther').value = Math.round(remaining*ratios.other);
-  // Sync hidden → wizard fields (copy values to wizard display)
-  syncHidToWiz('expFood','wizFood'); syncHidToWiz('expTransport','wizTransport');
-  syncHidToWiz('expPet','wizPet'); syncHidToWiz('expEntertain','wizEntertain');
-  syncHidToWiz('expInsurance','wizInsurance'); syncHidToWiz('expOther','wizOther');
+  // P3：写 [data-field] 控件（wizard/param 同步），hidden 中间层已删除
+  setFieldValue('expFood', Math.round(remaining*ratios.food));
+  setFieldValue('expTransport', Math.round(remaining*ratios.transport));
+  setFieldValue('expPet', Math.round(remaining*ratios.pet));
+  setFieldValue('expEntertain', Math.round(remaining*ratios.entertain));
+  setFieldValue('expInsurance', Math.round(remaining*ratios.insurance));
+  setFieldValue('expOther', Math.round(remaining*ratios.other));
   recalc();
 }
 
-// Renamed: sync hidden → wizard
-function syncHidToWiz(hiddenId, wizId){
-  const h = document.getElementById(hiddenId);
-  const w = document.getElementById(wizId);
-  if(h && w) w.value = h.value || '';
-}
+// P3：syncHidToWiz 已删除（hidden 中间层移除，控件写经 setFieldValue）
 
 function fillQuickMinExp(ratio){
   ['expRent','expFood','expTransport','expPet','expEntertain','expInsurance','expOther'].forEach(id=>{
@@ -3533,25 +3514,19 @@ function fillQuickMinExp(ratio){
     let targetId;
     if(id==='expRent') targetId='expQRent';
     else targetId=qId;
-    const el = document.getElementById(targetId);
-    if(el) el.value = Math.round(v * ratio);
+    // P3：写 [data-field] 控件（wizard/param 同步），hidden 中间层已删除
+    setFieldValue(targetId, Math.round(v * ratio));
   });
-  // Sync wiz fields
-  syncHidToWiz('expQRent','wizQHouse');
-  syncHidToWiz('expQFood','wizQFood'); syncHidToWiz('expQTransport','wizQTransport');
-  syncHidToWiz('expQPet','wizQPet'); syncHidToWiz('expQEntertain','wizQEntertain');
-  syncHidToWiz('expQInsurance','wizQInsurance'); syncHidToWiz('expQOther','wizQOther');
   recalc();
 }
 
 function fillQuickAssets(total){
   const half = Math.round(total/2);
-  document.getElementById('assetCash').value = Math.round(total*0.2);
-  document.getElementById('assetDeposit').value = Math.round(total*0.4);
-  document.getElementById('assetFund').value = Math.round(total*0.2);
-  document.getElementById('assetStock').value = Math.round(total*0.2);
-  syncHidToWiz('assetCash','wizCash'); syncHidToWiz('assetDeposit','wizDep');
-  syncHidToWiz('assetFund','wizFund'); syncHidToWiz('assetStock','wizStock');
+  // P3：写 [data-field] 控件（wizard/param 同步），hidden 中间层已删除
+  setFieldValue('assetCash', Math.round(total*0.2));
+  setFieldValue('assetDeposit', Math.round(total*0.4));
+  setFieldValue('assetFund', Math.round(total*0.2));
+  setFieldValue('assetStock', Math.round(total*0.2));
   recalc();
 }
 
@@ -3613,10 +3588,11 @@ function applyCityPreset(city){
   if(!p) return;
   const profile = getActiveProfile();
   if(profile){ profile.city = city; saveProfiles(); }
-  document.getElementById("pensionMin").value = p.pensionMin;
-  document.getElementById("medicalMin").value = p.medicalMin;
-  if(p.penSelf>0) document.getElementById("pensionSelfPay").value = p.penSelf;
-  if(p.medSelf>0) document.getElementById("medicalSelfPay").value = p.medSelf;
+  // P3：写 [data-field] 控件（pensionMin/medicalMin 有 param 控件；penSelf/medSelf 无控件则空操作）
+  setFieldValue("pensionMin", p.pensionMin);
+  setFieldValue("medicalMin", p.medicalMin);
+  if(p.penSelf>0) setFieldValue("pensionSelfPay", p.penSelf);
+  if(p.medSelf>0) setFieldValue("medicalSelfPay", p.medSelf);
   showVoiceToast("OK: applied "+p.label);
   setTimeout(()=> hideVoiceToast(), 2000);
   // Update city tip
@@ -3744,11 +3720,9 @@ function parseVoiceText(text){
     if(match){
       let value = match[1];
       if(transform) value = transform(value);
-      const el = document.getElementById(fieldId);
-      if(el){
-        el.value = value;
-        filled++;
-      }
+      // P3：语音输入写 [data-field] 控件（hidden 中间层已删除）
+      setFieldValue(fieldId, value);
+      filled++;
     }
   }
 
@@ -3782,8 +3756,7 @@ loadTheme();
 
 // 异步初始化：先尝试从云端合并 profiles，再渲染
 (async function asyncInit(){
-  const yearEl = document.getElementById('currentYear');
-  if(yearEl) yearEl.value = String(new Date().getFullYear());
+  // P3：currentYear hidden 已删除，calcAll 直接 new Date().getFullYear()
 
   // 显示骨架屏
   showDashboardSkeleton();
@@ -4128,29 +4101,9 @@ function showUserManageMenu(uid){
   renderUserManagePage();
 }
 
-// calcAllForProfile: 基于 profile 对象计算 FI，不依赖当前页面字段
+// calcAllForProfile: 基于 profile 对象计算 FI（P3：calcAll 直接读 profile，无需切换当前用户/DOM）
 function calcAllForProfile(p){
-  if(!p || !p.birthYear) return null;
-  // Save current state
-  const prevUid = activeUid;
-  const prevBills = bkBills.map(function(b){ return Object.assign({}, b); });
-  const prevBody = bodyRecords.map(function(b){ return Object.assign({}, b); });
-  const prevBodyTarget = bodyTarget;
-  // Switch to target profile temporarily
-  activeUid = p.uid;
-  loadProfileToFields(p);
-  reloadUserData();
-  const d = calcAll();
-  // Restore
-  activeUid = prevUid;
-  bkBills = prevBills;
-  bodyRecords = prevBody;
-  bodyTarget = prevBodyTarget;
-  if(prevUid){
-    const prevP = userProfiles.find(function(x){ return x.uid === prevUid; });
-    if(prevP) loadProfileToFields(prevP);
-  }
-  return d;
+  return calcAll(p);
 }
 
 // ===== PARAM OVERLAY (bottom sheet) =====
