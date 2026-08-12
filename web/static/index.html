@@ -1714,8 +1714,8 @@ td.wn { color: var(--orange); font-weight: 600; }
 
 <script>
 // ===== 版本号：每次迭代必须递增 =====
-const APP_VERSION = 'v5.6.0';
-const APP_BUILD_DATE = '2026-08-05';
+const APP_VERSION = 'v5.7.0';
+const APP_BUILD_DATE = '2026-08-12';
 console.log('[ShoreOS] 版本 ' + APP_VERSION + ' (' + APP_BUILD_DATE + ')');
 
 // ===== ShoreOS API 数据层 =====
@@ -1832,6 +1832,7 @@ const CloudStore = {
 // ===== MULTI-USER DATA LAYER =====
 const PROFILES_KEY = 'shoreos:v2:profiles';
 const ACTIVE_KEY = 'shoreos:v2:active';
+const PENDING_KEY = 'shoreos:v2:pendingSync';
 
 // 按用户隔离的 localStorage key
 function userKey(base){ return base + '_' + (activeUid || 'anon'); }
@@ -1863,7 +1864,7 @@ function loadProfiles(){
   } catch(e){ userProfiles = []; }
 }
 
-// 云端 profiles 同步：本地优先，云端备份 + 合并
+// 云端 profiles 同步：数据库为主数据源，localStorage 为缓存/离线兜底
 const ProfileCloud = {
   // 等待 ShoreOS API 就绪
   async _waitReady(timeoutMs = 3000){
@@ -1874,7 +1875,7 @@ const ProfileCloud = {
     return cbReady;
   },
 
-  // 从云端拉取 profiles
+  // 从云端拉取 profiles（失败返回 null，区分"API 不可用"与"云端空"）
   async _fetchCloud(){
     if(!await this._waitReady()) return null;
     try {
@@ -1884,40 +1885,50 @@ const ProfileCloud = {
     return null;
   },
 
-  // 推送到云端（全量覆盖）；空数组直接跳过，防止误清空服务端该用户全部档案
+  // 推送到云端（全量覆盖）；空数组直接跳过（防误清库）；返回 boolean
   async _pushCloud(profiles){
-    if(!Array.isArray(profiles) || profiles.length === 0) return;
-    if(!await this._waitReady()) return;
+    if(!Array.isArray(profiles) || profiles.length === 0) return true;
+    if(!await this._waitReady()) return false;
     try {
       await ShoreAPI.request('/api/v1/fire/scenarios/sync', {
         method: 'PUT',
         body: JSON.stringify({ profiles })
       });
       console.log('[API] profiles 已同步后端, 共', profiles.length, '个用户');
-    } catch(e){ console.warn('[API] 推送 profiles 失败:', e.message); }
+      return true;
+    } catch(e){ console.warn('[API] 推送 profiles 失败:', e.message); return false; }
   },
 
-  // 初始化时从云端合并数据（本地优先：本地非空字段保留本地，本地为空才用云端）
-  async mergeFromCloud(){
-    const cloudProfiles = await this._fetchCloud();
-    if(!cloudProfiles || cloudProfiles.length === 0) return;
-    // 合并策略：同 uid 时本地字段非空则保留本地，本地为空用云端补；本地独有的保留，云端独有的并入
-    const merged = new Map();
-    userProfiles.forEach(p => merged.set(p.uid, p));
-    cloudProfiles.forEach(cp => {
-      const lp = merged.get(cp.uid);
-      if(!lp){ merged.set(cp.uid, cp); return; }
-      const out = {};
-      const keys = new Set([...Object.keys(cp), ...Object.keys(lp)]);
-      for(const k of keys){
-        const lv = lp[k], cv = cp[k];
-        out[k] = (lv !== undefined && lv !== null && lv !== '') ? lv : cv;
-      }
-      merged.set(cp.uid, out);
-    });
-    userProfiles = Array.from(merged.values());
-    localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
-    // 恢复 activeUid
+  // 保存即推送：成功清 pendingSync，失败置 pendingSync + 用户可见提示
+  async pushAndMark(profiles){
+    const ok = await this._pushCloud(profiles);
+    if(ok){
+      localStorage.removeItem(PENDING_KEY);
+      showToast('☁️ 已同步到云端', 'success');
+    } else {
+      localStorage.setItem(PENDING_KEY, String(Date.now()));
+      showToast('⚠️ 网络异常，已存本地，恢复网络后自动同步', 'warn');
+    }
+  },
+
+  // 加载：DB 权威 —— 云端有数据则覆盖本地缓存；本地 pending 时本地优先并补推
+  async loadFromCloud(){
+    const cloud = await this._fetchCloud();
+    if(cloud === null) return;              // API 不可用 → 保持本地，不做任何覆盖
+    const pending = localStorage.getItem(PENDING_KEY);
+    if(cloud.length === 0){
+      // 云端空 + 本地有数据 → 首次迁移 push
+      if(userProfiles.length > 0) await this.pushAndMark([...userProfiles]);
+      return;
+    }
+    if(pending){
+      // 本地有未同步编辑 → 本地为准，立即补推覆盖云端
+      await this.pushAndMark([...userProfiles]);
+      return;
+    }
+    // 云端为准：整份覆盖本地缓存
+    userProfiles = cloud;
+    // 校验/恢复 activeUid
     const localActive = localStorage.getItem(ACTIVE_KEY);
     if(localActive && userProfiles.some(p => p.uid === localActive)){
       activeUid = localActive;
@@ -1925,14 +1936,15 @@ const ProfileCloud = {
       activeUid = userProfiles[0].uid;
       localStorage.setItem(ACTIVE_KEY, activeUid);
     }
-    console.log('[API] profiles 后端合并完成, 共', userProfiles.length, '个用户');
+    localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
+    console.log('[API] profiles 云端加载完成, 共', userProfiles.length, '个用户');
   }
 };
 
 function saveProfiles(){
   localStorage.setItem(PROFILES_KEY, JSON.stringify(userProfiles));
-  // 异步推送到云端
-  ProfileCloud._pushCloud([...userProfiles]);
+  // 保存即推送云端（非阻塞，UI 不等待；成功清 pendingSync，失败置 pendingSync）
+  ProfileCloud.pushAndMark([...userProfiles]);
 }
 function getActiveProfile(){
   if(!activeUid) return null;
@@ -3761,8 +3773,8 @@ loadTheme();
   // 显示骨架屏
   showDashboardSkeleton();
 
-  // 尝试从 ShoreOS API 合并后端 profiles
-  await ProfileCloud.mergeFromCloud();
+  // 从云端加载 profiles（DB 权威：云端覆盖本地缓存 / pending 时本地优先）
+  await ProfileCloud.loadFromCloud();
 
   // Migrate v1 data if exists
   const v1State = localStorage.getItem('shoreos_v05_state');
@@ -3801,8 +3813,8 @@ loadTheme();
   try { recalc(); } catch(e){ console.error('init recalc error:', e); }
   try { refreshDashboard(); } catch(e){ console.error('init refreshDashboard error:', e); }
 
-  // 后端同步后推送本地 profiles（确保双向一致）
-  if(cbReady) ProfileCloud._pushCloud([...userProfiles]);
+  // 后端同步后补推本地 profiles（确保双向一致）
+  if(cbReady) ProfileCloud.pushAndMark([...userProfiles]);
 })();
 
 // ===== AUTO-SAVE ON INPUT =====
@@ -3839,7 +3851,7 @@ document.addEventListener('touchend', function(){
   ptrRefreshing = true;
   const el = document.getElementById('ptrIndicator');
   if(el){ el.textContent = '⟳ 刷新中...'; el.className = 'ptr-indicator refreshing'; }
-  Promise.all([ProfileCloud.mergeFromCloud(), new Promise(r => setTimeout(r, 500))]).then(() => {
+  Promise.all([ProfileCloud.loadFromCloud(), new Promise(r => setTimeout(r, 500))]).then(() => {
     if(activeUid){ const p = getActiveProfile(); if(p) loadProfileToFields(p); }
     recalc(); refreshDashboard();
     ptrRefreshing = false;
@@ -3864,7 +3876,7 @@ function updateOnlineStatus(){
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 function retryConnection(){
-  ProfileCloud.mergeFromCloud().then(() => {
+  ProfileCloud.loadFromCloud().then(() => {
     showToast('连接已恢复 ✓', 'success');
     document.getElementById('offlineBanner').classList.remove('show');
   }).catch(() => showToast('仍然无法连接', 'warn'));
