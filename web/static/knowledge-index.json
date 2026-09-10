@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "entity-shoreos",
+      "type": "entity",
+      "title": "ShoreOS",
+      "summary": "个人操作系统主入口。FIRE、Ledger、Knowledge 等模块共享身份和事实边界，但各自维护清晰职责。",
+      "source": "repository",
+      "tags": ["shoreos", "system"]
+    },
+    {
+      "id": "domain-personal-finance",
+      "type": "domain",
+      "title": "个人财务与 FIRE",
+      "summary": "以统一账本为事实层，固定支出、浮动预算、准备金和一次性支出共同形成滚动支出基线，再进入 FIRE 目标和自由速度测算。",
+      "source": "docs/shared-ledger-fire-contract-v2.md",
+      "tags": ["fire", "ledger", "finance"]
+    },
+    {
+      "id": "concept-freedom-speed",
+      "type": "concept",
+      "title": "自由速度",
+      "summary": "不是只看 FIRE Number，而是看当前资产、每月可投入金额与真实支出节奏共同决定的预计自由日期，以及行为改变能提前或推迟多少时间。",
+      "source": "ShoreOS FIRE",
+      "tags": ["fire", "projection", "freedom-speed"]
+    },
+    {
+      "id": "decision-ledger-fire-boundary",
+      "type": "decision",
+      "title": "Ledger 与 FIRE 的边界",
+      "summary": "账本负责真实支出、预算、准备金和滚动支出基线；FIRE 负责收入、资产、目标参数和测算。FIRE 不直接覆盖账本事实。",
+      "source": "docs/shared-ledger-fire-contract-v2.md",
+      "tags": ["decision", "ledger", "fire"]
+    },
+    {
+      "id": "synthesis-knowledge-model",
+      "type": "synthesis",
+      "title": "知识库不是聊天归档",
+      "summary": "知识库保存可复用的长期认知：原始材料先进入 Raw，再生成来源摘要，判断影响面，更新 Domain/Concept/Entity/Decision，最终形成 Synthesis；冲突必须显式保留。",
+      "source": "knowledge/README.md",
+      "tags": ["knowledge", "memory", "workflow"]
+    }
+  ]
+}
